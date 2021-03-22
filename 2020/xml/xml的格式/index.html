@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="验证xml格式DTD验证可以使用DTD来定义XML文档的合法构建模块。DTD可以写在文档内部，也可以另外写一个文件 文档内部12345678910111213&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;&lt;!DOCTYPE note [    &lt;!ELEMENT note (to,from,body)&gt;    &lt;!ELEMENT to (#PCD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="验证xml格式">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="验证xml格式DTD验证可以使用DTD来定义XML文档的合法构建模块。DTD可以写在文档内部，也可以另外写一个文件 文档内部12345678910111213&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;&lt;!DOCTYPE note [    &lt;!ELEMENT note (to,from,body)&gt;    &lt;!ELEMENT to (#PCD">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-20T14:36:23.000Z">
+<meta property="article:modified_time" content="2020-12-29T03:37:33.063Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="xml">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>验证xml格式 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          验证xml格式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-20 22:36:23" itemprop="dateCreated datePublished" datetime="2020-12-20T22:36:23+08:00">2020-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-29 11:37:33" itemprop="dateModified" datetime="2020-12-29T11:37:33+08:00">2020-12-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/xml/" itemprop="url" rel="index"><span itemprop="name">xml</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/" class="post-meta-item leancloud_visitors" data-flag-title="验证xml格式" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/xml/xml%E7%9A%84%E6%A0%BC%E5%BC%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="验证xml格式"><a href="#验证xml格式" class="headerlink" title="验证xml格式"></a>验证xml格式</h2><h3 id="DTD验证"><a href="#DTD验证" class="headerlink" title="DTD验证"></a>DTD验证</h3><p>可以使用DTD来定义XML文档的合法构建模块。DTD可以写在文档内部，也可以另外写一个文件</p>
+<h4 id="文档内部"><a href="#文档内部" class="headerlink" title="文档内部"></a>文档内部</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> [</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">note</span> (<span class="meta-keyword">to</span>,<span class="meta-keyword">from</span>,<span class="meta-keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">to</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">from</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">to</span>&gt;</span>ll<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">from</span>&gt;</span>zh<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p>DTD包含在以上格式的声明中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素 [元素声明]&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="外部文档"><a href="#外部文档" class="headerlink" title="外部文档"></a>外部文档</h4><p>如果DTD位于XML源文件外部，应该封装在一个DTD文档中，并在XML中声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE  根元素 SYSTEM &quot;文件名&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="DTD结构"><a href="#DTD结构" class="headerlink" title="DTD结构"></a>DTD结构</h4><p>元素声明的语法格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT 元素名称 元素内容说明&gt;</span><br></pre></td></tr></table></figure>
+
+<p>元素内容说明的格式</p>
+<h5 id="PCDATA"><a href="#PCDATA" class="headerlink" title="#PCDATA"></a>#PCDATA</h5><p>关键字#PCDATA说明元素包含字符数据，内容只能是字符数据</p>
+<p>例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">name</span> [</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">name</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>张三<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="子元素"><a href="#子元素" class="headerlink" title="子元素"></a>子元素</h5><p>说明元素包含的是子元素。当一个元素只包含子元素时而没有字符数据时，表示此元素类型具有元素型类型。在该类型的元素声明时，通过内容模型来指定在其内容上的约束(内容模型是决定子元素类型和子元素出现顺序的一种简单语法)</p>
+<p>例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> [</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">note</span> (<span class="meta-keyword">to</span>,<span class="meta-keyword">from</span>,<span class="meta-keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">to</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">from</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">to</span>&gt;</span>ll<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">from</span>&gt;</span>zh<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>复杂一些的内容模型为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- </span><br><span class="line">竖线| 表示这些至少存在一个</span><br><span class="line">? 表示可以有一个也可以没有</span><br><span class="line">* 表示零个或者多个</span><br><span class="line">+ 表示一个或者多个，至少有一个</span><br><span class="line">--&gt;</span><br><span class="line">&lt;!-- 该内容模型表示 简历中要有名字，性别，年龄，电话和手机任选一个,填写一个家庭住址或者不填，零个或者多个兴趣爱好，至少一个教育经历，工作经验可有可无 --&gt;</span><br><span class="line">&lt;!ELEMENT 简历 (名字，性别，年龄，(电话 | 手机), 家庭住址?, 兴趣爱好*, 教育经历+, 工作经验*)&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="混合内容"><a href="#混合内容" class="headerlink" title="混合内容"></a>混合内容</h5><p>既可以包含子元素，也可以包含字符数据(使用混合内容模型时，#PCDATA关键字必须是模型中的第一个选项，不能再模型中使用逗号、问号或加号。只能用竖线来分隔#PCDATA和元素)</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">email</span> [</span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">email</span> (<span class="meta-keyword">#PCDATA</span> | <span class="meta-keyword">body</span>)*&gt;</span></span></span><br><span class="line"><span class="meta">    <span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span></span><br><span class="line">    邮件</span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">email</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="EMPTY"><a href="#EMPTY" class="headerlink" title="EMPTY"></a>EMPTY</h5><p>关键字EMPTY表明该元素既不包含字符数据，也不包含子元素，是一个空元素</p>
+<p>例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">br</span> <span class="meta-keyword">EMPTY</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="ANY"><a href="#ANY" class="headerlink" title="ANY"></a>ANY</h5><p>关键字ANY表明该元素可以包含任何字符数据和子元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT note ANY&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="XML-Schema-Definition"><a href="#XML-Schema-Definition" class="headerlink" title="XML Schema Definition"></a>XML Schema Definition</h3><p>在DTD之后，W3C推出了新的规范来验证xml格式：XML Schema Definition</p>
+<h4 id="Schema语法格式"><a href="#Schema语法格式" class="headerlink" title="Schema语法格式"></a>Schema语法格式</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">xs:schema</span>            <span class="attr">xmlns:xs</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema&quot;</span> <span class="attr">targetNamespace</span>=<span class="string">&quot;http:///j2j.idril.cn&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://j2j.idril.cn&quot;</span> <span class="attr">elementFormDefault</span>=<span class="string">&quot;qualified&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;note&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:complexType</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">xs:sequence</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;to&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;from&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;body&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">xs:sequence</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:complexType</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xs:schema</span>   </span></span><br><span class="line"><span class="tag">// 指定了<span class="attr">schema</span>中用到的元素和数据类型来自的命名空间  还规定了来自此命名空间的元素和数据类型应该使用前缀<span class="attr">xs:</span>           <span class="attr">xmlns:xs</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema&quot;</span> </span></span><br><span class="line"><span class="tag">// 说明此<span class="attr">schema</span>定义的元素来自的命名空间           </span></span><br><span class="line"><span class="tag"><span class="attr">targetNamespace</span>=<span class="string">&quot;http:///j2j.idril.cn&quot;</span> </span></span><br><span class="line"><span class="tag">// 指定了默认的命名空间           </span></span><br><span class="line"><span class="tag"><span class="attr">xmlns</span>=<span class="string">&quot;http://j2j.idril.cn&quot;</span> </span></span><br><span class="line"><span class="tag">// 指出任何<span class="attr">XML</span>实例文档所使用的且在此<span class="attr">schema</span>中声明过的元素必须被命名空间限定           </span></span><br><span class="line"><span class="tag"><span class="attr">elementFormDefault</span>=<span class="string">&quot;qualified&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 简易元素(仅包含文本的元素，不会包含子元素或属性)</span><br><span class="line">// 常用的type有xs:strig、xs:decimal、xs:integer、xs:Boolean、xs:date、xs:time</span><br><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;to&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 属性 </span><br><span class="line">// 常用的type有xs:strig、xs:decimal、xs:integer、xs:Boolean、xs:date、xs:time</span><br><span class="line"><span class="tag">&lt;<span class="name">xs:attribute</span> <span class="attr">name</span>=<span class="string">&quot;lang&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 限定   用于XML元素或者属性定义可接受的值</span><br><span class="line"><span class="tag">&lt;<span class="name">xs:restriction</span> <span class="attr">base</span>=<span class="string">&quot;xs:integer&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:minInclusive</span> <span class="attr">value</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:maxInclusive</span> <span class="attr">value</span>=<span class="string">&quot;120&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:restriction</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 复合元素</span><br><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;note&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:complexType</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">xs:sequence</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;to&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;from&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;body&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">xs:sequence</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:complexType</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>&lt;xs:element name=”to” type=”xs:string”/&gt;</p>
+<h4 id="Schema的使用"><a href="#Schema的使用" class="headerlink" title="Schema的使用"></a>Schema的使用</h4><p>同样的，在xml中需要声明Schema</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://j2j.idril.cn&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://j2j.idril.cn node.xsd&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>ll<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">from</span>&gt;</span>zh<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 规定了默认的命名空间的声明</span><br><span class="line">xmlns=&quot;http://j2j.idril.cn&quot;</span><br><span class="line">// 定义了XML Schema实例命名空间</span><br><span class="line">xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; </span><br><span class="line">// 包含两个值   第一个值是需要使用的命名空间  第二个值是供命名空间使用的XML Schema的位置</span><br><span class="line">xsi:schemaLocation=&quot;http://j2j.idril.cn node.xsd&quot;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/xml/" rel="tag"># xml</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86/JMS/JMS/" rel="prev" title="JMS">
+      <i class="fa fa-chevron-left"></i> JMS
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E6%A1%86%E6%9E%B6/struts/%E8%AE%BF%E9%97%AEweb%E8%B5%84%E6%BA%90/" rel="next" title="struts2访问web资源">
+      struts2访问web资源 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81xml%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">验证xml格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DTD%E9%AA%8C%E8%AF%81"><span class="nav-number">1.1.</span> <span class="nav-text">DTD验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%86%85%E9%83%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">文档内部</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E6%96%87%E6%A1%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">外部文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DTD%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">DTD结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PCDATA"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">#PCDATA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%90%E5%85%83%E7%B4%A0"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">子元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%86%85%E5%AE%B9"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">混合内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#EMPTY"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">EMPTY</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ANY"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">ANY</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XML-Schema-Definition"><span class="nav-number">1.2.</span> <span class="nav-text">XML Schema Definition</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Schema%E8%AF%AD%E6%B3%95%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">Schema语法格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Schema%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">Schema的使用</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

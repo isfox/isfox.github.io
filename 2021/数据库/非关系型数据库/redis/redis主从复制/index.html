@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="redis主从复制 注意：我使用的版本是6.0.10，不同版本可能略有差别  虽然redis有持久化的功能可以保证redis服务重启不会丢失数据，但是如果redis服务器的硬盘损坏就会导致数据丢失，，使用主从复制来避免这种单点故障。 主机数据更新后根据配置和策略自动同步到备机的master&#x2F;slave机制，master以写为主，slave以读为主 原理主要是使用PSYNC命令来实现 PSYNC命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis主从复制">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="redis主从复制 注意：我使用的版本是6.0.10，不同版本可能略有差别  虽然redis有持久化的功能可以保证redis服务重启不会丢失数据，但是如果redis服务器的硬盘损坏就会导致数据丢失，，使用主从复制来避免这种单点故障。 主机数据更新后根据配置和策略自动同步到备机的master&#x2F;slave机制，master以写为主，slave以读为主 原理主要是使用PSYNC命令来实现 PSYNC命令">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-17T05:55:30.000Z">
+<meta property="article:modified_time" content="2021-03-10T07:42:12.034Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis主从复制 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis主从复制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-17 13:55:30" itemprop="dateCreated datePublished" datetime="2021-02-17T13:55:30+08:00">2021-02-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-10 15:42:12" itemprop="dateModified" datetime="2021-03-10T15:42:12+08:00">2021-03-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="post-meta-item leancloud_visitors" data-flag-title="redis主从复制" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="redis主从复制"><a href="#redis主从复制" class="headerlink" title="redis主从复制"></a>redis主从复制</h2><blockquote>
+<p>注意：我使用的版本是6.0.10，不同版本可能略有差别</p>
+</blockquote>
+<p>虽然redis有持久化的功能可以保证redis服务重启不会丢失数据，但是如果redis服务器的硬盘损坏就会导致数据丢失，，使用主从复制来避免这种单点故障。</p>
+<p>主机数据更新后根据配置和策略自动同步到备机的master/slave机制，master以写为主，slave以读为主</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>主要是使用PSYNC命令来实现</p>
+<p>PSYNC命令具有完整重同步和部分重同步两种模式</p>
+<ul>
+<li>完整重同步用于处理初次复制的情况：slave启动成功连接到master后会发送一个psync命令，master接到命令后会启动后台创建并发送RDB文件，完成后将命令发送给slave</li>
+<li>部分重同步用于处理断线后重复制的情况：在断线后重连，slave向master发送psync命令，master将断线之后的写命令发送给slave</li>
+</ul>
+<a id="more"></a>
+
+<p>那么如何知道slave和master之间只差了这几个命令呢？</p>
+<p>是因为master和slave在复制的时候都维护了一个复制偏移量，而master在复制积压缓冲区中会保存一部分最近传播的写命令，为每个字节来记录相应的复制偏移量，可以根据复制偏移量来找到对应的字节，当然，如果复制积压缓冲区中没有这个偏移量了，那么就只能进行全量复制了</p>
+<blockquote>
+<p>redis默认的复制积压缓冲区为1mb，可以修改配置中repl-backlog-size 来进行调整</p>
+</blockquote>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>配主不配从，配置slave即可，使得slave时刻盯住主机</p>
+<p>在这里由于我只有一台电脑，所以只能用三个配置文件来启动三个redis服务了，带有配置文件的启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis79.conf</span><br></pre></td></tr></table></figure>
+
+<p>以及使用端口启动客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 6379</span><br></pre></td></tr></table></figure>
+
+<p>启动之后就可以配置从机了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replicaof 127.0.0.1 6379</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在5.0之后使用replicaof，5.0之前使用slaveof      不过当前slaveof还没有失效</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 可以配置最少有多少个从节点  主节点才可以写</span><br><span class="line"># min-replicas-to-write 3</span><br><span class="line"># min-replicas-max-lag 10</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="一主两仆"><a href="#一主两仆" class="headerlink" title="一主两仆"></a>一主两仆</h4><pre class="mermaid">graph TD
+master79-->slave80
+master79-->slave81</pre>
+
+
+
+<p>看一下执行命令之前的配置变化(使用info replication来查看)</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#之前</span></span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line"><span class="attr">role</span>:<span class="string">master</span></span><br><span class="line"><span class="attr">connected_slaves</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">master_replid</span>:<span class="string">96519fc9dab0e66f4d1e8513f519b68622f4af9e</span></span><br><span class="line"><span class="attr">master_replid2</span>:<span class="string">0000000000000000000000000000000000000000</span></span><br><span class="line"><span class="attr">master_repl_offset</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">second_repl_offset</span>:<span class="string">-1</span></span><br><span class="line"><span class="attr">repl_backlog_active</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">repl_backlog_size</span>:<span class="string">1048576</span></span><br><span class="line"><span class="attr">repl_backlog_first_byte_offset</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">repl_backlog_histlen</span>:<span class="string">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#之后</span></span><br><span class="line"><span class="comment">#主机</span></span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line"><span class="attr">role</span>:<span class="string">master</span></span><br><span class="line"><span class="attr">connected_slaves</span>:<span class="string">2</span></span><br><span class="line"><span class="attr">slave0</span>:<span class="string">ip=127.0.0.1,port=6380,state=online,offset=2646,lag=1</span></span><br><span class="line"><span class="attr">slave1</span>:<span class="string">ip=127.0.0.1,port=6381,state=online,offset=2646,lag=1</span></span><br><span class="line"><span class="attr">master_replid</span>:<span class="string">63b39507da5e42ce5e1b4d931f4e743c91bb92cd</span></span><br><span class="line"><span class="attr">master_replid2</span>:<span class="string">0000000000000000000000000000000000000000</span></span><br><span class="line"><span class="attr">master_repl_offset</span>:<span class="string">2646</span></span><br><span class="line"><span class="attr">second_repl_offset</span>:<span class="string">-1</span></span><br><span class="line"><span class="attr">repl_backlog_active</span>:<span class="string">1</span></span><br><span class="line"><span class="attr">repl_backlog_size</span>:<span class="string">1048576</span></span><br><span class="line"><span class="attr">repl_backlog_first_byte_offset</span>:<span class="string">1</span></span><br><span class="line"><span class="attr">repl_backlog_histlen</span>:<span class="string">2646</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#从机</span></span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line"><span class="attr">role</span>:<span class="string">slave</span></span><br><span class="line"><span class="attr">master_host</span>:<span class="string">127.0.0.1</span></span><br><span class="line"><span class="attr">master_port</span>:<span class="string">6379</span></span><br><span class="line"><span class="attr">master_link_status</span>:<span class="string">up</span></span><br><span class="line"><span class="attr">master_last_io_seconds_ago</span>:<span class="string">9</span></span><br><span class="line"><span class="attr">master_sync_in_progress</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">slave_repl_offset</span>:<span class="string">42</span></span><br><span class="line"><span class="attr">slave_priority</span>:<span class="string">100</span></span><br><span class="line"><span class="attr">slave_read_only</span>:<span class="string">1</span></span><br><span class="line"><span class="attr">connected_slaves</span>:<span class="string">0</span></span><br><span class="line"><span class="attr">master_replid</span>:<span class="string">63b39507da5e42ce5e1b4d931f4e743c91bb92cd</span></span><br><span class="line"><span class="attr">master_replid2</span>:<span class="string">0000000000000000000000000000000000000000</span></span><br><span class="line"><span class="attr">master_repl_offset</span>:<span class="string">42</span></span><br><span class="line"><span class="attr">second_repl_offset</span>:<span class="string">-1</span></span><br><span class="line"><span class="attr">repl_backlog_active</span>:<span class="string">1</span></span><br><span class="line"><span class="attr">repl_backlog_size</span>:<span class="string">1048576</span></span><br><span class="line"><span class="attr">repl_backlog_first_byte_offset</span>:<span class="string">43</span></span><br><span class="line"><span class="attr">repl_backlog_histlen</span>:<span class="string">0</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>重点：</p>
+<ul>
+<li>从机会将主机的所有数据进行备份</li>
+<li>从机只能读，不能写(error) READONLY You can’t write against a read only replica.</li>
+<li>主机挂了之后，从机身份不变(master_link_status变成down)，直到主机回来，主机回来之后还是主机</li>
+<li>从机挂了之后需要重新执行从属命令replicaof 127.0.0.1 6379(如果是直接在配置文件中配置的从属关系则不需要)</li>
+</ul>
+</blockquote>
+<p>可以使用命令来将从库变成主库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replicaof no one</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在5.0之后使用replicaof，5.0之前使用slaveof      不过当前slaveof还没有失效</p>
+</blockquote>
+<h4 id="薪火相传"><a href="#薪火相传" class="headerlink" title="薪火相传"></a>薪火相传</h4><p>由于一主两仆机制会导致主机挂掉之后整个redis就挂掉的问题，所以为了去中心化，有了薪火相传机制，上一个slave可能是下一个slave的master，slave同样可以接收其他的slave的连接和请求，可以有效地减轻master的写压力</p>
+<pre class="mermaid">graph LR
+master79-->slave80-->slave81</pre>
+
+<p>这里slave80对于slave81是主机，对于master79是从机</p>
+<blockquote>
+<p>该机制可能会存在延迟</p>
+</blockquote>
+<h4 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h4><p>由于一主两从的主库挂掉之后，需要人工的去干预从库反客为主，再进行更改主从配置，而哨兵模式通过监听主库是否挂掉，从库根据投票来决定自动将从库切换为主库</p>
+<p>配置redis-sentinel.conf配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#哨兵监控 6379  当6379挂了之后从库进行投票，票数超过1即可成为主库，配置文件会自动修改为新选举的主库ip和port</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+
+<p>哨兵启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-sentinel redis-sentinel.conf</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>当主库挂掉之后，从库进行重新选举出新的主库，原来的主库回来之后，只会成为从库，不会变成双主库</p>
+</blockquote>
+<h5 id="选举新的主服务器"><a href="#选举新的主服务器" class="headerlink" title="选举新的主服务器"></a>选举新的主服务器</h5><p>sentinel会将所有的从服务器保存到一个列表中，然后进行筛选</p>
+<ul>
+<li>首先会删除掉下线的从服务器</li>
+<li>然后删除掉最近五秒内没有回复过sentinel的info命令的从服务器</li>
+<li>删除掉与主服务连接断开超过down-after-milliseconds * 10 毫秒的从服务器(down-after-milliseconds表示判断主服务器下线所需的时间)</li>
+<li>根据从服务器优先级进行排序，如果有多个最高优先级的从服务器，则选出偏移量最大的</li>
+<li>如果存在多个最高优先级、复制偏移量最大的从服务器，则按照id进行排序，选出id最小的</li>
+</ul>
+<blockquote>
+<p>sentinel是不会监控从服务器的，所以如果从服务器挂掉之后，sentinel是不会对其进行故障转移的</p>
+</blockquote>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ul>
+<li>读写分离</li>
+<li>灾备</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/redis%E4%BA%8B%E5%8A%A1/" rel="prev" title="redis事务">
+      <i class="fa fa-chevron-left"></i> redis事务
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/linux/%E5%9F%BA%E7%A1%80/vim%E7%BC%96%E8%BE%91%E5%99%A8/" rel="next" title="vim编辑器">
+      vim编辑器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">redis主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%BB%E4%B8%A4%E4%BB%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">一主两仆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%96%AA%E7%81%AB%E7%9B%B8%E4%BC%A0"><span class="nav-number">1.2.2.</span> <span class="nav-text">薪火相传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">哨兵模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E6%96%B0%E7%9A%84%E4%B8%BB%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">选举新的主服务器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">作用</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="权限管理命令权限的查看及含义可以使用ls -l来查看每个文件或目录的权限，一共有十位 1234567891011121314151617ls -ls--------------------------------------------------------------------rw-------. 1 root root   946 Feb 14 16:13 anaconda-ks.cfgd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux权限管理命令">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="权限管理命令权限的查看及含义可以使用ls -l来查看每个文件或目录的权限，一共有十位 1234567891011121314151617ls -ls--------------------------------------------------------------------rw-------. 1 root root   946 Feb 14 16:13 anaconda-ks.cfgd">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-15T07:50:30.000Z">
+<meta property="article:modified_time" content="2021-03-18T03:18:01.803Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux权限管理命令 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux权限管理命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-15 15:50:30" itemprop="dateCreated datePublished" datetime="2021-02-15T15:50:30+08:00">2021-02-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-18 11:18:01" itemprop="dateModified" datetime="2021-03-18T11:18:01+08:00">2021-03-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="linux权限管理命令" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/linux/%E5%9F%BA%E7%A1%80/linux%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="权限管理命令"><a href="#权限管理命令" class="headerlink" title="权限管理命令"></a>权限管理命令</h2><h3 id="权限的查看及含义"><a href="#权限的查看及含义" class="headerlink" title="权限的查看及含义"></a>权限的查看及含义</h3><p>可以使用ls -l来查看每个文件或目录的权限，一共有十位</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ls -ls</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">-rw-------. 1 root root   946 Feb 14 16:13 anaconda-ks.cfg</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Desktop</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Documents</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Downloads</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Music</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Pictures</span><br><span class="line">-rw-r--r--. 1 root root 12148 Nov 30  2013 post-install</span><br><span class="line">-rw-r--r--. 1 root root   552 Nov 30  2013 post-install.log</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Public</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Templates</span><br><span class="line">drwxr-xr-x. 2 root root  4096 Feb 15 15:47 Videos</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<ul>
+<li>第 1 个字符表示文件类型，其中，普通文件 (-)、目录文件 (d)、套接字文件 (s)，管道文件 (p)，字符设备文件 (c)，块设备文件 (b)，软链接文件 (l)；</li>
+<li>第 2 个字符开始的 rwxr-xr-x 部分表示文件的权限位，共有 9 位。每三位为一组，分别为所有者的权限u、所属组的权限g、其他人权限o<ul>
+<li>第 2~4 位的 rwx 表示该文件可被它的 所有者以 r(读) 或 w(写) 或 x(执行) 的权限访问。</li>
+<li>第 5~7 位的 r-x 表示该文件可被与该文件同一所有组的用户以 r 或 x 的权限访问</li>
+<li>第 8~10 位的 r-x 表示该文件可被其它未知用户以 r 或 x 的权限访问。</li>
+</ul>
+</li>
+</ul>
+<h3 id="权限修改"><a href="#权限修改" class="headerlink" title="权限修改"></a>权限修改</h3><p>使用设置权限的命令 chmod<br>语法：<br> chmod [设置权限的对象]+/-[权限] [文件]<br> 设置权限的对象包括 所有者、所属组、其他这三类。u表示文件的所有者，g表示文件的所属组，o代表其他人<br> +代表增加权限，-代表去掉权限<br> 文件的权限就是读、写和执行，分别用r、w、x表示</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">chmod g+w abc.txt</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">多个设置权限可以使用逗号分隔</span></span><br><span class="line">chmod u+x,g+w abc.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="数字权限"><a href="#数字权限" class="headerlink" title="数字权限"></a>数字权限</h4><p>使用字母设置权限命令比较长，linux支持使用数字来替代权限</p>
+<ul>
+<li>4  代表r权限</li>
+<li>2  代表w权限</li>
+<li>1  代表x权限</li>
+</ul>
+<p>可以使用多个数字加和的方式来设置权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">设置u权限为7=4+2+1，设置g权限为5=4+1，设置o权限为5=4+1</span></span><br><span class="line">chmod 755 abc.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户操作"><a href="#用户操作" class="headerlink" title="用户操作"></a>用户操作</h3><h4 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">添加用户</span></span><br><span class="line"><span class="meta">#</span><span class="bash">useradd 用户名</span></span><br><span class="line">useradd user1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">给user1设置密码</span></span><br><span class="line"><span class="meta">#</span><span class="bash">passwd 用户名</span></span><br><span class="line">passwd user1</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改文件所有者"><a href="#修改文件所有者" class="headerlink" title="修改文件所有者"></a>修改文件所有者</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">chown 用户名 文件</span></span><br><span class="line">chown user1 abc.txt</span><br><span class="line"><span class="meta">#</span><span class="bash">chown 用户名:组名 文件</span></span><br><span class="line">chown user1:user1 abc.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改所属组"><a href="#修改所属组" class="headerlink" title="修改所属组"></a>修改所属组</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">chgrp 组名 文件名</span></span><br><span class="line">chgrp user1 abc.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="ACL操作"><a href="#ACL操作" class="headerlink" title="ACL操作"></a>ACL操作</h3><p>ACL是用来解决用户对文件身份不足的问题，上述权限管理只能对三类人群进行权限区分，这明显是不够的，所以出现了ACL操作</p>
+<p>先确认一下acl是否开启(一般情况下acl是开启的)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> dumpe2fs 查询指定分区详细文件系统信息的命令</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里我的sda1是根分区，</span></span><br><span class="line">dumpe2fs -h /dev/sda1</span><br><span class="line"></span><br><span class="line">-h 只显示超级块中的信息，不显示磁盘块组的信息</span><br><span class="line"></span><br><span class="line">-----------------------------</span><br><span class="line"><span class="meta">#</span><span class="bash">如果在查询结果中找到Default mount options:    user_xattr acl则说明acl是开启状态</span></span><br></pre></td></tr></table></figure>
+
+<p>如果acl没有开启</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">重新挂载根分区</span></span><br><span class="line">mount -o remount,acl /</span><br></pre></td></tr></table></figure>
+
+<h4 id="ACL基本命令"><a href="#ACL基本命令" class="headerlink" title="ACL基本命令"></a>ACL基本命令</h4><p>查看文件acl权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">getfacl 1.txt</span><br><span class="line"></span><br><span class="line">-----------------</span><br><span class="line"><span class="meta">#</span><span class="bash"> file: 1.txt</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> owner: root</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> group: root</span></span><br><span class="line">user::rw-</span><br><span class="line">group::r--</span><br><span class="line">other::r--</span><br></pre></td></tr></table></figure>
+
+<p>设定acl权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">setfacl [options] 文件名</span></span><br><span class="line">setfacl -m u:test1:6 1.txt</span><br><span class="line">-----------------</span><br><span class="line">-m u:用户名:权限 | g:组名:权限  设定acl权限</span><br><span class="line">-b  删除acl权限</span><br><span class="line">-R 递归，只能作用于目录，将权限同样赋给目录中的文件  setfacl -m u:test1:6 -R src  只能对已存在的文件设置权限</span><br><span class="line">                                             setfacl -m d:u:test1:6 -R src  对以后创建的文件也生效，d表示默认</span><br></pre></td></tr></table></figure>
+
+<h3 id="sudo授权"><a href="#sudo授权" class="headerlink" title="sudo授权"></a>sudo授权</h3><p>给普通用户赋予部分管理员权限</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90/jenkins/jenkins%E6%9E%84%E5%BB%BA/" rel="prev" title="jenkins构建">
+      <i class="fa fa-chevron-left"></i> jenkins构建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/linux/%E5%9F%BA%E7%A1%80/%E5%B8%AE%E5%8A%A9%E5%91%BD%E4%BB%A4/" rel="next" title="linux帮助命令">
+      linux帮助命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">权限管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%9A%84%E6%9F%A5%E7%9C%8B%E5%8F%8A%E5%90%AB%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">权限的查看及含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E4%BF%AE%E6%94%B9"><span class="nav-number">1.2.</span> <span class="nav-text">权限修改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E6%9D%83%E9%99%90"><span class="nav-number">1.2.1.</span> <span class="nav-text">数字权限</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">用户操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="nav-number">1.3.1.</span> <span class="nav-text">添加用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E8%80%85"><span class="nav-number">1.3.2.</span> <span class="nav-text">修改文件所有者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%89%80%E5%B1%9E%E7%BB%84"><span class="nav-number">1.3.3.</span> <span class="nav-text">修改所属组</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACL%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">ACL操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ACL%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">ACL基本命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sudo%E6%8E%88%E6%9D%83"><span class="nav-number">1.5.</span> <span class="nav-text">sudo授权</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

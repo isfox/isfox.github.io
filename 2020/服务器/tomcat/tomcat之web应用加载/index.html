@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Web应用加载Catalina对于Web应用的加载主要由StandardHost、HostConfig、StandardContext、ContextConfig、StandardWrapper这五个类完成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat之web应用加载">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="Web应用加载Catalina对于Web应用的加载主要由StandardHost、HostConfig、StandardContext、ContextConfig、StandardWrapper这五个类完成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-05T08:29:19.000Z">
+<meta property="article:modified_time" content="2020-09-08T01:42:23.814Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="tomcat">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>tomcat之web应用加载 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tomcat之web应用加载
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-05 16:29:19" itemprop="dateCreated datePublished" datetime="2020-09-05T16:29:19+08:00">2020-09-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-08 09:42:23" itemprop="dateModified" datetime="2020-09-08T09:42:23+08:00">2020-09-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index"><span itemprop="name">tomcat</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/" class="post-meta-item leancloud_visitors" data-flag-title="tomcat之web应用加载" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Web应用加载"><a href="#Web应用加载" class="headerlink" title="Web应用加载"></a>Web应用加载</h2><p>Catalina对于Web应用的加载主要由StandardHost、HostConfig、StandardContext、ContextConfig、StandardWrapper这五个类完成。</p>
+<a id="more"></a>
+
+<h3 id="StandardHost"><a href="#StandardHost" class="headerlink" title="StandardHost"></a>StandardHost</h3><p>StandardHost加载Web应用(即StandardContext)的入口有两个。</p>
+<p>一个入口是Catalina构造Server实例时，如果Host元素存在Context子元素时，那么Context元素将会作为Host容器的子容器加到Host实例中，并在Host启动时，由生命周期管理接口的start()方法启动</p>
+<p>此时Context的配置为</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Host</span> <span class="attr">name</span>=<span class="string">&quot;localhost&quot;</span> <span class="attr">appBase</span>=<span class="string">&quot;webapps&quot;</span> <span class="attr">unparkWARs</span>=<span class="string">&quot;true&quot;</span> <span class="attr">autoDeploy</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- docBase是Web应用根目录的文件路径   path为Web应用根请求地址 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Context</span> <span class="attr">docBase</span>=<span class="string">&quot;myApp&quot;</span> <span class="attr">path</span>=<span class="string">&quot;myApp&quot;</span> <span class="attr">reloadable</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Host</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这种配置需要每次部署新的Web应用或者删除旧应用时，都必须修改一下server.xml文件。</p>
+<h4 id="StandardHost启动加载过程"><a href="#StandardHost启动加载过程" class="headerlink" title="StandardHost启动加载过程"></a>StandardHost启动加载过程</h4><ul>
+<li><p>为Host添加一个Value实现ErrorReportValue，该类主要用于在服务器处理异常时输出错误页面。如果没有在web.xml中配置错误处理页面，Tomcat返回的异常栈页面便是由ErrorReportValue生成的。</p>
+</li>
+<li><p>调用StandardHost父类ContainerBase的startInternal()方法启动虚拟主机，处理步骤为</p>
+<ul>
+<li><p>如果配置了集群组件Cluster，则启动</p>
+</li>
+<li><p>如果配置了安全组件Realm，则启动</p>
+</li>
+<li><p>启动子节点(server.xml中<Context>创建的StandardContext实例)</Context></p>
+</li>
+<li><p>启动Host持有的Pipeline组件</p>
+</li>
+<li><p>设置HOST状态为STARTING，触发START_EVENT生命周期时间。HostConfig监听该事件，扫描Web部署目录，对于部署描述文件、WAR包、目录会自动创建StandardContext实例，添加到Host并启动</p>
+</li>
+<li><p>启动Host层级的后台任务处理：cluster后台任务处理、Realm后台任务处理、Pipeline中Value的后台任务处理</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="HostConfig"><a href="#HostConfig" class="headerlink" title="HostConfig"></a>HostConfig</h3><p>另一个入口则是由HostConfig自动扫描部署目录</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 默认的server.xml配置 --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- appBase为web应用部署的基础目录，所有需要部署的Web应用都会复制到此目录下，Tomcat通过HostConfig完成该目录下Web应用的自动部署 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Host</span> <span class="attr">name</span>=<span class="string">&quot;localhost&quot;</span>  <span class="attr">appBase</span>=<span class="string">&quot;webapps&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">unpackWARs</span>=<span class="string">&quot;true&quot;</span> <span class="attr">autoDeploy</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="生命周期事件"><a href="#生命周期事件" class="headerlink" title="生命周期事件"></a>生命周期事件</h4><p>HostConfig处理的生命周期事件包括：START_EVENT、PERIODIC_EVENT、STOP_EVENT</p>
+<h5 id="START-EVENT事件"><a href="#START-EVENT事件" class="headerlink" title="START_EVENT事件"></a>START_EVENT事件</h5><p>在Host启动时触发，完成服务器启动过程中的Web应用部署(只有当Host的deployOnStartup属性为true时，服务器才会在启动过程中部署web应用，默认为true)</p>
+<p>该事件完成了Context描述文件部署、web目录部署、WAR包部署，对应于3种不同的部署方式</p>
+<h6 id="Context描述文件部署"><a href="#Context描述文件部署" class="headerlink" title="Context描述文件部署"></a>Context描述文件部署</h6><p>Tomcat支持通过一个独立的Context描述文件来配置Web应用,该配置文件的存储路径由Host的xmlBase属性指定。默认为$CATALINA_BASE/conf/&lt;Egnine名称&gt;/&lt;Host名称&gt;，对于Tomcat默认的Host，$CATALINA_BASE/conf/Catalina/localhost</p>
+<p>在该目录下创建文件，为myApp.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Context</span> <span class="attr">docBase</span>=<span class="string">&quot;test/myApp&quot;</span> <span class="attr">path</span>=<span class="string">&quot;/myApp&quot;</span> <span class="attr">reloadable</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">WatchdResource</span>&gt;</span>WEB-INF/web.xml<span class="tag">&lt;/<span class="name">WatchdResource</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>将myApp的web应用复制到test目录下，Tomcat启动时便会自动部署该Web应用</p>
+<h6 id="web目录部署"><a href="#web目录部署" class="headerlink" title="web目录部署"></a>web目录部署</h6><p>以目录的形式发布并部署到Web应用是Tomcat中最常见的部署方式，只需将包含Web应用所有资源文件、jar包、描述文件的目录复制到Host指定的appBase目录下即可完成部署</p>
+<p>根据web应用中的配置文件来实例化Context(默认为META-INF目录下的context.xml)，但是无法覆盖name、path、webappVersion、docBase这四个属性，这些由Web目录的路径及名称确定</p>
+<h6 id="WAR包部署"><a href="#WAR包部署" class="headerlink" title="WAR包部署"></a>WAR包部署</h6><p>与web目录部署类似</p>
+<h5 id="PERIODIC-EVENT事件"><a href="#PERIODIC-EVENT事件" class="headerlink" title="PERIODIC_EVENT事件"></a>PERIODIC_EVENT事件</h5><p>用于定时扫描Web应用的变更，并进行重新加载</p>
+<h3 id="StandardContext"><a href="#StandardContext" class="headerlink" title="StandardContext"></a>StandardContext</h3><p>包含了具体的Web应用初始化及启动工作，该部分工作由组件Context完成</p>
+<p>StandardContext的启动过程</p>
+<ul>
+<li><p>发布正在启动的JMX通知，可以通过NotifycationListener来监听Web应用启动</p>
+</li>
+<li><p>启动当前Context维护的JNDI资源</p>
+</li>
+<li><p>初始化当前Context使用的WebResourceRoot并启动</p>
+<ul>
+<li><p>pre资源：在context.xml中通过<PreResources>配置的资源</PreResources></p>
+</li>
+<li><p>Main资源：web应用目录、WAR包或者WAE包解压目录包含的文件，这些资源的查找顺序为WEB-INF/classes、WEB-INF/lib</p>
+</li>
+<li><p>Jar资源：<JarResources>配置的资源</JarResources></p>
+</li>
+<li><p>Post资源：<PostResources>配置的资源</PostResources></p>
+</li>
+</ul>
+</li>
+<li><p>创建web应用类加载器WebappLoader</p>
+</li>
+<li><p>如果没有设置Cookie处理器，则创建默认的Rfc6265CokkieProcessor</p>
+</li>
+<li><p>设置字符集映射CharsetMapper，该映射主要用于根据Locale获取字符集编码</p>
+</li>
+<li><p>初始化临时目录，默认为$CATALINA_BASE/work/&lt;Egnine名称&gt;/&lt;Host名称&gt;/&lt;Context名称&gt;</p>
+</li>
+<li><p>web应用的依赖检测，主要检测依赖扩展点完整性</p>
+</li>
+<li><p>如果当前Context使用JNDI，则添加NamingContextListener</p>
+</li>
+<li><p>启动web应用类加载器WebappLoader.start</p>
+</li>
+<li><p>启动安全组件Realm</p>
+</li>
+<li><p>发布CONFIGURE_START_EVENT事件，ContextConfig监听该事件以完成Servlet的创建</p>
+</li>
+<li><p>启动Context子节点Wrapper</p>
+</li>
+<li><p>启动Context维护的Pipeline</p>
+</li>
+<li><p>创建会话管理器</p>
+</li>
+<li><p>将Context的web资源集合添加到ServletContext属性，属性名为org.apache.catalina.resources</p>
+</li>
+<li><p>创建实例管理器InstanceManager，用于创建对象实例，如Servlet、Filter等</p>
+</li>
+<li><p>将Jar包扫描器JarScanner添加到ServletContext属性</p>
+</li>
+<li><p>合并ServletContext初始化参数和Context组件中的ApplicationParameter。</p>
+</li>
+<li><p>启动添加到当前Context的ServletContainerInitializer</p>
+</li>
+<li><p>实例化应用监听器ApplicationListener，分为事件监听器(ServletContextAttributeListener、ServletRequestAttributeListener、ServletRequestListener、HttpSessionIdListener、HttpSessionAttributeListener)以及生命周期监听器(HttpSessionListener、ServletContextListener)</p>
+</li>
+<li><p>检测未覆盖的HTTP方法的安全约束</p>
+</li>
+<li><p>启动会话管理器</p>
+</li>
+<li><p>实例化FilterConfig、Filter，并调用Filter.init初始化</p>
+</li>
+<li><p>对于loadOnStartUp&gt;=0的Wrapper，调用Wrapper.load()，该方法负责实例化Servlet，并调用Servlet.init进行初始化</p>
+</li>
+<li><p>启动后台定时处理线程</p>
+</li>
+<li><p>发布正在运行的JMX通知</p>
+</li>
+<li><p>调用WebResourceRoot.gc()释放资源</p>
+</li>
+<li><p>设置Context的状态，如果启动成功，设置为STARTING，否则设为FAILED</p>
+</li>
+</ul>
+<h3 id="ContextConfig"><a href="#ContextConfig" class="headerlink" title="ContextConfig"></a>ContextConfig</h3><p>Context创建时会默认添加一个生命周期监听器–ContextConfig，一共处理6类事件，与Context启动有关系的3类：AFTER_INIT_EVENT、BEFORE_START_EVENT、CONFIGURE_STRAT_EVENT</p>
+<h4 id="AFTER-INIT-EVENT事件"><a href="#AFTER-INIT-EVENT事件" class="headerlink" title="AFTER_INIT_EVENT事件"></a>AFTER_INIT_EVENT事件</h4><p>属于Context初始化阶段，主要用于Context属性的配置工作</p>
+<p>Context的创建分为三种方式</p>
+<ul>
+<li>在实例化Server时，解析server.xml文件中的Context元素创建</li>
+<li>在HostConfig部署web应用时，解析web应用根目录下的META-INF/context.xml文件创建。如果不存在该文件，则自动创建一个Context对象，仅设置path、docBase等少数几个属性</li>
+<li>在Host部署web应用时，解析$CATALINA_BASE/conf/&lt;Egnine名称&gt;/&lt;Host名称&gt;下的Context部署配置文件创建</li>
+</ul>
+<p>该事件负责将tomcat提供的默认配置也一并添加到Context实例</p>
+<ul>
+<li><p>如果Context的override属性为false(表示使用的默认配置)</p>
+<ul>
+<li><p>如果存在conf/context.xml文件，那么解析该文件，更新当前Context实例属性</p>
+</li>
+<li><p>如果存在conf/&lt;Engine名称&gt;/&lt;Host名称&gt;/context.xml.default文件(Host级默认配置)，那么解析该文件，更新当前Context实例属性</p>
+</li>
+</ul>
+</li>
+<li><p>如果Context的configFile属性不为空，那么解析该文件，更新当前Context实例属性</p>
+</li>
+</ul>
+<p>Tomcat中Context属性优先级是   configFile -&gt;conf/&lt;Engine名称&gt;/&lt;Host名称&gt;/context.xml.default -&gt;conf/context.xml</p>
+<h4 id="BEFORE-START-EVENT事件"><a href="#BEFORE-START-EVENT事件" class="headerlink" title="BEFORE_START_EVENT事件"></a>BEFORE_START_EVENT事件</h4><p>该事件在Context启动之前触发用于更新Context的docBase属性和解决web目录锁的问题</p>
+<p>更新Context的docBase属性主要是为了满足WAR部署的情况，当Web应用为一个WAR压缩包且需要解压部署时，docBase属性指向的是解压后的文件夹目录，而非WAR包的路径</p>
+<p>处理过程(ContextConfig.fixDocBase)</p>
+<ul>
+<li>根据Host的appBase以及Context的docBase计算docBase的绝对路径</li>
+<li>如果docBase为一个WAR文件，则需要解压部署</li>
+<li>如果docBase为一个有效目录，而且存在与该目录同名的WAR包，则解压部署，覆盖之前的文件</li>
+<li>如果docBase为一个不存在的目录，但是存在与该目录同名的WAR包，则解压部署</li>
+</ul>
+<h4 id="CONFIGURE-START-EVENT事件"><a href="#CONFIGURE-START-EVENT事件" class="headerlink" title="CONFIGURE_START_EVENT事件"></a>CONFIGURE_START_EVENT事件</h4><p>Context在启动子节点之前，触发CONFIGURE_START_EVENT事件，解析web.xml，创建Wrapper(Servlet)、Filter、ServletContextListener等一系列Web容器相关的对象，完成Web容器的初始化</p>
+<p>该事件工作内容</p>
+<ul>
+<li><p>根据配置创建Wrapper(Servlet)、Filter、ServletContextListener等，完成web容器的初始化</p>
+</li>
+<li><p>如果StandardContext的ignoreAnnotations为false，则解析应用程序注解配置，添加相关JNDI资源引用</p>
+</li>
+<li><p>基于解析完成的web容器，检测web应用部署描述文件中使用的安全角色名称，当发现使用了未定义的角色时，提示警告同时将未定义的角色添加到Context安全角色列表中</p>
+</li>
+<li><p>当Context需要进行安全认证但是没有指定具体的Authenticator时，根据服务器配置自动创建默认实例</p>
+</li>
+</ul>
+<h5 id="web容器初始化"><a href="#web容器初始化" class="headerlink" title="web容器初始化"></a>web容器初始化</h5><ul>
+<li><p>解析默认配置，生成WebXml对象</p>
+</li>
+<li><p>解析Web应用的web.xml文件</p>
+</li>
+<li><p>扫描web应用所有的JAR包，如果包含META-INF/web-fragment.xml，则解析文件并创建WebXml对象（部分片段）</p>
+</li>
+<li><p>将web-fragment.xml创建的WebXml对象按照Servlet规范进行排序，同时将排序结果对应的JAR文件名列表设置到ServletContext属性中，javax.servlet.context.orderedLibs</p>
+</li>
+<li><p>查找ServletContainerInitializer实现，并创建实例，查找范围分为两部分</p>
+<ul>
+<li><p>web应用下的包：如果javax.servlet.context.orderedLibs不为空，仅搜索该属性中包含的包，否则搜索WEB-INF/lib下的所有包</p>
+</li>
+<li><p>容器包：搜索所有的包</p>
+</li>
+</ul>
+</li>
+<li><p>根据ServletContainerInitializer查询结果以及javax.servlet.annotation.HandlersTypes注解配置，初始化typeInitializerMap和initializerClassMap两个映射</p>
+</li>
+<li><p>当主Web.xml的metadataComplete为false或者typeInitializerMap不为空时，处理注解</p>
+</li>
+<li><p>当主Web.xml的metadataComplete为false，将所有的片段WebXml按照顺序排序合并至主WebXml</p>
+</li>
+<li><p>将默认WebXml合并至主WebXml</p>
+</li>
+<li><p>配置JspServlet</p>
+</li>
+<li><p>使用主WebXml配置当前StandardContext</p>
+</li>
+<li><p>将合并后的WebXml保存到ServletContext属性中</p>
+</li>
+<li><p>查找JAR包META-INF/resources/下的静态资源，并添加到StandardContext</p>
+</li>
+<li><p>将ServletContainerInitializer扫描结果添加到StandardContext，以便StandardContext启动时使用</p>
+</li>
+</ul>
+<h5 id="应用程序注解配置"><a href="#应用程序注解配置" class="headerlink" title="应用程序注解配置"></a>应用程序注解配置</h5><p>当StandardContext的ignoreAnnotations为false时，Tomcat支持读取如下接口的Java命名服务注解配置，添加相关的JNDI资源引用，以便在实例化相关接口时，进行JNDI资源依赖注入</p>
+<p>支持读取的接口</p>
+<ul>
+<li><p>web应用程序监听器</p>
+<ul>
+<li><p>javax.servlet.ServletContextAttributeListener</p>
+</li>
+<li><p>javax.servlet.ServletRequestListener</p>
+</li>
+<li><p>javax.servlet.ServletRequestAttributeListener</p>
+</li>
+<li><p>javax.servlet.http.HttpSessionAttributeListener</p>
+</li>
+<li><p>javax.servlet.http.HttpSessionListener</p>
+</li>
+<li><p>javax.servlet.ServletContextListener</p>
+</li>
+</ul>
+</li>
+<li><p>javax.servlet.Filter</p>
+</li>
+<li><p>javax.servlet.Servlet</p>
+</li>
+</ul>
+<p>支持读取的注解包括类注解、属性注解、方法注解</p>
+<ul>
+<li><p>类：javax.annotation.Resource、javax.annotation.Resources</p>
+</li>
+<li><p>属性和方法：javax.annotation.Resource</p>
+</li>
+</ul>
+<h3 id="StandardWrapper"><a href="#StandardWrapper" class="headerlink" title="StandardWrapper"></a>StandardWrapper</h3><p>StandardWrapper具体维护了Servlet实例，StandardWrapper的处理分为两部分</p>
+<ul>
+<li>当通过ContextConfig完成web容器初始化后，先调用StandardWrapper.start，此时StarndardWrapper组件状态将变为STARTED</li>
+<li>对于启动时加载的Servlet，调用StandardWrapper.load，完成Servlet的加载<ul>
+<li>创建Servlet实例，如果添加了JNDI资源注解，将进行资源注入</li>
+<li>读取javax.servlet.annotation.MultipartConfig注解配置，以用于multipart/form-data请求处理，包括临时文件存储路径、上传文件最大字节数、请求最大字节数、文件大小阈值</li>
+<li>读取javax.servlet.annotation.ServletSecurity()注解配置，添加Servlet安全</li>
+<li>调用javax.servlet.Servlet.init()方法进行Servlet初始化</li>
+</ul>
+</li>
+</ul>
+<h3 id="Context的命名规则"><a href="#Context的命名规则" class="headerlink" title="Context的命名规则"></a>Context的命名规则</h3><p>Context的name、path、version与文件名称相关</p>
+<p>当未指定version时，name与path相同，如果path为空字符，基础文件名称为ROOT;否则，将path起始的/删除，其余/替换为#的基础文件</p>
+<p>path为/foo/bar     name为/foo/path   基础文件名称为foo#bar</p>
+<p>如果指定了version，则path不变，name和基础文件名称将追加##和具体版本号</p>
+<p>path为/foo/bar   version为2   name为/foo/bar##2   基础文件名称为foo#bar##2</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E7%BB%84%E4%BB%B6%E8%AF%B4%E6%98%8E/" rel="prev" title="tomcat组件说明">
+      <i class="fa fa-chevron-left"></i> tomcat组件说明
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="next" title="tomcat之性能优化">
+      tomcat之性能优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web%E5%BA%94%E7%94%A8%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">Web应用加载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#StandardHost"><span class="nav-number">1.1.</span> <span class="nav-text">StandardHost</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#StandardHost%E5%90%AF%E5%8A%A8%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">StandardHost启动加载过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HostConfig"><span class="nav-number">1.2.</span> <span class="nav-text">HostConfig</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">生命周期事件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#START-EVENT%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">START_EVENT事件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Context%E6%8F%8F%E8%BF%B0%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.1.1.1.</span> <span class="nav-text">Context描述文件部署</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#web%E7%9B%AE%E5%BD%95%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.1.1.2.</span> <span class="nav-text">web目录部署</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#WAR%E5%8C%85%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.1.1.3.</span> <span class="nav-text">WAR包部署</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PERIODIC-EVENT%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">PERIODIC_EVENT事件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StandardContext"><span class="nav-number">1.3.</span> <span class="nav-text">StandardContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ContextConfig"><span class="nav-number">1.4.</span> <span class="nav-text">ContextConfig</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AFTER-INIT-EVENT%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">AFTER_INIT_EVENT事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BEFORE-START-EVENT%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">BEFORE_START_EVENT事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONFIGURE-START-EVENT%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">CONFIGURE_START_EVENT事件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#web%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">web容器初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">应用程序注解配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StandardWrapper"><span class="nav-number">1.5.</span> <span class="nav-text">StandardWrapper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Context%E7%9A%84%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99"><span class="nav-number">1.6.</span> <span class="nav-text">Context的命名规则</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="web.xml配置文件web.xml是web应用的部署文件，包括tomcat中conf&#x2F;web.xml中的默认配置以及web应用WEB-INF&#x2F;web.xml下的定制配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat之web配置文件">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="web.xml配置文件web.xml是web应用的部署文件，包括tomcat中conf&#x2F;web.xml中的默认配置以及web应用WEB-INF&#x2F;web.xml下的定制配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-19T06:25:19.000Z">
+<meta property="article:modified_time" content="2020-09-23T10:29:12.988Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="tomcat">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>tomcat之web配置文件 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tomcat之web配置文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-19 14:25:19" itemprop="dateCreated datePublished" datetime="2020-09-19T14:25:19+08:00">2020-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-23 18:29:12" itemprop="dateModified" datetime="2020-09-23T18:29:12+08:00">2020-09-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index"><span itemprop="name">tomcat</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" class="post-meta-item leancloud_visitors" data-flag-title="tomcat之web配置文件" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8Bweb%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="web-xml配置文件"><a href="#web-xml配置文件" class="headerlink" title="web.xml配置文件"></a>web.xml配置文件</h2><p>web.xml是web应用的部署文件，包括tomcat中conf/web.xml中的默认配置以及web应用WEB-INF/web.xml下的定制配置</p>
+<a id="more"></a>
+
+<p>主要分为以下几类</p>
+<ul>
+<li><p>ServletContext初始化参数</p>
+</li>
+<li><p>会话配置</p>
+</li>
+<li><p>Servlet声明配置</p>
+</li>
+<li><p>应用生命周期监听器</p>
+</li>
+<li><p>Filter定义及映射</p>
+</li>
+<li><p>MIME类型映射</p>
+</li>
+<li><p>欢迎文件列表</p>
+</li>
+<li><p>错误页面</p>
+</li>
+<li><p>本地化及编码映射</p>
+</li>
+<li><p>安全配置</p>
+</li>
+<li><p>JNDI配置</p>
+</li>
+</ul>
+<h3 id="ServletContext初始化参数"><a href="#ServletContext初始化参数" class="headerlink" title="ServletContext初始化参数"></a>ServletContext初始化参数</h3><p>使用<context-param>添加初始化参数，可以使用javax.servlet.ServletContext.getInitParameter()方法获取参数值</context-param></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>name<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>value<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="会话配置"><a href="#会话配置" class="headerlink" title="会话配置"></a>会话配置</h3><p><session-config>用于配置web应用会话，包括超时时间、cookie配置以及会话追踪模式。</session-config></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">session-config</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">session-timeout</span>&gt;</span>30<span class="tag">&lt;/<span class="name">session-timeout</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">cookie-config</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">name</span>&gt;</span>jessionid<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">domain</span>&gt;</span>myApp.com<span class="tag">&lt;/<span class="name">domain</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">path</span>&gt;</span>/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 安全性配置，只有mode为cookie时才会生效 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">http-only</span>&gt;</span>true<span class="tag">&lt;/<span class="name">http-only</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 安全性配置，只有mode为cookie时才会生效 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">secure</span>&gt;</span>true<span class="tag">&lt;/<span class="name">secure</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">max-age</span>&gt;</span>3600<span class="tag">&lt;/<span class="name">max-age</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">cookie-config</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 会话追踪模式 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">tracking-mode</span>&gt;</span>COOKIE<span class="tag">&lt;/<span class="name">tracking-mode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">session-config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Servlet支持三种会话追踪模式：COOKIE、URL、SSL</p>
+<ul>
+<li>COOKIE：通过HTTP    Cookie追踪会话，当首次发起HTTP请求时，Servlet容器会发送一个用于会话的Cookie到客户端，在后续请求中，客户端会将该Cookie返回到服务端，服务端根据该Cookie确定请求会话。默认情况下，Cookie的名称为JSESSIONID，可以通过<Context>的sessionCookieName属性或者<cookie-config>的name属性修改</cookie-config></Context></li>
+<li>URL：当客户端不支持Cookie时，可以采用URL重写的方式。当采用URL追踪模式时，请求路径需要包含会话标识信息，Servlet容器会根据路径中的会话标识设置请求的会话信息，参数名为jessionid</li>
+<li>SSL：对于SSL请求，通过SSL会话标识确定请求会话标识</li>
+</ul>
+<h3 id="Servlet声明和映射"><a href="#Servlet声明和映射" class="headerlink" title="Servlet声明和映射"></a>Servlet声明和映射</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>ad<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.zhanghe.servlet.MyMainServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>name<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>value<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 上传文件配置 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">multipart-config</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">max-file-size</span>&gt;</span>1024<span class="tag">&lt;/<span class="name">max-file-size</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">max-request-size</span>&gt;</span>2048<span class="tag">&lt;/<span class="name">max-request-size</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 文件超过该大小后将写入磁盘 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">file-size-threshold</span>&gt;</span>0<span class="tag">&lt;/<span class="name">file-size-threshold</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 标识该Servlet是否启用 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">enabled</span>&gt;</span>true<span class="tag">&lt;/<span class="name">enabled</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 安全角色的引用 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">security-role-ref</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- 代码中使用的角色名称 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>admin<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- 对应tomcat-user.xml中服务器配置角色名称 --&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">role-link</span>&gt;</span>manager<span class="tag">&lt;/<span class="name">role-link</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">security-role-ref</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">multipart-config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>ad<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>*.*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/myapp/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="应用生命周期监听器"><a href="#应用生命周期监听器" class="headerlink" title="应用生命周期监听器"></a>应用生命周期监听器</h3><p>监听器要实现javax.servlet.ServletContextListener接口，执行顺序与web.xml的配置顺序一致，停止时与启动顺序相反</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.zhanghe.listener.MyListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Filter定义和映射"><a href="#Filter定义和映射" class="headerlink" title="Filter定义和映射"></a>Filter定义和映射</h3><p>过滤器，用于过滤资源请求及响应</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>myFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>com.zhanghe.filter.MyFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>name<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>value<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>myFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 也可以设置servlet-name --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/myApp/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MIME类型映射"><a href="#MIME类型映射" class="headerlink" title="MIME类型映射"></a>MIME类型映射</h3><p>设定某类型的扩展名文件使用何种应用程序打开</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mime-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">extension</span>&gt;</span>doc<span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">mime-type</span>&gt;</span>application/msword<span class="tag">&lt;/<span class="name">mime-type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mime-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="欢迎文件列表"><a href="#欢迎文件列表" class="headerlink" title="欢迎文件列表"></a>欢迎文件列表</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">welcome-file-list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">welcome-file</span>&gt;</span>index.html<span class="tag">&lt;/<span class="name">welcome-file</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">welcome-file</span>&gt;</span>index.htm<span class="tag">&lt;/<span class="name">welcome-file</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">welcome-file</span>&gt;</span>index.jsp<span class="tag">&lt;/<span class="name">welcome-file</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">welcome-file-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="错误页面"><a href="#错误页面" class="headerlink" title="错误页面"></a>错误页面</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">error-page</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">error-code</span>&gt;</span>404<span class="tag">&lt;/<span class="name">error-code</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">localtion</span>&gt;</span>/404.html<span class="tag">&lt;/<span class="name">localtion</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">error-page</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">error-page</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">error-type</span>&gt;</span>java.lang.Exception<span class="tag">&lt;/<span class="name">error-type</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">localtion</span>&gt;</span>/error.html<span class="tag">&lt;/<span class="name">localtion</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">error-page</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="本地化及编码映射"><a href="#本地化及编码映射" class="headerlink" title="本地化及编码映射"></a>本地化及编码映射</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">locale-encoding-mapping-list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">locale-encoding-mapping</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">locale</span>&gt;</span>zh<span class="tag">&lt;/<span class="name">locale</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">encoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">encoding</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">locale-encoding-mapping</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">locale-encoding-mapping-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="安全配置"><a href="#安全配置" class="headerlink" title="安全配置"></a>安全配置</h3><p>为web应用增加页面的访问权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 针对符合url-pattern的请求进行安全约束 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">display-name</span>&gt;</span>user<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">web-resource-name</span>&gt;</span>user<span class="tag">&lt;/<span class="name">web-resource-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>*.html<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">http-method</span>&gt;</span>POST<span class="tag">&lt;/<span class="name">http-method</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>user<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">user-data-constraint</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">transport-guarantee</span>&gt;</span>NONE<span class="tag">&lt;/<span class="name">transport-guarantee</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">user-data-constraint</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 为web应用添加角色 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">security-role</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">user-name</span>&gt;</span>user<span class="tag">&lt;/<span class="name">user-name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">security-role</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 用于指定对于security-constraint中http-method中未指定的请求是否允许访问 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">deny-uncovered-http-methods</span>&gt;</span><span class="tag">&lt;/<span class="name">deny-uncovered-http-methods</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 认证方式   BASIC/DIGEST/FORM/CLIENT-CERT --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">login-config</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">auth-method</span>&gt;</span>FORM<span class="tag">&lt;/<span class="name">auth-method</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">form-login-config</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">form-login-page</span>&gt;</span>/login.html<span class="tag">&lt;/<span class="name">form-login-page</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form-error-page</span>&gt;</span>/error.html<span class="tag">&lt;/<span class="name">form-error-page</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">form-login-config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">login-config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8BJSP%E5%BC%95%E6%93%8E/" rel="prev" title="tomcat之JSP引擎">
+      <i class="fa fa-chevron-left"></i> tomcat之JSP引擎
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/tomcat%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="next" title="tomcat之过滤器">
+      tomcat之过滤器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web-xml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">web.xml配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ServletContext%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">ServletContext初始化参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">会话配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet%E5%A3%B0%E6%98%8E%E5%92%8C%E6%98%A0%E5%B0%84"><span class="nav-number">1.3.</span> <span class="nav-text">Servlet声明和映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9B%91%E5%90%AC%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">应用生命周期监听器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter%E5%AE%9A%E4%B9%89%E5%92%8C%E6%98%A0%E5%B0%84"><span class="nav-number">1.5.</span> <span class="nav-text">Filter定义和映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MIME%E7%B1%BB%E5%9E%8B%E6%98%A0%E5%B0%84"><span class="nav-number">1.6.</span> <span class="nav-text">MIME类型映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AC%A2%E8%BF%8E%E6%96%87%E4%BB%B6%E5%88%97%E8%A1%A8"><span class="nav-number">1.7.</span> <span class="nav-text">欢迎文件列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E9%A1%B5%E9%9D%A2"><span class="nav-number">1.8.</span> <span class="nav-text">错误页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%8F%8A%E7%BC%96%E7%A0%81%E6%98%A0%E5%B0%84"><span class="nav-number">1.9.</span> <span class="nav-text">本地化及编码映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.10.</span> <span class="nav-text">安全配置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

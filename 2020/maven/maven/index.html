@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"v4pu07.coding-pages.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="maven构建    清理：将之前编译的class字节码文件删除    编译：将java源程序编译成为class字节码文件    测试：自动测试，自动调用junit程序    报告：测试程序执行的结果    打包：动态web工程打war包，java工程打jar包    安装：将打包得到的文件复制到仓库中指定的位置    部署：将动态web工程生成的 TODO 待整理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小菜鸟">
+<meta property="og:url" content="http://v4pu07.coding-pages.com/2020/maven/maven/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="maven构建    清理：将之前编译的class字节码文件删除    编译：将java源程序编译成为class字节码文件    测试：自动测试，自动调用junit程序    报告：测试程序执行的结果    打包：动态web工程打war包，java工程打jar包    安装：将打包得到的文件复制到仓库中指定的位置    部署：将动态web工程生成的 TODO 待整理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-18T09:02:01.919Z">
+<meta property="article:modified_time" content="2021-02-20T08:54:46.571Z">
+<meta property="article:author" content="ZH">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://v4pu07.coding-pages.com/2020/maven/maven/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://v4pu07.coding-pages.com/2020/maven/maven/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-18 17:02:01" itemprop="dateCreated datePublished" datetime="2020-11-18T17:02:01+08:00">2020-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-20 16:54:46" itemprop="dateModified" datetime="2021-02-20T16:54:46+08:00">2021-02-20</time>
+              </span>
+
+          
+            <span id="/2020/maven/maven/" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/maven/maven/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/maven/maven/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>maven<br>构建<br>    清理：将之前编译的class字节码文件删除<br>    编译：将java源程序编译成为class字节码文件<br>    测试：自动测试，自动调用junit程序<br>    报告：测试程序执行的结果<br>    打包：动态web工程打war包，java工程打jar包<br>    安装：将打包得到的文件复制到仓库中指定的位置<br>    部署：将动态web工程生成的</p>
+<p>TODO 待整理</p>
+<a id="more"></a>
+
+
+<p>mvn -v 查看maven版本<br>mvn clean  清理<br>mvn compile  编译<br>mvn test-compile  编译测试程序<br>mvn test  执行测试<br>mvn package  打包<br>mvn install 安装到本地仓库</p>
+<p>目录结构<br>    src  源码 主程序<br>        main<br>            - java  源文件<br>            - resources  框架配置文件<br>        test<br>            - java<br>            - resources<br>    pom.xml</p>
+<p>POM<br>    Project Object Model 项目对象模型<br>    pom.xml  maven的核心配置文件</p>
+<p>坐标<br>    groupid: 公司域名倒叙+项目名<br>    artifactid: 模块名<br>    version: 版本</p>
+<p>依赖<br>    依赖的范围<br>        ①compile<br>            - 对主程序是否有效(main)：有效<br>            - 对测试程序是否有效（test）：有效<br>            - 是否参与打包：参与<br>        ②test<br>            - 对主程序是否有效：无效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ③provided<br>            只参与开发环节，部署运行时不需要，在服务器上存在，如servlet-api.jar<br>            - 对主程序是否有效：有效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ④runtime<br>            运行时有效，编译时无效，如JDBC</p>
+<pre><code>依赖的传递性
+    非compile范围的无法传递
+
+依赖的排除
+    &lt;exclusions&gt;
+
+依赖的原则
+    作用：解决各模块之间jar包冲突问题
+
+    路径最短原则
+    路径距离相同的情况下，先声明者优先，dependency的声明顺序
+
+
+版本的统一管理
+    使用&lt;properties&gt;使用自定义标签号
+        &lt;properties&gt;
+            &lt;spring.version&gt;4.1.2&lt;/spring.version&gt;  
+        &lt;/properties&gt;
+
+        依赖中使用版本
+        $&#123;spring.version&#125;</code></pre>
+<p>仓库<br>    本地仓库：<br>    私服：局域网内的<br>    中央仓库：<br>    中央仓库镜像：为了分担中央仓库的流量</p>
+<pre><code>仓库中包含
+①maven工程所需要的插件
+②第三方框架或工具的jar包
+③自己开发的Maven工程</code></pre>
+<p>生命周期</p>
+<pre><code>无论是执行哪个阶段，都会从最初的位置开始执行
+maven有三套生命周期
+一、clean生命周期  在构建之前进行一些清理工作
+    pre-clean clean之前完成的工作
+    clean 移除上一次构建生成的文件
+    post-clean 执行一些需要在clean之后立刻完成的工作
+
+二、Default 生命周期  构建的核心，编译、测试、打包、安装、部署    每个都是一个目标goal 在插件中指定目标
+    validate:
+
+    generate-sources
+    process-sources  
+
+    generate-resources
+    process-resources  复制并处理资源文件，至目标目录，准备打包
+
+    complie
+
+    process-classes
+
+    generate-test-sources
+    process-test-sources
+
+    generate-test-resources
+    process-test-resources  复制并处理资源文件，至目标测试目录
+
+    test-complie  编译测试代码
+
+    process-test-classes
+
+    test 测试
+
+    prepare-package
+    package  打包
+
+    pre-integration-test
+    integration-test
+    post-integration-test
+
+    verify
+
+    install 安装至本地仓库
+
+    deploy 复制到远程仓库
+
+三、Site生命周期  生成项目报告、站点、发布站点
+    pre-site：执行一些需要在生成站点文档之前的工作
+    site：生成项目的站点文档
+    post-site：执行一些需要在生成站点文档之后完成的工作，并且为部署做准备
+    site-deploy：将生成的站点文档部署到服务器上
+
+
+插件中配置该插件执行的生命周期
+&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-source-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.7.0&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;compile&lt;/phase&gt;  生命周期
+            &lt;goals&gt;
+                &lt;goal&gt;jar&lt;goal&gt;  目标
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+<p>继承<br>    继承父工程的版本</p>
+<pre><code>在父工程中进行统一的依赖管理，子工程也可以不使用该依赖的version
+依赖管理
+&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;denpendency&gt;
+
+        &lt;/denpendency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+<p>聚合<br>    在maven工程中可以配置多个模块<br>        <modules><br>            指定相对路径<br>            <module></module><br>        </modules></p>
+<p>寻找依赖的插件或者jar包 ，先寻找本地仓库，连接中央仓库下载</p>
+<p>配置构建过程<br><build><br>    <plugins><br>        <!-- 插件 --><br>        <plugin><br>        </plugin><br>    </plugins><br></build></p>
+<p>maven 有一个超级pom  在lib下的maven-model-builder.jar中</p>
+<p>可以使用mvn help:effective-pom命令来查看完整的pom文件(包含有超级pom内容的pom文件</p>
+<p>命令<br>mvn cobertura:cobertura  测试代码的覆盖率统计信息</p>
+<p>mvn archetype:create -DgroupId= -DartifactId= -DpackageName= 创建maven工程<br>mvn install:install-file -Dfile=  -DgroupId= -DartifactId= -Dversion= -Dpackaging=jar  上传jar包到本地仓库<br>mvn help:describe -Dplugin=插件名称   查看插件的目标<br>mvn help:describe -Dplugin=插件名称 -Dfull<br>mvn help:active-profiles  查看所有的激活的profiles   会按照从上到下的顺序覆盖，会取用最后一个profile的属性值<br>mvn help:all-profiles   查看所有的profiles</p>
+<p>profiles  可以写在pom.xml  也可以抽离出来，写在settings.xml<br>使用<activation>标签匹配激活<br><activation><br>    <activeByDefault>false&lt;/&gt;  是否默认激活<br>    <jdk>1.8&lt;/&gt;  jdk版本1.8<br>    <os>  操作系统</os></jdk></activeByDefault></activation></activation></p>
+<pre><code>&lt;/os&gt;
+&lt;file&gt;
+&lt;/file&gt;
+&lt;property&gt; 匹配某个属性值
+    &lt;name&gt;&lt;/&gt;
+    &lt;value&gt;&lt;/&gt;
+&lt;/property&gt;</code></pre>
+
+
+
+<p>在settings.xml中激活profile,不能激活pom.xml中的profile<br><settings><br>    <activeProfiles><br>        <activeProfile>profile-id</activeProfile><br>    </activeProfiles><br></settings></p>
+<p>在maven中profiles只有repositories/pluginRepositories/properties可以再settings.xml中定义，其他属性必须在pom.xml中使用</p>
+<p>maven的六类属性<br>    一、内置属性<br>        ${basedir}表示根目录(含有pom.xml的文件目录)  ${version} 项目版本<br>    二、POM属性<br>        ${project.build.sourceDirectory}:项目的主源码目录，默认为src/main/java<br>        ${project.build.testSourceDirectory}:项目的测试源码目录，默认为src/test/java<br>        ${project.build.directory}:项目构建输出目录，默认为target/<br>        ${project.outputDirectory}:项目主代码编译输出目录,默认为target/classes/<br>        ${project.testOutputDirectory}:项目测试代码编译输出目录,默认为target/test-classes/<br>        ${project.groupId}:项目的groupid<br>        ${project.artifactId}:项目的artifactid<br>        ${project.version}:项目的version,等价于${version}<br>        ${project.build.fianlName} 项目打包的名称,默认为${project.artifactId}-${project.version}<br>    三、自定义属性<br>        可以在POM的<properties>中自定义属性<br>    四、Settings属性<br>        用户使用settings.开头的属性引用settings.xml文件中XML元素的值<br>    五、Java系统属性<br>        所有java系统属性都可以使用Maven属性引用<br>    六、环境变量属性<br>        所有环境变量都可以使用env.开头的maven属性引用</properties></p>
+<p>maven的属性过滤<br>在build中添加resources进行属性文件过滤，替换属性值<br>resources中定义那些目录下的文件会被配置文件中定义的变量替换<br>表示src/main/resources下的所有properties文件中的变量都会替换<br><resources><br>    <resource><br>        <targetPath></targetPath>编译之后文件移动到的位置<br>        <directory><br>            src/main/resources<br>        </directory><br>        <filtering>true</filtering>   如果filtering是false表示不会进行替换<br>        <includes><br>            <include>*<em>/</em>.properties</include><br>        </includes><br>    </resource><br><resources></resources></resources></p>
+<p>maven配置web资源过滤<br><plugin><br>    <groupId>org.apache.maven.plugins</groupId><br>    <artifactId>maven-war-plugin</artifactId><br>    <version>2.6</version></plugin></p>
+<pre><code>&lt;configuration&gt;
+    &lt;webResources&gt;
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF
+            &lt;/directory&gt;
+            &lt;includes&gt;
+                &lt;include&gt;**/*.xml&lt;/include&gt;
+                &lt;include&gt;**/*.properties&lt;/include&gt;
+            &lt;/includes&gt;
+            &lt;targetPath&gt;WEB-INF&lt;/targetPath&gt;
+        &lt;/resource&gt;
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF/jsp
+            &lt;/directory&gt;
+            &lt;targetPath&gt;WEB-INF/jsp&lt;/targetPath&gt;
+        &lt;/resource&gt;
+
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF/css
+            &lt;/directory&gt;
+            &lt;targetPath&gt;WEB-INF/css&lt;/targetPath&gt;
+        &lt;/resource&gt;
+
+
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF/js
+            &lt;/directory&gt;
+            &lt;targetPath&gt;WEB-INF/js&lt;/targetPath&gt;
+        &lt;/resource&gt;
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF/images
+            &lt;/directory&gt;
+            &lt;targetPath&gt;WEB-INF/images&lt;/targetPath&gt;
+        &lt;/resource&gt;
+        &lt;resource&gt;
+            &lt;filtering&gt;true&lt;/filtering&gt;
+            &lt;directory&gt;$&#123;project.basedir&#125;/src/main/WebContent/WEB-INF
+            &lt;/directory&gt;
+            &lt;includes&gt;
+                &lt;include&gt;**/*.xml&lt;/include&gt;
+                &lt;include&gt;**/*.properties&lt;/include&gt;
+            &lt;/includes&gt;
+            &lt;targetPath&gt;WEB-INF&lt;/targetPath&gt;
+        &lt;/resource&gt;
+    &lt;/webResources&gt;
+&lt;/configuration&gt;</code></pre>
+
+
+
+
+
+
+<p>Nexus仓库管理器<br>默认admin/admin123</p>
+<p>可以搭建私服</p>
+<p>仓库分类</p>
+<p>download remote indexes 改为true</p>
+<p>group组仓库  仓库的合集  按照配置的顺序找jar包<br>    - proxy代理仓库1 ——url1   type为proxy<br>    - proxy代理仓库2 ——url2<br>    - hosted宿主仓库       mvn deploy会提交到hosted仓库中<br>        - snapshot部署仓库<br>        - release部署仓库<br>        - 第三方jar包仓库  third party/3rd party</p>
+<p>Virtual虚拟仓库，用于适配其他类型的仓库，比如maven要兼容maven1、maven2等<br>想要使用私服时，需要在pom文件中配置<br><repositroies><br>    <repository><br>        <id></id><br>        <name></name><br>        <url></url><br>        <releases><br>            <enabled>true</enabled><br>        </releases><br>        <!-- snapshots默认关闭的，需要手动开启 --><br>        <snapshots><br>            <enabled>true</enabled><br>        </snapshots><br>    </repository><br><br>或者在settings中配置<br><profile><br>    <id></id><br>    <repositroies><br>        <repository><br>            <id></id><br>            <name></name><br>            <url></url><br>            <releases><br>                <enabled>true</enabled><br>            </releases><br>            <!-- snapshots默认关闭的，需要手动开启 --><br>            <snapshots><br>                <enabled>true</enabled><br>            </snapshots><br>        </repository><br>    <br></repositroies></profile></repositroies></p>
+<p>或者设置镜像</p>
+<p>在settings.xml进行配置私服<br><mirriors><br>    <mirror><br>        <id>nexus</id>  对应激活的profile<br>        <mirrorOf>*</mirrorOf><br>        <name></name><br>        <url></url>  这个对应的是group组仓库的地址<br>    </mirror><br></mirriors></p>
+<p>在pom文件中配置<br>发布工程时会用到，会发布到仓库<br><distributionManagement><br>    <repository><br>        <id>releases</id>  要对应在nexus中的id<br>        <name>&lt;/&gt;<br>        <url>&lt;/&gt;<br>    </url></name></repository><br>    <repository><br>        <id>snapshots</id>  要对应在nexus中的id<br>        <name>&lt;/&gt;<br>        <url>&lt;/&gt;<br>    </url></name></repository><br></distributionManagement></p>
+<p>在发布时会使用到用户名，密码<br>此时应该在settings.xml中配置server<br><servers><br>    <server><br>        <id>releases</id><br>        <username>admin</username><br>        <password>admin123<password><br>    </password></password></server><br></servers></p>
+<p>权限管理<br>先设置权限 privileges<br>再设置角色 roles<br>再设置用户 users</p>
+<p>项目发布  Assembly插件<br>1、Assembly:一定要单独运行，不要绑定生命周期<br>2、Single mojo 这个和某个生命周期相关联</p>
+<p>Assembly常用的套件描述符<br>1、bin - 将jar包打zip包<br>2、jar-with-denpendencies - 带有依赖的jar包<br>3、project - 将工程源代码打包<br>4、src - 将工程src目录下的源代码打包</p>
+<p>默认在超级pom中带有插件的<br><plugin><br>  <artifactId>maven-assembly-plugin</artifactId><br>  <version>2.2-beta-5</version><br></plugin><br>可以使用打包<br>mvn assembly:single -DdescriptorId=描述符</p>
+<p>可以在pom文件中直接配置自定义该插件</p>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>2.6</version>
+    <executions>
+        <execution>
+
+<pre><code>        &lt;id&gt;create-jar&lt;/id&gt;
+        &lt;phase&gt;package&lt;/phase&gt;
+        &lt;goals&gt;
+            &lt;goal&gt;single&lt;/goal&gt;
+        &lt;/goals&gt;
+        &lt;configuration&gt;
+            &lt;descriptorRefs&gt;
+                &lt;descriptorRef&gt;
+                    jar-with-dependencies
+                &lt;/descriptorRef&gt;
+            &lt;/descriptorRefs&gt;
+            &lt;archive&gt;
+                &lt;manifest&gt;
+                    &lt;mainClass&gt;GetSiteMapUrl&lt;/mainClass&gt;
+                &lt;/manifest&gt;
+            &lt;/archive&gt;
+        &lt;/configuration&gt;
+    &lt;/execution&gt;
+&lt;/executions&gt;</code></pre>
+</execution></executions></plugin>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/java%E5%9F%BA%E7%A1%80/IO/AIO%E4%BB%8B%E7%BB%8D/" rel="prev" title="AIO介绍">
+      <i class="fa fa-chevron-left"></i> AIO介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E5%8A%A0%E5%AF%86/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/" rel="next" title="加密算法简介">
+      加密算法简介 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/zhanghe1996hy@163.com" title="E-Mail → zhanghe1996hy@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
