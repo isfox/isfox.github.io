@@ -30,7 +30,7 @@
 <meta property="og:description" content="最全的javaweb知识全集servlet容器在上面介绍servlet生命周期时，多次提到了servlet容器，其实在设计Servlet时，J2EE  jdk只是提供了一个标准，在javax.servlet包以及子包下，而真正的实现是由servlet容器来进行实现的，如tomcat是在servlet-api.jar中实现的 servlet容器1、可以创建servlet，并调用servlet的相关生">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-13T08:30:19.000Z">
-<meta property="article:modified_time" content="2021-03-22T03:50:24.472Z">
+<meta property="article:modified_time" content="2021-03-29T10:27:20.417Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="javaweb">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-22 11:50:24" itemprop="dateModified" datetime="2021-03-22T11:50:24+08:00">2021-03-22</time>
+                <time title="修改时间：2021-03-29 18:27:20" itemprop="dateModified" datetime="2021-03-29T18:27:20+08:00">2021-03-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,6 +275,8 @@
         <h2 id="最全的javaweb知识全集"><a href="#最全的javaweb知识全集" class="headerlink" title="最全的javaweb知识全集"></a>最全的javaweb知识全集</h2><h3 id="servlet容器"><a href="#servlet容器" class="headerlink" title="servlet容器"></a>servlet容器</h3><p>在上面介绍servlet生命周期时，多次提到了servlet容器，其实在设计Servlet时，J2EE  jdk只是提供了一个标准，在javax.servlet包以及子包下，而真正的实现是由servlet容器来进行实现的，如tomcat是在servlet-api.jar中实现的</p>
 <p>servlet容器<br>1、可以创建servlet，并调用servlet的相关生命周期方法<br>2、JSP、Filter、Listener</p>
 <p>下面将以tomcat作为servlet容器为例介绍web应用</p>
+<a id="more"></a>
+
 <h3 id="web应用"><a href="#web应用" class="headerlink" title="web应用"></a>web应用</h3><h4 id="WEB-INF"><a href="#WEB-INF" class="headerlink" title="WEB-INF"></a>WEB-INF</h4><p>静态页面不要放在WEB-INF下，WEB-INF是给tomcat用的</p>
 <p>WEB-INF  对于web应用的描述</p>
 <blockquote>
@@ -312,7 +314,7 @@
 
 <p>commons-fileupload解析请求，解析成FileItem集合，无论是文本域还是文件域<br>使用FileItem.isFormField()来判断是不是一个表单域<br>    表单域   item.getFieldName   item.getString</p>
 <p>​    非表单域  item.getFieldName  item.getName   item.getContentType  item.isImemory  item.getSize   item.getInputStream</p>
-<h3 id="转发和重定向"><a href="#转发和重定向" class="headerlink" title="转发和重定向"></a>转发和重定向</h3><h3 id="国际化"><a href="#国际化" class="headerlink" title="国际化"></a>国际化</h3><ul>
+<h3 id="国际化"><a href="#国际化" class="headerlink" title="国际化"></a>国际化</h3><ul>
 <li>国际化(i18n): i18n internationalization，网站能够提供翻译成访问者的语言或国籍的不同版本的内容</li>
 <li>本地化(i10n): 向网站添加资源，使其适应特定的地理或文化区域，例如将网站翻译为中文</li>
 <li>区域设置：通常为语言符号后跟一个由下划线分隔的国家符号。例如”en_US”</li>
@@ -337,19 +339,6 @@
 <p>不是重复提交的情况<br>①点击返回之后，刷新页面，再点击提交</p>
 <p>如何避免表单的重复提交<br>使用session，生成属性，移除属性</p>
 <p>HttpServletRequestWrapper类包装原始的request对象，实现了HttpServletRequest接口的所有方法，内部调用了所包装的<br>request对象的对应方法<br>相应的也有HttpServletResponseWrapper类来包装原始的response对象<br>    继承HttpServletRequestWrapper，重写</p>
-<p>Servlet监听器<br>用于监听ServletContext、HttpSession、ServletRequest等对象的创建和销毁，以及属性修改</p>
-<p>①监听ServletContext、HttpSession、ServletRequest等对象的创建和销毁<br>    ServletContextListener     创建contextInitialized       销毁contextDestroyed<br>    HttpSessionListener        创建sessionCreated           销毁sessionDestroyed<br>    ServletRequestListener     创建requestInitialized       销毁requestDestroyed</p>
-<p>实现相应的接口，监听不同的域对象</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- web.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>场景：<br>ServletContextListener最常用，在当前WEB应用加载的时候对当前WEB应用的相关资源进行初始化操作：创建数据库连接池，创建Spring的IOC容器，读取当前WEB应用的初始化参数</p>
-</blockquote>
-<p>②监听域对象 ServletContext、HttpSession、ServletRequest 属性变更的监听器<br>    ServletContextAttributeListener   attributeAdded  attributeRemoved  attributeReplaced<br>    HttpSessionAttributeListener      attributeAdded  attributeRemoved  attributeReplaced<br>    ServletRequestAttributeListener   attributeAdded  attributeRemoved  attributeReplaced<br>        ServletRequestAttributeEvent  可以getName、getValue或者值</p>
-<p>③感知session绑定的监听器<br>    保存到Session域中的对象可以有多种状态：绑定到Session中，从Session中解除绑定；随Session对象持久到到一个存储设备中；随Session对象从一个存储设备中恢复<br>    HttpSessionBindingListener和HttpSessionActivationListener接口，实现这两个接口不需要在web.xml文件中注册</p>
-<p>放到session中的对象实现HttpSessionBindingListener<br>    会触发两个方法   绑定valueBound        解除valueUnBanding</p>
-<p>实现了HttpSessionActivationListener接口的对象可以感知自己被钝化和被活化的事件<br>    sessionWillPassivate 从内存写到磁盘     sessionDisActivate 从磁盘中读取出来</p>
-<p>session会被存储在tomcat当前项目下  .cer文件</p>
 
     </div>
 
@@ -436,7 +425,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%85%A8%E7%9A%84javaweb%E7%9F%A5%E8%AF%86%E5%85%A8%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">最全的javaweb知识全集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#servlet%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">servlet容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">web应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WEB-INF"><span class="nav-number">1.2.1.</span> <span class="nav-text">WEB-INF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tomcat%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9B%AE%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">tomcat配置项目位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#web-xml%E9%85%8D%E7%BD%AEservlet"><span class="nav-number">1.2.3.</span> <span class="nav-text">web.xml配置servlet</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">上传文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E5%8F%91%E5%92%8C%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">1.5.</span> <span class="nav-text">转发和重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.6.</span> <span class="nav-text">国际化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">获取区域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">获取区域设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.6.3.</span> <span class="nav-text">时间国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%A7%E5%B8%81%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.6.4.</span> <span class="nav-text">货币国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.6.5.</span> <span class="nav-text">字符串国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BD%E9%99%85%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.6.</span> <span class="nav-text">国际化配置</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%85%A8%E7%9A%84javaweb%E7%9F%A5%E8%AF%86%E5%85%A8%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">最全的javaweb知识全集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#servlet%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">servlet容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">web应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WEB-INF"><span class="nav-number">1.2.1.</span> <span class="nav-text">WEB-INF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tomcat%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9B%AE%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">tomcat配置项目位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#web-xml%E9%85%8D%E7%BD%AEservlet"><span class="nav-number">1.2.3.</span> <span class="nav-text">web.xml配置servlet</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">上传文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.5.</span> <span class="nav-text">国际化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">获取区域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">获取区域设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">时间国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%A7%E5%B8%81%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.5.4.</span> <span class="nav-text">货币国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%9B%BD%E9%99%85%E5%8C%96"><span class="nav-number">1.5.5.</span> <span class="nav-text">字符串国际化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BD%E9%99%85%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.6.</span> <span class="nav-text">国际化配置</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -452,7 +441,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">333</span>
+          <span class="site-state-item-count">336</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
