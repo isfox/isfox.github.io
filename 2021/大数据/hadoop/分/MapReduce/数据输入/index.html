@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="数据输入FileInputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。">
+  <meta name="description" content="数据输入InputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据输入">
 <meta property="og:url" content="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/%E5%88%86/MapReduce/%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="数据输入FileInputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。">
+<meta property="og:description" content="数据输入InputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-28T05:06:30.000Z">
-<meta property="article:modified_time" content="2021-03-28T07:16:24.627Z">
+<meta property="article:modified_time" content="2021-03-30T02:44:20.057Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="hadoop">
 <meta name="twitter:card" content="summary">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-03-28 13:06:30 / 修改时间：15:16:24" itemprop="dateCreated datePublished" datetime="2021-03-28T13:06:30+08:00">2021-03-28</time>
+              <time title="创建时间：2021-03-28 13:06:30" itemprop="dateCreated datePublished" datetime="2021-03-28T13:06:30+08:00">2021-03-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-30 10:44:20" itemprop="dateModified" datetime="2021-03-30T10:44:20+08:00">2021-03-30</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -266,7 +272,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="数据输入"><a href="#数据输入" class="headerlink" title="数据输入"></a>数据输入</h2><p>FileInputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。</p>
+        <h2 id="数据输入"><a href="#数据输入" class="headerlink" title="数据输入"></a>数据输入</h2><p>InputFormat作为MapReduce的数据输入，有很多的实现类，如TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等。</p>
 <a id="more"></a>
 
 <h3 id="TextInputFormat"><a href="#TextInputFormat" class="headerlink" title="TextInputFormat"></a>TextInputFormat</h3><p>框架默认的TextInputFormat是按行读取每条记录，键是存储该行在整个文件中的起始字节偏移量， LongWritable类型；值是这行的内容，不包括任何行终止符，Text类型</p>
@@ -286,6 +292,7 @@
 
 <h3 id="KeyValueTextInputFormat"><a href="#KeyValueTextInputFormat" class="headerlink" title="KeyValueTextInputFormat"></a>KeyValueTextInputFormat</h3><p>每一行均为一条记录，被分隔符分割为key，value。可以通过在驱动类中设置conf.set(KeyValueLineRecordReader.KEY_VALUE_SEPERATOR, “\t”);来设定分隔符。默认分隔符是tab</p>
 <h3 id="NLineInputFormat"><a href="#NLineInputFormat" class="headerlink" title="NLineInputFormat"></a>NLineInputFormat</h3><p>代表每个map进程处理的InputSplit不再按Block块去划分，而是按NlineInputFormat指定的行数N来划分。即输入文件的总行数/N=切片数，如果不整除，切片数=商+1</p>
+<h3 id="自定义"><a href="#自定义" class="headerlink" title="自定义"></a>自定义</h3><p>自定义一个类继承FileInputFormat，并重写getRecordReader方法，自定义RecordReader</p>
 
     </div>
 
@@ -372,7 +379,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">数据输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TextInputFormat"><span class="nav-number">1.1.</span> <span class="nav-text">TextInputFormat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E7%89%87%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.1.</span> <span class="nav-text">切片机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%88%87%E7%89%87%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">配置切片大小</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CombineTextInputFormat"><span class="nav-number">1.2.</span> <span class="nav-text">CombineTextInputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KeyValueTextInputFormat"><span class="nav-number">1.3.</span> <span class="nav-text">KeyValueTextInputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLineInputFormat"><span class="nav-number">1.4.</span> <span class="nav-text">NLineInputFormat</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BE%93%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">数据输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TextInputFormat"><span class="nav-number">1.1.</span> <span class="nav-text">TextInputFormat</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E7%89%87%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.1.</span> <span class="nav-text">切片机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%88%87%E7%89%87%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">配置切片大小</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CombineTextInputFormat"><span class="nav-number">1.2.</span> <span class="nav-text">CombineTextInputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KeyValueTextInputFormat"><span class="nav-number">1.3.</span> <span class="nav-text">KeyValueTextInputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NLineInputFormat"><span class="nav-number">1.4.</span> <span class="nav-text">NLineInputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89"><span class="nav-number">1.5.</span> <span class="nav-text">自定义</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -388,7 +395,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">336</span>
+          <span class="site-state-item-count">347</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
