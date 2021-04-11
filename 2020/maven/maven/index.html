@@ -30,7 +30,7 @@
 <meta property="og:description" content="maven构建    清理：将之前编译的class字节码文件删除    编译：将java源程序编译成为class字节码文件    测试：自动测试，自动调用junit程序    报告：测试程序执行的结果    打包：动态web工程打war包，java工程打jar包    安装：将打包得到的文件复制到仓库中指定的位置    部署：将动态web工程生成的 TODO 待整理">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-11-18T09:02:01.919Z">
-<meta property="article:modified_time" content="2021-02-20T08:54:46.571Z">
+<meta property="article:modified_time" content="2021-04-09T02:51:30.063Z">
 <meta property="article:author" content="ZH">
 <meta name="twitter:card" content="summary">
 
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-20 16:54:46" itemprop="dateModified" datetime="2021-02-20T16:54:46+08:00">2021-02-20</time>
+                <time title="修改时间：2021-04-09 10:51:30" itemprop="dateModified" datetime="2021-04-09T10:51:30+08:00">2021-04-09</time>
               </span>
 
           
@@ -266,26 +266,32 @@
 <p>TODO 待整理</p>
 <a id="more"></a>
 
+<p>常用命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看maven版本</span></span><br><span class="line">mvn -v </span><br><span class="line"><span class="meta">#</span><span class="bash">清理</span></span><br><span class="line">mvn clean </span><br><span class="line"><span class="meta">#</span><span class="bash">编译</span></span><br><span class="line">mvn compile  </span><br><span class="line"><span class="meta">#</span><span class="bash">编译测试程序</span></span><br><span class="line">mvn test-compile </span><br><span class="line"><span class="meta">#</span><span class="bash">执行测试</span></span><br><span class="line">mvn test </span><br><span class="line"><span class="meta">#</span><span class="bash">打包</span></span><br><span class="line">mvn package </span><br><span class="line"><span class="meta">#</span><span class="bash"> 跳过测试</span></span><br><span class="line">mvn clean package -Dmaven.test.skip=true</span><br><span class="line">mvn clean package -DskipTests</span><br><span class="line"><span class="meta">#</span><span class="bash">安装到本地仓库</span></span><br><span class="line">mvn install</span><br><span class="line">mvn install:install-file -Dfile=  -DgroupId= -DartifactId= -Dversion= -Dpackaging=jar</span><br><span class="line"><span class="meta">#</span><span class="bash"> 发布</span></span><br><span class="line">mvn deploy</span><br><span class="line"><span class="meta">#</span><span class="bash"> 生成项目站点</span></span><br><span class="line">mvn site</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建maven项目</span></span><br><span class="line">mvn archetype:create -DgroupId= -DartifactId= -DpackageName= </span><br><span class="line"><span class="meta">#</span><span class="bash"> 测试代码的覆盖率统计信息</span></span><br><span class="line">mvn cobertura:cobertura</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看完整的pom文件(包含有超级pom内容的pom文件）</span></span><br><span class="line">mvn help:effective-pom</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看插件的目标</span></span><br><span class="line">mvn help:describe -Dplugin=插件名称</span><br><span class="line">mvn help:describe -Dplugin=插件名称 -Dfull</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看所有的激活的profiles   会按照从上到下的顺序覆盖，会取用最后一个profile的属性值</span></span><br><span class="line">mvn help:active-profiles  </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看所有的profiles</span></span><br><span class="line">mvn help:all-profiles</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看依赖树</span></span><br><span class="line">mvn dependency:tree</span><br></pre></td></tr></table></figure>
 
-<p>mvn -v 查看maven版本<br>mvn clean  清理<br>mvn compile  编译<br>mvn test-compile  编译测试程序<br>mvn test  执行测试<br>mvn package  打包<br>mvn install 安装到本地仓库</p>
+
+
+
+
+
+
+
 <p>目录结构<br>    src  源码 主程序<br>        main<br>            - java  源文件<br>            - resources  框架配置文件<br>        test<br>            - java<br>            - resources<br>    pom.xml</p>
 <p>POM<br>    Project Object Model 项目对象模型<br>    pom.xml  maven的核心配置文件</p>
-<p>坐标<br>    groupid: 公司域名倒叙+项目名<br>    artifactid: 模块名<br>    version: 版本</p>
-<p>依赖<br>    依赖的范围<br>        ①compile<br>            - 对主程序是否有效(main)：有效<br>            - 对测试程序是否有效（test）：有效<br>            - 是否参与打包：参与<br>        ②test<br>            - 对主程序是否有效：无效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ③provided<br>            只参与开发环节，部署运行时不需要，在服务器上存在，如servlet-api.jar<br>            - 对主程序是否有效：有效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ④runtime<br>            运行时有效，编译时无效，如JDBC</p>
-<pre><code>依赖的传递性
-    非compile范围的无法传递
-
-依赖的排除
-    &lt;exclusions&gt;
-
-依赖的原则
-    作用：解决各模块之间jar包冲突问题
-
-    路径最短原则
-    路径距离相同的情况下，先声明者优先，dependency的声明顺序
+<p>坐标<br>    groupid: 公司域名倒叙+项目名<br>    artifactid: 模块名<br>    version: 版本<br>    packaging: 打包方式<br>    classifer: 定义输出的一些附件</p>
+<p>依赖<br>    依赖的范围<br>        ①compile<br>            - 对主程序是否有效(main)：有效<br>            - 对测试程序是否有效（test）：有效<br>            - 是否参与打包：参与<br>        ②test<br>            - 对主程序是否有效：无效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ③provided<br>            只参与开发环节，部署运行时不需要，在服务器上存在，如servlet-api.jar<br>            - 对主程序是否有效：有效<br>            - 对测试程序是否有效：有效<br>            - 是否参与打包：不参与<br>        ④runtime<br>            运行时有效，编译时无效，如JDBC<br>        ⑤system<br>            不从maven仓库获取，通过systemPath指定jar路径<br>        ⑥import<br>            用于一个dependencyManagement对另一个dependencyManagement的继承</p>
+<h4 id="依赖原则"><a href="#依赖原则" class="headerlink" title="依赖原则"></a>依赖原则</h4><blockquote>
+<p>依赖的传递性   非compile范围的无法传递</p>
+</blockquote>
+<p><strong>依赖路径最短优先原则</strong><br>项目依赖了两个jar包，其中A-B-C-D ， A-D。由于第二条路径最短，所以项目使用的是第二个D。</p>
+<p><strong>pom文件中申明顺序优先</strong><br>路径距离相同的情况下，先声明者优先，dependency的声明顺序</p>
+<p><strong>覆写优先</strong><br>子pom内声明的优先于父pom中的依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">依赖的排除</span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
-版本的统一管理
+
+
+<pre><code>版本的统一管理
     使用&lt;properties&gt;使用自定义标签号
         &lt;properties&gt;
             &lt;spring.version&gt;4.1.2&lt;/spring.version&gt;  
@@ -307,42 +313,32 @@ maven有三套生命周期
     post-clean 执行一些需要在clean之后立刻完成的工作
 
 二、Default 生命周期  构建的核心，编译、测试、打包、安装、部署    每个都是一个目标goal 在插件中指定目标
-    validate:
-
+    validate: 验证工程是否正确
     generate-sources
     process-sources  
-
     generate-resources
     process-resources  复制并处理资源文件，至目标目录，准备打包
-
-    complie
-
+    complie 编译
     process-classes
-
     generate-test-sources
     process-test-sources
-
     generate-test-resources
     process-test-resources  复制并处理资源文件，至目标测试目录
-
     test-complie  编译测试代码
-
     process-test-classes
-
     test 测试
-
     prepare-package
     package  打包
 
     pre-integration-test
-    integration-test
+    integration-test   可以将包处理发布到一个能够进行集成测试的环境
     post-integration-test
 
-    verify
+    verify  验证包是否有效
 
     install 安装至本地仓库
 
-    deploy 复制到远程仓库
+    deploy 发布到远程仓库
 
 三、Site生命周期  生成项目报告、站点、发布站点
     pre-site：执行一些需要在生成站点文档之前的工作
@@ -579,6 +575,7 @@ maven有三套生命周期
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E5%8E%9F%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">依赖原则</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -594,20 +591,20 @@ maven有三套生命周期
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">352</span>
+          <span class="site-state-item-count">361</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-count">57</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="redis配置 注意：我使用的版本是6.0.10，不同版本可能略有差别  redis的配置主要集中在redis.conf文件中，接下来就来看一下redis.conf中包含了哪些内容 INCLUDES模块该模块下可以使用include来包含其他的redis配置文件，将其他配置文件引入进来 12# include &#x2F;path&#x2F;to&#x2F;local.conf# include">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis配置">
+<meta property="og:url" content="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="redis配置 注意：我使用的版本是6.0.10，不同版本可能略有差别  redis的配置主要集中在redis.conf文件中，接下来就来看一下redis.conf中包含了哪些内容 INCLUDES模块该模块下可以使用include来包含其他的redis配置文件，将其他配置文件引入进来 12# include &#x2F;path&#x2F;to&#x2F;local.conf# include">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-16T12:02:30.000Z">
+<meta property="article:modified_time" content="2021-04-11T03:58:52.171Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redis配置 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/isfox" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redis配置
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-16 20:02:30" itemprop="dateCreated datePublished" datetime="2021-02-16T20:02:30+08:00">2021-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-11 11:58:52" itemprop="dateModified" datetime="2021-04-11T11:58:52+08:00">2021-04-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/" class="post-meta-item leancloud_visitors" data-flag-title="redis配置" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/10.redis%E9%85%8D%E7%BD%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="redis配置"><a href="#redis配置" class="headerlink" title="redis配置"></a>redis配置</h2><blockquote>
+<p>注意：我使用的版本是6.0.10，不同版本可能略有差别</p>
+</blockquote>
+<p>redis的配置主要集中在redis.conf文件中，接下来就来看一下redis.conf中包含了哪些内容</p>
+<h3 id="INCLUDES模块"><a href="#INCLUDES模块" class="headerlink" title="INCLUDES模块"></a>INCLUDES模块</h3><p>该模块下可以使用include来包含其他的redis配置文件，将其他配置文件引入进来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># include &#x2F;path&#x2F;to&#x2F;local.conf</span><br><span class="line"># include &#x2F;path&#x2F;to&#x2F;other.conf</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="GENERAL模块"><a href="#GENERAL模块" class="headerlink" title="GENERAL模块"></a>GENERAL模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#是否为守护线程 默认为no 如果需要在后台运行，改为yes</span><br><span class="line">daemonize no</span><br><span class="line"></span><br><span class="line">supervised no</span><br><span class="line"></span><br><span class="line">#pid文件，运行多个redis时，指定不同的的pid文件和端口</span><br><span class="line">pidfile &#x2F;var&#x2F;run&#x2F;redis_6379.pid</span><br><span class="line"></span><br><span class="line"># 日志级别  有四个级别</span><br><span class="line"># debug   verbose  notice  warning</span><br><span class="line">loglevel notice</span><br><span class="line"></span><br><span class="line">#日志文件 如果为空，控制台输出</span><br><span class="line">logfile &quot;&quot;</span><br><span class="line"></span><br><span class="line">#系统日志是否打开</span><br><span class="line"># syslog-enabled no</span><br><span class="line"></span><br><span class="line">#如果系统日志打开 日志标识为redis</span><br><span class="line"># syslog-ident redis</span><br><span class="line"></span><br><span class="line">#指定syslog设备</span><br><span class="line"># syslog-facility local0</span><br><span class="line"></span><br><span class="line">#数据库个数，可以使用 select &lt;dbid&gt;来切换数据库，默认使用的数据库是0</span><br><span class="line">databases 16</span><br><span class="line"></span><br><span class="line">always-show-logo yes</span><br></pre></td></tr></table></figure>
+
+<h3 id="MODULES模块"><a href="#MODULES模块" class="headerlink" title="MODULES模块"></a>MODULES模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">################################## MODULES #####################################</span><br><span class="line"></span><br><span class="line"># Load modules at startup. If the server is not able to load modules</span><br><span class="line"># it will abort. It is possible to use multiple loadmodule directives.</span><br><span class="line">#</span><br><span class="line"># loadmodule &#x2F;path&#x2F;to&#x2F;my_module.so</span><br><span class="line"># loadmodule &#x2F;path&#x2F;to&#x2F;other_module.so</span><br></pre></td></tr></table></figure>
+
+<h3 id="NETWORK模块"><a href="#NETWORK模块" class="headerlink" title="NETWORK模块"></a>NETWORK模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">################################## NETWORK #####################################</span><br><span class="line"></span><br><span class="line">#指定redis只接收来自于该ip地址的请求，如果不设置，将接收所有请求</span><br><span class="line">bind 127.0.0.1 ::1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">protected-mode yes</span><br><span class="line"></span><br><span class="line">#监听端口</span><br><span class="line">port 6379</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tcp-backlog 511</span><br><span class="line"></span><br><span class="line"># Unix socket.</span><br><span class="line">#</span><br><span class="line">#</span><br><span class="line"># unixsocket &#x2F;tmp&#x2F;redis.sock</span><br><span class="line"># unixsocketperm 700</span><br><span class="line"></span><br><span class="line"># 设置客户端连接的超时时间，单位秒，如果客户端超过该时间没有发出任何指令，则关闭该连接，0表示不关闭</span><br><span class="line">timeout 0</span><br><span class="line"></span><br><span class="line">tcp-keepalive 300</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="TLS-SSL模块"><a href="#TLS-SSL模块" class="headerlink" title="TLS/SSL模块"></a>TLS/SSL模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">################################# TLS&#x2F;SSL #####################################</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># port 0</span><br><span class="line"># tls-port 6379</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-cert-file redis.crt </span><br><span class="line"># tls-key-file redis.key</span><br><span class="line"></span><br><span class="line"># Configure a DH parameters file to enable Diffie-Hellman (DH) key exchange:</span><br><span class="line">#</span><br><span class="line"># tls-dh-params-file redis.dh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-ca-cert-file ca.crt</span><br><span class="line"># tls-ca-cert-dir &#x2F;etc&#x2F;ssl&#x2F;certs</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-auth-clients no</span><br><span class="line"># tls-auth-clients optional</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-replication yes</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-cluster yes</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-protocols &quot;TLSv1.2 TLSv1.3&quot;</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-ciphers DEFAULT:!MEDIUM</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-ciphersuites TLS_CHACHA20_POLY1305_SHA256</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-prefer-server-ciphers yes</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-session-caching no</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-session-cache-size 5000</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># tls-session-cache-timeout 60</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SNAPSHOTTING模块"><a href="#SNAPSHOTTING模块" class="headerlink" title="SNAPSHOTTING模块"></a>SNAPSHOTTING模块</h3><p>快照模块主要是用来配置RDB持久化的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">################################ SNAPSHOTTING  ################################</span><br><span class="line"></span><br><span class="line">#进行数据库快照存储的条件</span><br><span class="line">#900秒内有一个key发生变化</span><br><span class="line">save 900 1</span><br><span class="line">#300秒内有10个key发生变化</span><br><span class="line">save 300 10</span><br><span class="line"># 60秒内有10000个key发生变化</span><br><span class="line">save 60 10000</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line"></span><br><span class="line">#rdb快照是否进行压缩</span><br><span class="line">rdbcompression yes</span><br><span class="line"></span><br><span class="line">rdbchecksum yes</span><br><span class="line"></span><br><span class="line"># rdb快照文件名</span><br><span class="line">dbfilename dump_6379.rdb</span><br><span class="line"></span><br><span class="line">rdb-del-sync-files no</span><br><span class="line">#存储位置</span><br><span class="line">dir &#x2F;usr&#x2F;local&#x2F;var&#x2F;db&#x2F;redis&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="REPLICATION模块"><a href="#REPLICATION模块" class="headerlink" title="REPLICATION模块"></a>REPLICATION模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">################################# REPLICATION #################################</span><br><span class="line"></span><br><span class="line"># replicaof &lt;masterip&gt; &lt;masterport&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 主数据库密码</span><br><span class="line"># masterauth &lt;master-password&gt;</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># masteruser &lt;username&gt;</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line">replica-serve-stale-data yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">replica-read-only yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">repl-diskless-sync no</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">repl-diskless-sync-delay 5</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># &quot;disabled&quot;    - Don&#39;t use diskless load (store the rdb file to the disk first)</span><br><span class="line"># &quot;on-empty-db&quot; - Use diskless load only when it is completely safe.</span><br><span class="line"># &quot;swapdb&quot;      - Keep a copy of the current db contents in RAM while parsing</span><br><span class="line">#                 the data directly from the socket. note that this requires</span><br><span class="line">#                 sufficient memory, if you don&#39;t have it, you risk an OOM kill.</span><br><span class="line">repl-diskless-load disabled</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># repl-ping-replica-period 10</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># repl-timeout 60</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># repl-backlog-size 1mb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># repl-backlog-ttl 3600</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">replica-priority 100</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># min-replicas-to-write 3</span><br><span class="line"># min-replicas-max-lag 10</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># replica-announce-ip 5.5.5.5</span><br><span class="line"># replica-announce-port 1234</span><br></pre></td></tr></table></figure>
+
+<h3 id="KEYS-TRACKING模块"><a href="#KEYS-TRACKING模块" class="headerlink" title="KEYS TRACKING模块"></a>KEYS TRACKING模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">############################### KEYS TRACKING #################################</span><br><span class="line"></span><br><span class="line"># Redis implements server assisted support for client side caching of values.</span><br><span class="line"># This is implemented using an invalidation table that remembers, using</span><br><span class="line"># 16 millions of slots, what clients may have certain subsets of keys. In turn</span><br><span class="line"># this is used in order to send invalidation messages to clients. Please</span><br><span class="line"># check this page to understand more about the feature:</span><br><span class="line">#</span><br><span class="line">#   https:&#x2F;&#x2F;redis.io&#x2F;topics&#x2F;client-side-caching</span><br><span class="line">#</span><br><span class="line"># When tracking is enabled for a client, all the read only queries are assumed</span><br><span class="line"># to be cached: this will force Redis to store information in the invalidation</span><br><span class="line"># table. When keys are modified, such information is flushed away, and</span><br><span class="line"># invalidation messages are sent to the clients. However if the workload is</span><br><span class="line"># heavily dominated by reads, Redis could use more and more memory in order</span><br><span class="line"># to track the keys fetched by many clients.</span><br><span class="line">#</span><br><span class="line"># For this reason it is possible to configure a maximum fill value for the</span><br><span class="line"># invalidation table. By default it is set to 1M of keys, and once this limit</span><br><span class="line"># is reached, Redis will start to evict keys in the invalidation table</span><br><span class="line"># even if they were not modified, just to reclaim memory: this will in turn</span><br><span class="line"># force the clients to invalidate the cached values. Basically the table</span><br><span class="line"># maximum size is a trade off between the memory you want to spend server</span><br><span class="line"># side to track information about who cached what, and the ability of clients</span><br><span class="line"># to retain cached objects in memory.</span><br><span class="line">#</span><br><span class="line"># If you set the value to 0, it means there are no limits, and Redis will</span><br><span class="line"># retain as many keys as needed in the invalidation table.</span><br><span class="line"># In the &quot;stats&quot; INFO section, you can find information about the number of</span><br><span class="line"># keys in the invalidation table at every given moment.</span><br><span class="line">#</span><br><span class="line"># Note: when key tracking is used in broadcasting mode, no memory is used</span><br><span class="line"># in the server side so this setting is useless.</span><br><span class="line">#</span><br><span class="line"># tracking-table-max-keys 1000000</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MEMORY-MANAGEMENT模块"><a href="#MEMORY-MANAGEMENT模块" class="headerlink" title="MEMORY MANAGEMENT模块"></a>MEMORY MANAGEMENT模块</h3><h4 id="redis的淘汰机制"><a href="#redis的淘汰机制" class="headerlink" title="redis的淘汰机制"></a>redis的淘汰机制</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">############################## MEMORY MANAGEMENT ################################</span><br><span class="line"></span><br><span class="line"># redis能够使用的最大内存</span><br><span class="line"># maxmemory &lt;bytes&gt;</span><br><span class="line"></span><br><span class="line">#设置了过期时间的键，选取最近最少使用的键抛弃（Least Recently Used）</span><br><span class="line"># volatile-lru -&gt; Evict using approximated LRU, only keys with an expire set.</span><br><span class="line">#对于所有的键，选取最近最少使用的键抛弃（Least Recently Used）</span><br><span class="line"># allkeys-lru -&gt; Evict any key using approximated LRU.</span><br><span class="line">#设置了过期时间的键，选取最少频率使用的键抛弃（Least Frequently Used）</span><br><span class="line"># volatile-lfu -&gt; Evict using approximated LFU, only keys with an expire set.</span><br><span class="line">#对于所有的键，选取最少频率使用的键抛弃（Least Frequently Used）</span><br><span class="line"># allkeys-lfu -&gt; Evict any key using approximated LFU.</span><br><span class="line">#对于设置过期时间的键，随机选取键抛弃</span><br><span class="line"># volatile-random -&gt; Remove a random key having an expire set.</span><br><span class="line">#对于所有的键，随机选取键抛弃</span><br><span class="line"># allkeys-random -&gt; Remove a random key, any key.</span><br><span class="line">#抛弃最近要过期的键</span><br><span class="line"># volatile-ttl -&gt; Remove the key with the nearest expire time (minor TTL)</span><br><span class="line">#默认策略，不淘汰，如果内存已满，写操作返回错误</span><br><span class="line"># noeviction -&gt; Don&#39;t evict anything, just return an error on write operations.</span><br><span class="line"># maxmemory-policy noeviction</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># maxmemory-samples 5</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># replica-ignore-maxmemory yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># active-expire-effort 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="CLIENTS模块"><a href="#CLIENTS模块" class="headerlink" title="CLIENTS模块"></a>CLIENTS模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">################################### CLIENTS ####################################</span><br><span class="line"></span><br><span class="line"># 限制同时连接的客户端数量，超过这个数量将不再接受其他连接请求</span><br><span class="line"># maxclients 10000</span><br></pre></td></tr></table></figure>
+
+<h3 id="LAZY-FREEING模块"><a href="#LAZY-FREEING模块" class="headerlink" title="LAZY FREEING模块"></a>LAZY FREEING模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">############################# LAZY FREEING ####################################</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lazyfree-lazy-eviction no</span><br><span class="line">lazyfree-lazy-expire no</span><br><span class="line">lazyfree-lazy-server-del no</span><br><span class="line">replica-lazy-flush no</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lazyfree-lazy-user-del no</span><br></pre></td></tr></table></figure>
+
+<h3 id="THREADED-I-O模块"><a href="#THREADED-I-O模块" class="headerlink" title="THREADED I/O模块"></a>THREADED I/O模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">################################ THREADED I&#x2F;O #################################</span><br><span class="line"></span><br><span class="line"># Redis is mostly single threaded, however there are certain threaded</span><br><span class="line"># operations such as UNLINK, slow I&#x2F;O accesses and other things that are</span><br><span class="line"># performed on side threads.</span><br><span class="line">#</span><br><span class="line"># Now it is also possible to handle Redis clients socket reads and writes</span><br><span class="line"># in different I&#x2F;O threads. Since especially writing is so slow, normally</span><br><span class="line"># Redis users use pipelining in order to speed up the Redis performances per</span><br><span class="line"># core, and spawn multiple instances in order to scale more. Using I&#x2F;O</span><br><span class="line"># threads it is possible to easily speedup two times Redis without resorting</span><br><span class="line"># to pipelining nor sharding of the instance.</span><br><span class="line">#</span><br><span class="line"># By default threading is disabled, we suggest enabling it only in machines</span><br><span class="line"># that have at least 4 or more cores, leaving at least one spare core.</span><br><span class="line"># Using more than 8 threads is unlikely to help much. We also recommend using</span><br><span class="line"># threaded I&#x2F;O only if you actually have performance problems, with Redis</span><br><span class="line"># instances being able to use a quite big percentage of CPU time, otherwise</span><br><span class="line"># there is no point in using this feature.</span><br><span class="line">#</span><br><span class="line"># So for instance if you have a four cores boxes, try to use 2 or 3 I&#x2F;O</span><br><span class="line"># threads, if you have a 8 cores, try to use 6 threads. In order to</span><br><span class="line"># enable I&#x2F;O threads use the following configuration directive:</span><br><span class="line">#</span><br><span class="line"># io-threads 4</span><br><span class="line">#</span><br><span class="line"># Setting io-threads to 1 will just use the main thread as usual.</span><br><span class="line"># When I&#x2F;O threads are enabled, we only use threads for writes, that is</span><br><span class="line"># to thread the write(2) syscall and transfer the client buffers to the</span><br><span class="line"># socket. However it is also possible to enable threading of reads and</span><br><span class="line"># protocol parsing using the following configuration directive, by setting</span><br><span class="line"># it to yes:</span><br><span class="line">#</span><br><span class="line"># io-threads-do-reads no</span><br><span class="line">#</span><br><span class="line"># Usually threading reads doesn&#39;t help much.</span><br><span class="line">#</span><br><span class="line"># NOTE 1: This configuration directive cannot be changed at runtime via</span><br><span class="line"># CONFIG SET. Aso this feature currently does not work when SSL is</span><br><span class="line"># enabled.</span><br><span class="line">#</span><br><span class="line"># NOTE 2: If you want to test the Redis speedup using redis-benchmark, make</span><br><span class="line"># sure you also run the benchmark itself in threaded mode, using the</span><br><span class="line"># --threads option to match the number of Redis threads, otherwise you&#39;ll not</span><br><span class="line"># be able to notice the improvements.</span><br></pre></td></tr></table></figure>
+
+<h3 id="KERNEL-OOM-CONTROL模块"><a href="#KERNEL-OOM-CONTROL模块" class="headerlink" title="KERNEL OOM CONTROL模块"></a>KERNEL OOM CONTROL模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">############################ KERNEL OOM CONTROL ##############################</span><br><span class="line"></span><br><span class="line"># On Linux, it is possible to hint the kernel OOM killer on what processes</span><br><span class="line"># should be killed first when out of memory.</span><br><span class="line">#</span><br><span class="line"># Enabling this feature makes Redis actively control the oom_score_adj value</span><br><span class="line"># for all its processes, depending on their role. The default scores will</span><br><span class="line"># attempt to have background child processes killed before all others, and</span><br><span class="line"># replicas killed before masters.</span><br><span class="line">#</span><br><span class="line"># Redis supports three options:</span><br><span class="line">#</span><br><span class="line"># no:       Don&#39;t make changes to oom-score-adj (default).</span><br><span class="line"># yes:      Alias to &quot;relative&quot; see below.</span><br><span class="line"># absolute: Values in oom-score-adj-values are written as is to the kernel.</span><br><span class="line"># relative: Values are used relative to the initial value of oom_score_adj when</span><br><span class="line">#           the server starts and are then clamped to a range of -1000 to 1000.</span><br><span class="line">#           Because typically the initial value is 0, they will often match the</span><br><span class="line">#           absolute values.</span><br><span class="line">oom-score-adj no</span><br><span class="line"></span><br><span class="line"># When oom-score-adj is used, this directive controls the specific values used</span><br><span class="line"># for master, replica and background child processes. Values range -2000 to</span><br><span class="line"># 2000 (higher means more likely to be killed).</span><br><span class="line">#</span><br><span class="line"># Unprivileged processes (not root, and without CAP_SYS_RESOURCE capabilities)</span><br><span class="line"># can freely increase their value, but not decrease it below its initial</span><br><span class="line"># settings. This means that setting oom-score-adj to &quot;relative&quot; and setting the</span><br><span class="line"># oom-score-adj-values to positive values will always succeed.</span><br><span class="line">oom-score-adj-values 0 200 800</span><br></pre></td></tr></table></figure>
+
+<h3 id="APPEND-ONLY-MODE模块"><a href="#APPEND-ONLY-MODE模块" class="headerlink" title="APPEND ONLY MODE模块"></a>APPEND ONLY MODE模块</h3><p>AOF持久化配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">############################## APPEND ONLY MODE ###############################</span><br><span class="line">#开启aof持久化策略，将接收到的每次写操作请求都追加到aof文件中，在redis重启时，会加载aof文件，优先级比rdb高</span><br><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line"># aof文件名</span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># 设置aof持久化频率</span><br><span class="line"># 有三种选择 always    everysec    no</span><br><span class="line"># appendfsync always</span><br><span class="line">appendfsync everysec</span><br><span class="line"># appendfsync no</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">aof-load-truncated yes</span><br><span class="line"></span><br><span class="line">aof-use-rdb-preamble yes</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SECURITY模块"><a href="#SECURITY模块" class="headerlink" title="SECURITY模块"></a>SECURITY模块</h3><p>默认情况下使用redis不需要进行安全认证，因为在配置文件中requirepass是注释掉的</p>
+<p>可以使用redis命令来查看当前的密码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config get requirepass</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以使用redis命令来设置密码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config set requirepass 123456</span><br></pre></td></tr></table></figure>
+
+<p>设置密码之后再次进入客户端就需要输入密码进行认证了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auth 123456</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">################################## SECURITY ###################################</span><br><span class="line"></span><br><span class="line">acllog-max-len 128</span><br><span class="line"></span><br><span class="line"># aclfile &#x2F;etc&#x2F;redis&#x2F;users.acl</span><br><span class="line"></span><br><span class="line"># 设置客户端连接的密码</span><br><span class="line"># requirepass foobared</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># rename-command CONFIG &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LUA-SCRIPTING模块"><a href="#LUA-SCRIPTING模块" class="headerlink" title="LUA SCRIPTING模块"></a>LUA SCRIPTING模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">################################ LUA SCRIPTING  ###############################</span><br><span class="line"></span><br><span class="line"># Max execution time of a Lua script in milliseconds.</span><br><span class="line">#</span><br><span class="line"># If the maximum execution time is reached Redis will log that a script is</span><br><span class="line"># still in execution after the maximum allowed time and will start to</span><br><span class="line"># reply to queries with an error.</span><br><span class="line">#</span><br><span class="line"># When a long running script exceeds the maximum execution time only the</span><br><span class="line"># SCRIPT KILL and SHUTDOWN NOSAVE commands are available. The first can be</span><br><span class="line"># used to stop a script that did not yet call any write commands. The second</span><br><span class="line"># is the only way to shut down the server in the case a write command was</span><br><span class="line"># already issued by the script but the user doesn&#39;t want to wait for the natural</span><br><span class="line"># termination of the script.</span><br><span class="line">#</span><br><span class="line"># Set it to 0 or a negative value for unlimited execution without warnings.</span><br><span class="line">lua-time-limit 5000</span><br></pre></td></tr></table></figure>
+
+<h3 id="REDIS-CLUSTER模块"><a href="#REDIS-CLUSTER模块" class="headerlink" title="REDIS CLUSTER模块"></a>REDIS CLUSTER模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line">################################ REDIS CLUSTER  ###############################</span><br><span class="line"></span><br><span class="line"># Normal Redis instances can&#39;t be part of a Redis Cluster; only nodes that are</span><br><span class="line"># started as cluster nodes can. In order to start a Redis instance as a</span><br><span class="line"># cluster node enable the cluster support uncommenting the following:</span><br><span class="line">#</span><br><span class="line"># cluster-enabled yes</span><br><span class="line"></span><br><span class="line"># Every cluster node has a cluster configuration file. This file is not</span><br><span class="line"># intended to be edited by hand. It is created and updated by Redis nodes.</span><br><span class="line"># Every Redis Cluster node requires a different cluster configuration file.</span><br><span class="line"># Make sure that instances running in the same system do not have</span><br><span class="line"># overlapping cluster configuration file names.</span><br><span class="line">#</span><br><span class="line"># cluster-config-file nodes-6379.conf</span><br><span class="line"></span><br><span class="line"># Cluster node timeout is the amount of milliseconds a node must be unreachable</span><br><span class="line"># for it to be considered in failure state.</span><br><span class="line"># Most other internal time limits are a multiple of the node timeout.</span><br><span class="line">#</span><br><span class="line"># cluster-node-timeout 15000</span><br><span class="line"></span><br><span class="line"># A replica of a failing master will avoid to start a failover if its data</span><br><span class="line"># looks too old.</span><br><span class="line">#</span><br><span class="line"># There is no simple way for a replica to actually have an exact measure of</span><br><span class="line"># its &quot;data age&quot;, so the following two checks are performed:</span><br><span class="line">#</span><br><span class="line"># 1) If there are multiple replicas able to failover, they exchange messages</span><br><span class="line">#    in order to try to give an advantage to the replica with the best</span><br><span class="line">#    replication offset (more data from the master processed).</span><br><span class="line">#    Replicas will try to get their rank by offset, and apply to the start</span><br><span class="line">#    of the failover a delay proportional to their rank.</span><br><span class="line">#</span><br><span class="line"># 2) Every single replica computes the time of the last interaction with</span><br><span class="line">#    its master. This can be the last ping or command received (if the master</span><br><span class="line">#    is still in the &quot;connected&quot; state), or the time that elapsed since the</span><br><span class="line">#    disconnection with the master (if the replication link is currently down).</span><br><span class="line">#    If the last interaction is too old, the replica will not try to failover</span><br><span class="line">#    at all.</span><br><span class="line">#</span><br><span class="line"># The point &quot;2&quot; can be tuned by user. Specifically a replica will not perform</span><br><span class="line"># the failover if, since the last interaction with the master, the time</span><br><span class="line"># elapsed is greater than:</span><br><span class="line">#</span><br><span class="line">#   (node-timeout * cluster-replica-validity-factor) + repl-ping-replica-period</span><br><span class="line">#</span><br><span class="line"># So for example if node-timeout is 30 seconds, and the cluster-replica-validity-factor</span><br><span class="line"># is 10, and assuming a default repl-ping-replica-period of 10 seconds, the</span><br><span class="line"># replica will not try to failover if it was not able to talk with the master</span><br><span class="line"># for longer than 310 seconds.</span><br><span class="line">#</span><br><span class="line"># A large cluster-replica-validity-factor may allow replicas with too old data to failover</span><br><span class="line"># a master, while a too small value may prevent the cluster from being able to</span><br><span class="line"># elect a replica at all.</span><br><span class="line">#</span><br><span class="line"># For maximum availability, it is possible to set the cluster-replica-validity-factor</span><br><span class="line"># to a value of 0, which means, that replicas will always try to failover the</span><br><span class="line"># master regardless of the last time they interacted with the master.</span><br><span class="line"># (However they&#39;ll always try to apply a delay proportional to their</span><br><span class="line"># offset rank).</span><br><span class="line">#</span><br><span class="line"># Zero is the only value able to guarantee that when all the partitions heal</span><br><span class="line"># the cluster will always be able to continue.</span><br><span class="line">#</span><br><span class="line"># cluster-replica-validity-factor 10</span><br><span class="line"></span><br><span class="line"># Cluster replicas are able to migrate to orphaned masters, that are masters</span><br><span class="line"># that are left without working replicas. This improves the cluster ability</span><br><span class="line"># to resist to failures as otherwise an orphaned master can&#39;t be failed over</span><br><span class="line"># in case of failure if it has no working replicas.</span><br><span class="line">#</span><br><span class="line"># Replicas migrate to orphaned masters only if there are still at least a</span><br><span class="line"># given number of other working replicas for their old master. This number</span><br><span class="line"># is the &quot;migration barrier&quot;. A migration barrier of 1 means that a replica</span><br><span class="line"># will migrate only if there is at least 1 other working replica for its master</span><br><span class="line"># and so forth. It usually reflects the number of replicas you want for every</span><br><span class="line"># master in your cluster.</span><br><span class="line">#</span><br><span class="line"># Default is 1 (replicas migrate only if their masters remain with at least</span><br><span class="line"># one replica). To disable migration just set it to a very large value.</span><br><span class="line"># A value of 0 can be set but is useful only for debugging and dangerous</span><br><span class="line"># in production.</span><br><span class="line">#</span><br><span class="line"># cluster-migration-barrier 1</span><br><span class="line"></span><br><span class="line"># By default Redis Cluster nodes stop accepting queries if they detect there</span><br><span class="line"># is at least a hash slot uncovered (no available node is serving it).</span><br><span class="line"># This way if the cluster is partially down (for example a range of hash slots</span><br><span class="line"># are no longer covered) all the cluster becomes, eventually, unavailable.</span><br><span class="line"># It automatically returns available as soon as all the slots are covered again.</span><br><span class="line">#</span><br><span class="line"># However sometimes you want the subset of the cluster which is working,</span><br><span class="line"># to continue to accept queries for the part of the key space that is still</span><br><span class="line"># covered. In order to do so, just set the cluster-require-full-coverage</span><br><span class="line"># option to no.</span><br><span class="line">#</span><br><span class="line"># cluster-require-full-coverage yes</span><br><span class="line"></span><br><span class="line"># This option, when set to yes, prevents replicas from trying to failover its</span><br><span class="line"># master during master failures. However the master can still perform a</span><br><span class="line"># manual failover, if forced to do so.</span><br><span class="line">#</span><br><span class="line"># This is useful in different scenarios, especially in the case of multiple</span><br><span class="line"># data center operations, where we want one side to never be promoted if not</span><br><span class="line"># in the case of a total DC failure.</span><br><span class="line">#</span><br><span class="line"># cluster-replica-no-failover no</span><br><span class="line"></span><br><span class="line"># This option, when set to yes, allows nodes to serve read traffic while the</span><br><span class="line"># the cluster is in a down state, as long as it believes it owns the slots. </span><br><span class="line">#</span><br><span class="line"># This is useful for two cases.  The first case is for when an application </span><br><span class="line"># doesn&#39;t require consistency of data during node failures or network partitions.</span><br><span class="line"># One example of this is a cache, where as long as the node has the data it</span><br><span class="line"># should be able to serve it. </span><br><span class="line">#</span><br><span class="line"># The second use case is for configurations that don&#39;t meet the recommended  </span><br><span class="line"># three shards but want to enable cluster mode and scale later. A </span><br><span class="line"># master outage in a 1 or 2 shard configuration causes a read&#x2F;write outage to the</span><br><span class="line"># entire cluster without this option set, with it set there is only a write outage.</span><br><span class="line"># Without a quorum of masters, slot ownership will not change automatically. </span><br><span class="line">#</span><br><span class="line"># cluster-allow-reads-when-down no</span><br><span class="line"></span><br><span class="line"># In order to setup your cluster make sure to read the documentation</span><br><span class="line"># available at http:&#x2F;&#x2F;redis.io web site.</span><br></pre></td></tr></table></figure>
+
+<h3 id="CLUSTER-DOCKER-NAT-support模块"><a href="#CLUSTER-DOCKER-NAT-support模块" class="headerlink" title="CLUSTER DOCKER/NAT support模块"></a>CLUSTER DOCKER/NAT support模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">########################## CLUSTER DOCKER&#x2F;NAT support  ########################</span><br><span class="line"></span><br><span class="line"># In certain deployments, Redis Cluster nodes address discovery fails, because</span><br><span class="line"># addresses are NAT-ted or because ports are forwarded (the typical case is</span><br><span class="line"># Docker and other containers).</span><br><span class="line">#</span><br><span class="line"># In order to make Redis Cluster working in such environments, a static</span><br><span class="line"># configuration where each node knows its public address is needed. The</span><br><span class="line"># following two options are used for this scope, and are:</span><br><span class="line">#</span><br><span class="line"># * cluster-announce-ip</span><br><span class="line"># * cluster-announce-port</span><br><span class="line"># * cluster-announce-bus-port</span><br><span class="line">#</span><br><span class="line"># Each instructs the node about its address, client port, and cluster message</span><br><span class="line"># bus port. The information is then published in the header of the bus packets</span><br><span class="line"># so that other nodes will be able to correctly map the address of the node</span><br><span class="line"># publishing the information.</span><br><span class="line">#</span><br><span class="line"># If the above options are not used, the normal Redis Cluster auto-detection</span><br><span class="line"># will be used instead.</span><br><span class="line">#</span><br><span class="line"># Note that when remapped, the bus port may not be at the fixed offset of</span><br><span class="line"># clients port + 10000, so you can specify any port and bus-port depending</span><br><span class="line"># on how they get remapped. If the bus-port is not set, a fixed offset of</span><br><span class="line"># 10000 will be used as usual.</span><br><span class="line">#</span><br><span class="line"># Example:</span><br><span class="line">#</span><br><span class="line"># cluster-announce-ip 10.1.1.5</span><br><span class="line"># cluster-announce-port 6379</span><br><span class="line"># cluster-announce-bus-port 6380</span><br></pre></td></tr></table></figure>
+
+<h3 id="SLOW-LOG模块"><a href="#SLOW-LOG模块" class="headerlink" title="SLOW LOG模块"></a>SLOW LOG模块</h3><p>慢日志配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">################################## SLOW LOG ###################################</span><br><span class="line"></span><br><span class="line"># 指定指定时间超过多少微秒的命令会被记录到日志上(1s 为1000000微妙)</span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line"></span><br><span class="line"># 服务器最多保存多少条慢查询日志</span><br><span class="line">slowlog-max-len 128</span><br></pre></td></tr></table></figure>
+
+<h3 id="LATENCY-MONITOR模块"><a href="#LATENCY-MONITOR模块" class="headerlink" title="LATENCY MONITOR模块"></a>LATENCY MONITOR模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">################################ LATENCY MONITOR ##############################</span><br><span class="line"></span><br><span class="line"># The Redis latency monitoring subsystem samples different operations</span><br><span class="line"># at runtime in order to collect data related to possible sources of</span><br><span class="line"># latency of a Redis instance.</span><br><span class="line">#</span><br><span class="line"># Via the LATENCY command this information is available to the user that can</span><br><span class="line"># print graphs and obtain reports.</span><br><span class="line">#</span><br><span class="line"># The system only logs operations that were performed in a time equal or</span><br><span class="line"># greater than the amount of milliseconds specified via the</span><br><span class="line"># latency-monitor-threshold configuration directive. When its value is set</span><br><span class="line"># to zero, the latency monitor is turned off.</span><br><span class="line">#</span><br><span class="line"># By default latency monitoring is disabled since it is mostly not needed</span><br><span class="line"># if you don&#39;t have latency issues, and collecting data has a performance</span><br><span class="line"># impact, that while very small, can be measured under big load. Latency</span><br><span class="line"># monitoring can easily be enabled at runtime using the command</span><br><span class="line"># &quot;CONFIG SET latency-monitor-threshold &lt;milliseconds&gt;&quot; if needed.</span><br><span class="line">latency-monitor-threshold 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="EVENT-NOTIFICATION模块"><a href="#EVENT-NOTIFICATION模块" class="headerlink" title="EVENT NOTIFICATION模块"></a>EVENT NOTIFICATION模块</h3><p>事件通知模块</p>
+<p>如果某个键发生某种变化 可以通知 发布/订阅的客户端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">############################# EVENT NOTIFICATION ##############################</span><br><span class="line"># 事件通知的参数选项</span><br><span class="line">#  K     Keyspace events, published with __keyspace@&lt;db&gt;__ prefix.</span><br><span class="line">#  E     Keyevent events, published with __keyevent@&lt;db&gt;__ prefix.</span><br><span class="line">#  g     Generic commands (non-type specific) like DEL, EXPIRE, RENAME, ...</span><br><span class="line">#  $     String commands</span><br><span class="line">#  l     List commands</span><br><span class="line">#  s     Set commands</span><br><span class="line">#  h     Hash commands</span><br><span class="line">#  z     Sorted set commands</span><br><span class="line">#  x     Expired events (events generated every time a key expires)</span><br><span class="line">#  e     Evicted events (events generated when a key is evicted for maxmemory)</span><br><span class="line">#  t     Stream commands</span><br><span class="line">#  m     Key-miss events (Note: It is not included in the &#39;A&#39; class)</span><br><span class="line">#  A     Alias for g$lshzxet, so that the &quot;AKE&quot; string means all the events</span><br><span class="line">#        (Except key-miss events which are excluded from &#39;A&#39; due to their</span><br><span class="line">#         unique nature).</span><br><span class="line">notify-keyspace-events &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GOPHER-SERVER模块"><a href="#GOPHER-SERVER模块" class="headerlink" title="GOPHER SERVER模块"></a>GOPHER SERVER模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">############################### GOPHER SERVER #################################</span><br><span class="line"></span><br><span class="line"># Redis contains an implementation of the Gopher protocol, as specified in</span><br><span class="line"># the RFC 1436 (https:&#x2F;&#x2F;www.ietf.org&#x2F;rfc&#x2F;rfc1436.txt).</span><br><span class="line">#</span><br><span class="line"># The Gopher protocol was very popular in the late &#39;90s. It is an alternative</span><br><span class="line"># to the web, and the implementation both server and client side is so simple</span><br><span class="line"># that the Redis server has just 100 lines of code in order to implement this</span><br><span class="line"># support.</span><br><span class="line">#</span><br><span class="line"># What do you do with Gopher nowadays? Well Gopher never *really* died, and</span><br><span class="line"># lately there is a movement in order for the Gopher more hierarchical content</span><br><span class="line"># composed of just plain text documents to be resurrected. Some want a simpler</span><br><span class="line"># internet, others believe that the mainstream internet became too much</span><br><span class="line"># controlled, and it&#39;s cool to create an alternative space for people that</span><br><span class="line"># want a bit of fresh air.</span><br><span class="line">#</span><br><span class="line"># Anyway for the 10nth birthday of the Redis, we gave it the Gopher protocol</span><br><span class="line"># as a gift.</span><br><span class="line">#</span><br><span class="line"># --- HOW IT WORKS? ---</span><br><span class="line">#</span><br><span class="line"># The Redis Gopher support uses the inline protocol of Redis, and specifically</span><br><span class="line"># two kind of inline requests that were anyway illegal: an empty request</span><br><span class="line"># or any request that starts with &quot;&#x2F;&quot; (there are no Redis commands starting</span><br><span class="line"># with such a slash). Normal RESP2&#x2F;RESP3 requests are completely out of the</span><br><span class="line"># path of the Gopher protocol implementation and are served as usual as well.</span><br><span class="line">#</span><br><span class="line"># If you open a connection to Redis when Gopher is enabled and send it</span><br><span class="line"># a string like &quot;&#x2F;foo&quot;, if there is a key named &quot;&#x2F;foo&quot; it is served via the</span><br><span class="line"># Gopher protocol.</span><br><span class="line">#</span><br><span class="line"># In order to create a real Gopher &quot;hole&quot; (the name of a Gopher site in Gopher</span><br><span class="line"># talking), you likely need a script like the following:</span><br><span class="line">#</span><br><span class="line">#   https:&#x2F;&#x2F;github.com&#x2F;antirez&#x2F;gopher2redis</span><br><span class="line">#</span><br><span class="line"># --- SECURITY WARNING ---</span><br><span class="line">#</span><br><span class="line"># If you plan to put Redis on the internet in a publicly accessible address</span><br><span class="line"># to server Gopher pages MAKE SURE TO SET A PASSWORD to the instance.</span><br><span class="line"># Once a password is set:</span><br><span class="line">#</span><br><span class="line">#   1. The Gopher server (when enabled, not by default) will still serve</span><br><span class="line">#      content via Gopher.</span><br><span class="line">#   2. However other commands cannot be called before the client will</span><br><span class="line">#      authenticate.</span><br><span class="line">#</span><br><span class="line"># So use the &#39;requirepass&#39; option to protect your instance.</span><br><span class="line">#</span><br><span class="line"># Note that Gopher is not currently supported when &#39;io-threads-do-reads&#39;</span><br><span class="line"># is enabled.</span><br><span class="line">#</span><br><span class="line"># To enable Gopher support, uncomment the following line and set the option</span><br><span class="line"># from no (the default) to yes.</span><br><span class="line">#</span><br><span class="line"># gopher-enabled no</span><br></pre></td></tr></table></figure>
+
+<h3 id="ADVANCED-CONFIG模块"><a href="#ADVANCED-CONFIG模块" class="headerlink" title="ADVANCED CONFIG模块"></a>ADVANCED CONFIG模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">############################### ADVANCED CONFIG ###############################</span><br><span class="line"></span><br><span class="line"># hash数据结构使用ziplist的条件</span><br><span class="line">hash-max-ziplist-entries 512</span><br><span class="line">hash-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># -5: max size: 64 Kb  &lt;-- not recommended for normal workloads</span><br><span class="line"># -4: max size: 32 Kb  &lt;-- not recommended</span><br><span class="line"># -3: max size: 16 Kb  &lt;-- probably not recommended</span><br><span class="line"># -2: max size: 8 Kb   &lt;-- good</span><br><span class="line"># -1: max size: 4 Kb   &lt;-- good</span><br><span class="line">list-max-ziplist-size -2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 0: disable all list compression</span><br><span class="line"># 1: depth 1 means &quot;don&#39;t start compressing until after 1 node into the list,</span><br><span class="line">#    going from either the head or tail&quot;</span><br><span class="line">#    So: [head]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[tail]</span><br><span class="line">#    [head], [tail] will always be uncompressed; inner nodes will compress.</span><br><span class="line"># 2: [head]-&gt;[next]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[prev]-&gt;[tail]</span><br><span class="line">#    2 here means: don&#39;t compress head or head-&gt;next or tail-&gt;prev or tail,</span><br><span class="line">#    but compress all nodes between them.</span><br><span class="line"># 3: [head]-&gt;[next]-&gt;[next]-&gt;node-&gt;node-&gt;...-&gt;node-&gt;[prev]-&gt;[prev]-&gt;[tail]</span><br><span class="line"># etc.</span><br><span class="line">list-compress-depth 0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">set-max-intset-entries 512</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">stream-node-max-bytes 4096</span><br><span class="line">stream-node-max-entries 100</span><br><span class="line"></span><br><span class="line"># 开启之后，redis每100毫秒时使用1毫秒来对redis的hash表进行重新hash，可以降低内存的使用</span><br><span class="line"># 如果要求实时性特别高的话(低于2ms)，将该配置为no</span><br><span class="line">activerehashing yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line">client-output-buffer-limit replica 256mb 64mb 60</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># client-query-buffer-limit 1gb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#</span><br><span class="line"># proto-max-bulk-len 512mb</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">hz 10</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dynamic-hz yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rdb-save-incremental-fsync yes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># lfu-log-factor 10</span><br><span class="line"># lfu-decay-time 1</span><br></pre></td></tr></table></figure>
+
+<h3 id="ACTIVE-DEFRAGMENTATION模块"><a href="#ACTIVE-DEFRAGMENTATION模块" class="headerlink" title="ACTIVE DEFRAGMENTATION模块"></a>ACTIVE DEFRAGMENTATION模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">########################### ACTIVE DEFRAGMENTATION #######################</span><br><span class="line">#</span><br><span class="line"># What is active defragmentation?</span><br><span class="line"># -------------------------------</span><br><span class="line">#</span><br><span class="line"># Active (online) defragmentation allows a Redis server to compact the</span><br><span class="line"># spaces left between small allocations and deallocations of data in memory,</span><br><span class="line"># thus allowing to reclaim back memory.</span><br><span class="line">#</span><br><span class="line"># Fragmentation is a natural process that happens with every allocator (but</span><br><span class="line"># less so with Jemalloc, fortunately) and certain workloads. Normally a server</span><br><span class="line"># restart is needed in order to lower the fragmentation, or at least to flush</span><br><span class="line"># away all the data and create it again. However thanks to this feature</span><br><span class="line"># implemented by Oran Agra for Redis 4.0 this process can happen at runtime</span><br><span class="line"># in a &quot;hot&quot; way, while the server is running.</span><br><span class="line">#</span><br><span class="line"># Basically when the fragmentation is over a certain level (see the</span><br><span class="line"># configuration options below) Redis will start to create new copies of the</span><br><span class="line"># values in contiguous memory regions by exploiting certain specific Jemalloc</span><br><span class="line"># features (in order to understand if an allocation is causing fragmentation</span><br><span class="line"># and to allocate it in a better place), and at the same time, will release the</span><br><span class="line"># old copies of the data. This process, repeated incrementally for all the keys</span><br><span class="line"># will cause the fragmentation to drop back to normal values.</span><br><span class="line">#</span><br><span class="line"># Important things to understand:</span><br><span class="line">#</span><br><span class="line"># 1. This feature is disabled by default, and only works if you compiled Redis</span><br><span class="line">#    to use the copy of Jemalloc we ship with the source code of Redis.</span><br><span class="line">#    This is the default with Linux builds.</span><br><span class="line">#</span><br><span class="line"># 2. You never need to enable this feature if you don&#39;t have fragmentation</span><br><span class="line">#    issues.</span><br><span class="line">#</span><br><span class="line"># 3. Once you experience fragmentation, you can enable this feature when</span><br><span class="line">#    needed with the command &quot;CONFIG SET activedefrag yes&quot;.</span><br><span class="line">#</span><br><span class="line"># The configuration parameters are able to fine tune the behavior of the</span><br><span class="line"># defragmentation process. If you are not sure about what they mean it is</span><br><span class="line"># a good idea to leave the defaults untouched.</span><br><span class="line"></span><br><span class="line"># Enabled active defragmentation</span><br><span class="line"># activedefrag no</span><br><span class="line"></span><br><span class="line"># Minimum amount of fragmentation waste to start active defrag</span><br><span class="line"># active-defrag-ignore-bytes 100mb</span><br><span class="line"></span><br><span class="line"># Minimum percentage of fragmentation to start active defrag</span><br><span class="line"># active-defrag-threshold-lower 10</span><br><span class="line"></span><br><span class="line"># Maximum percentage of fragmentation at which we use maximum effort</span><br><span class="line"># active-defrag-threshold-upper 100</span><br><span class="line"></span><br><span class="line"># Minimal effort for defrag in CPU percentage, to be used when the lower</span><br><span class="line"># threshold is reached</span><br><span class="line"># active-defrag-cycle-min 1</span><br><span class="line"></span><br><span class="line"># Maximal effort for defrag in CPU percentage, to be used when the upper</span><br><span class="line"># threshold is reached</span><br><span class="line"># active-defrag-cycle-max 25</span><br><span class="line"></span><br><span class="line"># Maximum number of set&#x2F;hash&#x2F;zset&#x2F;list fields that will be processed from</span><br><span class="line"># the main dictionary scan</span><br><span class="line"># active-defrag-max-scan-fields 1000</span><br><span class="line"></span><br><span class="line"># Jemalloc background thread for purging will be enabled by default</span><br><span class="line">jemalloc-bg-thread yes</span><br><span class="line"></span><br><span class="line"># It is possible to pin different threads and processes of Redis to specific</span><br><span class="line"># CPUs in your system, in order to maximize the performances of the server.</span><br><span class="line"># This is useful both in order to pin different Redis threads in different</span><br><span class="line"># CPUs, but also in order to make sure that multiple Redis instances running</span><br><span class="line"># in the same host will be pinned to different CPUs.</span><br><span class="line">#</span><br><span class="line"># Normally you can do this using the &quot;taskset&quot; command, however it is also</span><br><span class="line"># possible to this via Redis configuration directly, both in Linux and FreeBSD.</span><br><span class="line">#</span><br><span class="line"># You can pin the server&#x2F;IO threads, bio threads, aof rewrite child process, and</span><br><span class="line"># the bgsave child process. The syntax to specify the cpu list is the same as</span><br><span class="line"># the taskset command:</span><br><span class="line">#</span><br><span class="line"># Set redis server&#x2F;io threads to cpu affinity 0,2,4,6:</span><br><span class="line"># server_cpulist 0-7:2</span><br><span class="line">#</span><br><span class="line"># Set bio threads to cpu affinity 1,3:</span><br><span class="line"># bio_cpulist 1,3</span><br><span class="line">#</span><br><span class="line"># Set aof rewrite child process to cpu affinity 8,9,10,11:</span><br><span class="line"># aof_rewrite_cpulist 8-11</span><br><span class="line">#</span><br><span class="line"># Set bgsave child process to cpu affinity 1,10,11</span><br><span class="line"># bgsave_cpulist 1,10-11</span><br><span class="line"></span><br><span class="line"># In some cases redis will emit warnings and even refuse to start if it detects</span><br><span class="line"># that the system is in bad state, it is possible to suppress these warnings</span><br><span class="line"># by setting the following config which takes a space delimited list of warnings</span><br><span class="line"># to suppress</span><br><span class="line">#</span><br><span class="line"># ignore-warnings ARM64-COW-BUG</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/7.redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="redis数据结构">
+      <i class="fa fa-chevron-left"></i> redis数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/redis/%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/4.redis%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4/" rel="next" title="redis解析命令">
+      redis解析命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">redis配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#INCLUDES%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.</span> <span class="nav-text">INCLUDES模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GENERAL%E6%A8%A1%E5%9D%97"><span class="nav-number">1.2.</span> <span class="nav-text">GENERAL模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MODULES%E6%A8%A1%E5%9D%97"><span class="nav-number">1.3.</span> <span class="nav-text">MODULES模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NETWORK%E6%A8%A1%E5%9D%97"><span class="nav-number">1.4.</span> <span class="nav-text">NETWORK模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS-SSL%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.</span> <span class="nav-text">TLS&#x2F;SSL模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SNAPSHOTTING%E6%A8%A1%E5%9D%97"><span class="nav-number">1.6.</span> <span class="nav-text">SNAPSHOTTING模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REPLICATION%E6%A8%A1%E5%9D%97"><span class="nav-number">1.7.</span> <span class="nav-text">REPLICATION模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KEYS-TRACKING%E6%A8%A1%E5%9D%97"><span class="nav-number">1.8.</span> <span class="nav-text">KEYS TRACKING模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MEMORY-MANAGEMENT%E6%A8%A1%E5%9D%97"><span class="nav-number">1.9.</span> <span class="nav-text">MEMORY MANAGEMENT模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis%E7%9A%84%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">1.9.1.</span> <span class="nav-text">redis的淘汰机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLIENTS%E6%A8%A1%E5%9D%97"><span class="nav-number">1.10.</span> <span class="nav-text">CLIENTS模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LAZY-FREEING%E6%A8%A1%E5%9D%97"><span class="nav-number">1.11.</span> <span class="nav-text">LAZY FREEING模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#THREADED-I-O%E6%A8%A1%E5%9D%97"><span class="nav-number">1.12.</span> <span class="nav-text">THREADED I&#x2F;O模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KERNEL-OOM-CONTROL%E6%A8%A1%E5%9D%97"><span class="nav-number">1.13.</span> <span class="nav-text">KERNEL OOM CONTROL模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#APPEND-ONLY-MODE%E6%A8%A1%E5%9D%97"><span class="nav-number">1.14.</span> <span class="nav-text">APPEND ONLY MODE模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SECURITY%E6%A8%A1%E5%9D%97"><span class="nav-number">1.15.</span> <span class="nav-text">SECURITY模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LUA-SCRIPTING%E6%A8%A1%E5%9D%97"><span class="nav-number">1.16.</span> <span class="nav-text">LUA SCRIPTING模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REDIS-CLUSTER%E6%A8%A1%E5%9D%97"><span class="nav-number">1.17.</span> <span class="nav-text">REDIS CLUSTER模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLUSTER-DOCKER-NAT-support%E6%A8%A1%E5%9D%97"><span class="nav-number">1.18.</span> <span class="nav-text">CLUSTER DOCKER&#x2F;NAT support模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SLOW-LOG%E6%A8%A1%E5%9D%97"><span class="nav-number">1.19.</span> <span class="nav-text">SLOW LOG模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LATENCY-MONITOR%E6%A8%A1%E5%9D%97"><span class="nav-number">1.20.</span> <span class="nav-text">LATENCY MONITOR模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EVENT-NOTIFICATION%E6%A8%A1%E5%9D%97"><span class="nav-number">1.21.</span> <span class="nav-text">EVENT NOTIFICATION模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GOPHER-SERVER%E6%A8%A1%E5%9D%97"><span class="nav-number">1.22.</span> <span class="nav-text">GOPHER SERVER模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ADVANCED-CONFIG%E6%A8%A1%E5%9D%97"><span class="nav-number">1.23.</span> <span class="nav-text">ADVANCED CONFIG模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACTIVE-DEFRAGMENTATION%E6%A8%A1%E5%9D%97"><span class="nav-number">1.24.</span> <span class="nav-text">ACTIVE DEFRAGMENTATION模块</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">361</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/isfox" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;isfox" rel="noopener" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/SiXiangPiaoFuZhe" title="Gitee → https:&#x2F;&#x2F;gitee.com&#x2F;SiXiangPiaoFuZhe" rel="noopener" target="_blank"><i class="fa fa-git fa-fw"></i>Gitee</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhanghe1996hy@163.com" title="E-Mail → mailto:zhanghe1996hy@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
