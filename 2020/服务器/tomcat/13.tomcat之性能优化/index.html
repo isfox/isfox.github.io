@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="性能优化有几个与性能关系密切的属性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat之性能优化">
+<meta property="og:url" content="https://isfox.github.io/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="性能优化有几个与性能关系密切的属性">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T08:13:19.000Z">
+<meta property="article:modified_time" content="2021-04-18T01:27:42.990Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="tomcat">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://isfox.github.io/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>tomcat之性能优化 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/isfox" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tomcat之性能优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 16:13:19" itemprop="dateCreated datePublished" datetime="2020-09-06T16:13:19+08:00">2020-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-18 09:27:42" itemprop="dateModified" datetime="2021-04-18T09:27:42+08:00">2021-04-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tomcat/" itemprop="url" rel="index"><span itemprop="name">tomcat</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="tomcat之性能优化" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/13.tomcat%E4%B9%8B%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>有几个与性能关系密切的属性</p>
+<a id="more"></a>
+
+<ul>
+<li>maxThreads：指定Connector创建的请求处理线程的最大数目。该属性决定了可以并行处理的请求最大数目，即并发上限。当并发请求数超过maxThreads时，多余的请求只能排队等待</li>
+<li>maxSpareThreads：Tomcat允许的空闲线程的最大数目，超出的空闲线程将被直接关闭默认50</li>
+<li>minSpareThreads：Tomcat允许的空闲线程的最小数目，也是启动时Connector创建的线程数目。如果空闲线程数小于该值，Tomcat将创建新的线程。默认4</li>
+<li>tcpNoDelay：该属性为true，会启用Socket的TCP_NO_DELAY选项。会禁用Nagle算法，该算法通过降低网络发送包的数量提升网络利用率。在非交互式的web应用环境中，该算法会缩短响应时间。但是在交互式web应用环境中则会加大响应时间，因为它会将小包拼接为大包在进行发送，从而导致响应延迟</li>
+<li>maxKeepAliveRequest：用于控制HTTP请求的“keep-alive”行为，以启用持续链接（多个请求通过同一个HTTP连接发送）。该属性指定HTTP连接在被服务器关闭之前处理的请求最大数目。默认100，如果设置为1，表示禁用该特性</li>
+<li>socketBuffer：用于指定Socket输出缓冲的大小，单位为字节</li>
+<li>enableLookups：设置为false，会禁用request.getRemoteHost()方法的DNS查询，从而提升响应性能（减少DNS查询耗时）</li>
+</ul>
+<h3 id="JVM优化"><a href="#JVM优化" class="headerlink" title="JVM优化"></a>JVM优化</h3><p>内存分配以及GC策略调整，选择不同的垃圾回收策略，调整JVM以及垃圾回收参数，可以极大地减少垃圾回收次数，提升垃圾回收效率，从而改善程序运行性能。</p>
+<p>垃圾收集器</p>
+<ul>
+<li><p>串行收集器：采用单线程执行所有的垃圾回收工作，适用于单核的服务器</p>
+</li>
+<li><p>并行收集器：以并行的方式执行Minor回收（年轻代垃圾回收），可以降低垃圾回收的开销，适用于多处理器，需要启用并行压缩</p>
+</li>
+<li><p>并发收集器：以并发的方式执行大部分垃圾回收工作，缩短垃圾回收的暂停时间，适用于数据集中为中型到大型、响应时间优先于吞吐量的应用。虽然减少了暂停时间，但是会降低应用程序性能</p>
+<p>JDK8中提供了两种并发收集器</p>
+<ul>
+<li><p>CMS收集器：并发标记扫描收集器，适用于缩短垃圾回收暂停时间并且负担得起与垃圾回收共享资源的应用</p>
+</li>
+<li><p>G1收集器：适用于大容量内存的多核服务器，在满足垃圾回收暂停时间目标的同时，以最大可能性实现高吞吐量</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="JVM参数"><a href="#JVM参数" class="headerlink" title="JVM参数"></a>JVM参数</h4><ul>
+<li>-Xms  初始堆的大小，如不指定，初始化大小为分配的年轻代和年老代之和</li>
+<li>-Xmx  最大堆内存，xms和xmx设置为一个值，可以减少程序运行过程中调整堆内存分配的耗时</li>
+<li>-Xmn  年轻代的初始值及最大值，推荐为堆内存的1/2~1/4之间</li>
+<li>-XX:NewSize  年轻代初始值</li>
+<li>-XX:MaxNewSize  年轻代最大值</li>
+<li>-XX:MetaspaceSize  元数据空间的初始值</li>
+<li>-XX:MaxMetaspaceSize  分配用于类元数据的本地内存上限，默认不受限</li>
+<li>-Xss  线程栈大小</li>
+<li>-XX:ThreadStackSize  等价于xss</li>
+<li>-XX:NewRatio  设置年轻代和年老代大小的比值，默认2</li>
+<li>-XX:SurvivorRatio  Eden区和Survivor区大小的比值，默认为2</li>
+<li>-XX:LargePageSizeInBytes  堆内存的内存页大小，默认0，表示由JVM动态选择</li>
+<li>-XX:+DisableExplicitGC  禁用Sytem.gc</li>
+<li>-XX:MaxTenuringThreshold  在新生代中对象存活次数后仍然存活，晋升到旧生代，最大值15</li>
+<li>-XX:+AggressiveOpts  开启新的编译器性能优化选项</li>
+<li>-XX:+UseBiasedLocking  启用偏向锁</li>
+<li>-Xnoclassgc  禁用类的垃圾回收，即类对象不会回收</li>
+<li>-XX:SoftRefLRUPolicyMSPerMB  每兆空闲堆内存中，SoftReference对象在最后一次引用后的存活时间，默认1s</li>
+<li>-XX:MaxHeapFreeRatio  垃圾回收后，堆内存空闲空间最大允许百分比，如果超过该值，堆内存会收缩</li>
+<li>-XX:MinHeapFreeRatio  垃圾回收后，堆内存空闲空间最小百分比，如果低于该值，堆内存会扩大</li>
+<li>-XX:+ParallelRefProcEnabled  启用并行引用处理。如果应用存在大量的引用或者finalizable对象需要处理，可以减少垃圾回收时间</li>
+<li>-XX:TargetSurivorRatio  设定幸存区的目标使用率</li>
+<li>-XX:+UseGCOverheadLimit  限定JVM耗费在GC上的时间百分比</li>
+<li>-XX:+UseSerialGC  启用串行收集器</li>
+</ul>
+<h3 id="Tomcat配置"><a href="#Tomcat配置" class="headerlink" title="Tomcat配置"></a>Tomcat配置</h3><h4 id="server-xml配置"><a href="#server-xml配置" class="headerlink" title="server.xml配置"></a>server.xml配置</h4><ul>
+<li>修改链接器的maxConnections属性该属性决定了服务器在同一时间接收并处理的最大连接数</li>
+<li>tcpNoDeply属性设置为true，会开启Socket的TCP_NO_DEPLY选项，禁用Nagle算法，该算法用于链接小的缓冲消息，会降低通过网络发送数据包的数量，提升网络传输效率，但是对于交互式应用会增加响应时间</li>
+<li>调整maxKeepAliveRequest属性，用于控制keep-alive行为，指定了链接被服务器关闭之前可以接受的请求最大数目</li>
+<li>调整socketBuffer，调整Socket缓冲区大小</li>
+<li>将enableLookups属性设置为false，禁用request.getRemoteHost的DNS查找功能，减少查找时间</li>
+<li>IO方式最好使用NIO2或者APR</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/5.tomcat%E4%B9%8Bweb%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86/" rel="prev" title="tomcat之web请求处理">
+      <i class="fa fa-chevron-left"></i> tomcat之web请求处理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/6.DefaultServlet%E5%92%8CJspServlet/" rel="next" title="DefaultServlet和JspServlet">
+      DefaultServlet和JspServlet <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">JVM优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">JVM参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">Tomcat配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#server-xml%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">server.xml配置</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">367</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/isfox" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;isfox" rel="noopener" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/SiXiangPiaoFuZhe" title="Gitee → https:&#x2F;&#x2F;gitee.com&#x2F;SiXiangPiaoFuZhe" rel="noopener" target="_blank"><i class="fa fa-git fa-fw"></i>Gitee</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhanghe1996hy@163.com" title="E-Mail → mailto:zhanghe1996hy@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

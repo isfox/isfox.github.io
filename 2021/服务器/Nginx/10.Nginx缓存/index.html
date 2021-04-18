@@ -30,7 +30,7 @@
 <meta property="og:description" content="Nginx缓存一般情况下系统用到的缓存有三种  服务端缓存：缓存存在后端服务器，如redis 代理缓存：缓存存储在代理服务器或中间件，内容从后端服务器获取，保存在本地 客户端缓存：缓存在浏览器  Nginx使用的缓存属于代理缓存">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-08T04:20:23.000Z">
-<meta property="article:modified_time" content="2021-04-11T03:53:29.262Z">
+<meta property="article:modified_time" content="2021-04-18T01:17:21.769Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="Nginx">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-11 11:53:29" itemprop="dateModified" datetime="2021-04-11T11:53:29+08:00">2021-04-11</time>
+                <time title="修改时间：2021-04-18 09:17:21" itemprop="dateModified" datetime="2021-04-18T09:17:21+08:00">2021-04-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -290,7 +290,7 @@
 <li>path设置缓存数据存放的路径</li>
 <li>levels设置目录层级，如levels=1:2，表示有两个子目录</li>
 <li>keys_zone 设置内存zone的名称和大小，如keys_zone=my:10m</li>
-<li>inactive设置缓存多长时间失效，当磁盘上的缓存数据在改时间段内没有被访问过，就会失效，数据将被删除，默认10s</li>
+<li>inactive设置缓存多长时间失效，当磁盘上的缓存数据在该时间段内没有被访问过，就会失效，数据将被删除，默认10s</li>
 <li>max_size 设置硬盘中最多缓存多少数据，数据超出，则删除最少访问的数据</li>
 </ul>
 </li>
