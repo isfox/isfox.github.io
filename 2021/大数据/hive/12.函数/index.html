@@ -30,7 +30,7 @@
 <meta property="og:description" content="函数hive中有很多内置函数可以使用 查看内置函数 1show functions;  查看函数的用法及作用 1desc function floor_day;  查看函数的详细用法 1desc function extended floor_day;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-14T13:24:23.000Z">
-<meta property="article:modified_time" content="2021-04-15T07:24:25.318Z">
+<meta property="article:modified_time" content="2021-04-18T01:57:06.321Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="hive">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-15 15:24:25" itemprop="dateModified" datetime="2021-04-15T15:24:25+08:00">2021-04-15</time>
+                <time title="修改时间：2021-04-18 09:57:06" itemprop="dateModified" datetime="2021-04-18T09:57:06+08:00">2021-04-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -340,10 +340,28 @@
 <p>示例：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> a, LAG(a, <span class="number">3</span>, <span class="number">0</span>) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> b <span class="keyword">ORDER</span> <span class="keyword">BY</span> C)<span class="keyword">FROM</span> T;</span><br></pre></td></tr></table></figure>
 
+<h5 id="rank函数"><a href="#rank函数" class="headerlink" title="rank函数"></a>rank函数</h5><p>rank有三个函数</p>
+<ul>
+<li>RANK() 排序相同时会重复，总数不会变</li>
+<li>DENSE_RANK() 排序相同时会重复，总数会减少</li>
+<li>ROW_NUMBER() 会根据顺序计算</li>
+</ul>
+<p>全部数据</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">test_partitioned.id    test_partitioned.<span class="section">money</span>    test_partitioned.date</span><br><span class="line"><span class="number">1</span>    <span class="number">20.0</span>    <span class="number">20210413</span></span><br><span class="line"><span class="number">2</span>    <span class="number">50.0</span>    <span class="number">20210413</span></span><br><span class="line"><span class="number">3</span>    <span class="number">80.0</span>    <span class="number">20210414</span></span><br><span class="line"><span class="number">4</span>    <span class="number">200.0</span>    <span class="number">20210414</span></span><br><span class="line"><span class="number">6</span>    <span class="number">80.0</span>    <span class="number">20210415</span></span><br></pre></td></tr></table></figure>
 
+<p>分别进行测试验证</p>
+<p><strong>RANK()</strong> </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> *,<span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> money) <span class="keyword">from</span> test_partitioned;</span><br><span class="line"></span><br><span class="line">test_partitioned.id    test_partitioned.money    test_partitioned.date    rank_window_0</span><br><span class="line">1    20.0    20210413    1</span><br><span class="line">2    50.0    20210413    2</span><br><span class="line">6    80.0    20210415    3</span><br><span class="line">3    80.0    20210414    3</span><br><span class="line">4    200.0    20210414    5</span><br></pre></td></tr></table></figure>
 
+<p>使用money进行排序，money相同的rank值是一样的，排序相同时会重复，但是总数不会变，3 3 5</p>
+<p><strong>DENSE_RANK()</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> *,<span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> money) <span class="keyword">from</span> test_partitioned;</span><br><span class="line"></span><br><span class="line">test_partitioned.id    test_partitioned.money    test_partitioned.date    dense_rank_window_0</span><br><span class="line">1    20.0    20210413    1</span><br><span class="line">2    50.0    20210413    2</span><br><span class="line">6    80.0    20210415    3</span><br><span class="line">3    80.0    20210414    3</span><br><span class="line">4    200.0    20210414    4</span><br></pre></td></tr></table></figure>
 
+<p>使用money进行排序，money相同的rank值是一样的，排序相同时会重复，但是总数会减少，3 3 4</p>
+<p><strong>ROW_NUMBER()</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> *,row_number() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> money) <span class="keyword">from</span> test_partitioned;</span><br><span class="line"></span><br><span class="line">test_partitioned.id    test_partitioned.money    test_partitioned.date    row_number_window_0</span><br><span class="line">1    20.0    20210413    1</span><br><span class="line">2    50.0    20210413    2</span><br><span class="line">6    80.0    20210415    3</span><br><span class="line">3    80.0    20210414    4</span><br><span class="line">4    200.0    20210414    5</span><br></pre></td></tr></table></figure>
 
+<p>使用money进行排序，money相同的rank值也会按照顺序进行排序，完全不会重复</p>
 
     </div>
 
@@ -430,7 +448,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">函数分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nvl%E7%A9%BA%E5%AD%97%E6%AE%B5%E8%B5%8B%E5%80%BC"><span class="nav-number">1.2.1.</span> <span class="nav-text">nvl空字段赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concat%E5%AD%97%E7%AC%A6%E6%8B%BC%E6%8E%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">concat字符拼接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#collect-set%E6%B1%87%E6%80%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">collect_set汇总</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#explode%E6%8B%86%E5%88%86"><span class="nav-number">1.2.4.</span> <span class="nav-text">explode拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#over%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.5.</span> <span class="nav-text">over窗口函数</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">函数分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nvl%E7%A9%BA%E5%AD%97%E6%AE%B5%E8%B5%8B%E5%80%BC"><span class="nav-number">1.2.1.</span> <span class="nav-text">nvl空字段赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concat%E5%AD%97%E7%AC%A6%E6%8B%BC%E6%8E%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">concat字符拼接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#collect-set%E6%B1%87%E6%80%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">collect_set汇总</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#explode%E6%8B%86%E5%88%86"><span class="nav-number">1.2.4.</span> <span class="nav-text">explode拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#over%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.5.</span> <span class="nav-text">over窗口函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#rank%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">rank函数</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -446,7 +464,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">367</span>
+          <span class="site-state-item-count">371</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -459,7 +477,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

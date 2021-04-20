@@ -30,7 +30,7 @@
 <meta property="og:description" content="控制器 controller_epoch:用于记录控制器发生变更次数，即记录当前控制器是第几代控制器，初始值为0，每选出一个新的控制器该字段加一，每个控制器发送请求都会带上这个字段，">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-08T01:23:30.000Z">
-<meta property="article:modified_time" content="2021-04-13T03:28:27.228Z">
+<meta property="article:modified_time" content="2021-04-19T02:49:26.875Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="kafka">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-13 11:28:27" itemprop="dateModified" datetime="2021-04-13T11:28:27+08:00">2021-04-13</time>
+                <time title="修改时间：2021-04-19 10:49:26" itemprop="dateModified" datetime="2021-04-19T10:49:26+08:00">2021-04-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -281,9 +281,9 @@
 </li>
 <li><p>已分配副本(assigned replica):每个分区的所有副本集合被称为已分配副本(AR)</p>
 </li>
-<li><p>LeaderAndIsr:kafka将Leader对应的brokeId和ISR列表封装为一个LeaderAndIsr类</p>
+<li><p>LeaderAndIsr:kafka将Leader对应的brokeId和ISR列表(In-Sync-Replicas 副本同步队列)封装为一个LeaderAndIsr类</p>
 </li>
-<li><p>优先副本(preferred replica):在AR中，第一个副本称为优先副本。理想情况下，优先副本应该是该分区的Leader，kafka要确保所有主题的优先副本在kafka集群中均衡分布，这样就保证了所有分区的Leader均衡分布。保证Leader在集群中均衡分布很重要，因为所有的读写请求都由分区Leader副本处理，如果Leader过于集中，就会造成集群负载不均衡。为了保证优先副本的均衡分布，kafka提供了5种分区选举器(PartitionLeaderSelector)，当分区数发生变化或是分区Leader宕机时就会通过分区选举器及时选出分区新的Leader</p>
+<li><p>优先副本(preferred replica):在AR(Assigned Replicas 所有副本)中，第一个副本称为优先副本。理想情况下，优先副本应该是该分区的Leader，kafka要确保所有主题的优先副本在kafka集群中均衡分布，这样就保证了所有分区的Leader均衡分布。保证Leader在集群中均衡分布很重要，因为所有的读写请求都由分区Leader副本处理，如果Leader过于集中，就会造成集群负载不均衡。为了保证优先副本的均衡分布，kafka提供了5种分区选举器(PartitionLeaderSelector)，当分区数发生变化或是分区Leader宕机时就会通过分区选举器及时选出分区新的Leader</p>
 </li>
 </ul>
 <p>在启动kafka集群时，每一个代理都会实例化并启动一个KafkaController，并将该代理的brokerId注册到zookeeper的相应节点中。kafka集群中各代理会根据选举及只选出其中一个代理作为Leader，即Leader控制器。当控制器发生宕机后其他代理再次竞选出新的控制器。控制器负责主题的创建与删除、分区和副本的管理以及代理故障转移处理等。当一个代理被选举称为控制器时，该代理对应的KafkaController就会注册(Register)控制器相应的操作权限，同时标记自己是Leader。当代理不再是控制器时，就要注销掉(DeRegist)相应的权限。</p>
@@ -439,8 +439,8 @@
       <i class="fa fa-chevron-left"></i> kafka之延迟操作组件
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/9.tomcat%E4%B9%8Bserver%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="next" title="tomcat之server配置文件">
-      tomcat之server配置文件 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/8.tomcat%E4%B9%8BJSP%E5%BC%95%E6%93%8E/" rel="next" title="tomcat之JSP引擎">
+      tomcat之JSP引擎 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -517,7 +517,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">367</span>
+          <span class="site-state-item-count">371</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -530,7 +530,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
