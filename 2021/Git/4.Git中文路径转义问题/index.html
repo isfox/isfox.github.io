@@ -22,20 +22,22 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="域名解析 首先浏览器会先检查缓存中有没有这个域名对应的解析过的 IP 地址。如果缓存中有，这个解析过程就将结束。域名的缓存时间限制可以通过 TTL 属性来设置。  如果浏览器缓存中没有，会检查操作系统中是否有这个域名对应的 DNS 解析结果，在 Windows 中可以通过 C:\Windows\System32\drivers\etc\hosts 文件来设置，在 Linux 中这个配置文件是 &#x2F;e">
+  <meta name="description" content="Git中文路径转义问题之前在提交博客的时候是直接在终端上使用git进行提交的，没有使用可视化工具，因为可能会同时改了好几个博客，而我在提交的时候通常都是分类提交，在使用git status时看一下有哪些改动，发现中文路径自动转义，导致我在分别add和commit的时候不方便  可以使用来进行配置，默认为true 1git config core.quotepath false">
 <meta property="og:type" content="article">
-<meta property="og:title" content="域名解析">
-<meta property="og:url" content="https://isfox.github.io/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:title" content="Git中文路径转义问题">
+<meta property="og:url" content="https://isfox.github.io/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="域名解析 首先浏览器会先检查缓存中有没有这个域名对应的解析过的 IP 地址。如果缓存中有，这个解析过程就将结束。域名的缓存时间限制可以通过 TTL 属性来设置。  如果浏览器缓存中没有，会检查操作系统中是否有这个域名对应的 DNS 解析结果，在 Windows 中可以通过 C:\Windows\System32\drivers\etc\hosts 文件来设置，在 Linux 中这个配置文件是 &#x2F;e">
+<meta property="og:description" content="Git中文路径转义问题之前在提交博客的时候是直接在终端上使用git进行提交的，没有使用可视化工具，因为可能会同时改了好几个博客，而我在提交的时候通常都是分类提交，在使用git status时看一下有哪些改动，发现中文路径自动转义，导致我在分别add和commit的时候不方便  可以使用来进行配置，默认为true 1git config core.quotepath false">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-03-31T12:26:23.000Z">
-<meta property="article:modified_time" content="2021-03-31T03:25:59.118Z">
+<meta property="og:image" content="https://isfox.github.io/images/Git/Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98.png">
+<meta property="article:published_time" content="2021-01-25T02:33:30.000Z">
+<meta property="article:modified_time" content="2021-04-21T07:05:10.248Z">
 <meta property="article:author" content="ZH">
-<meta property="article:tag" content="网络">
+<meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://isfox.github.io/images/Git/Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98.png">
 
-<link rel="canonical" href="https://isfox.github.io/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/">
+<link rel="canonical" href="https://isfox.github.io/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/">
 
 
 <script id="page-configurations">
@@ -48,7 +50,7 @@
   };
 </script>
 
-  <title>域名解析 | 小菜鸟</title>
+  <title>Git中文路径转义问题 | 小菜鸟</title>
   
 
 
@@ -198,7 +200,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -211,7 +213,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          域名解析
+          Git中文路径转义问题
         </h1>
 
         <div class="post-meta">
@@ -220,22 +222,28 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-03-31 20:26:23 / 修改时间：11:25:59" itemprop="dateCreated datePublished" datetime="2021-03-31T20:26:23+08:00">2021-03-31</time>
+              <time title="创建时间：2021-01-25 10:33:30" itemprop="dateCreated datePublished" datetime="2021-01-25T10:33:30+08:00">2021-01-25</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-21 15:05:10" itemprop="dateModified" datetime="2021-04-21T15:05:10+08:00">2021-04-21</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+                  <a href="/categories/Git/" itemprop="url" rel="index"><span itemprop="name">Git</span></a>
                 </span>
             </span>
 
           
-            <span id="/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/" class="post-meta-item leancloud_visitors" data-flag-title="域名解析" title="阅读次数">
+            <span id="/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="Git中文路径转义问题" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -250,8 +258,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E7%BD%91%E7%BB%9C/%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/Git/4.Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,36 +274,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><ol>
-<li><p>首先浏览器会先检查缓存中有没有这个域名对应的解析过的 IP 地址。如果缓存中有，这个解析过程就将结束。域名的缓存时间限制可以通过 <code>TTL</code> 属性来设置。</p>
-</li>
-<li><p>如果浏览器缓存中没有，会检查操作系统中是否有这个域名对应的 <code>DNS</code> 解析结果，在 Windows 中可以通过 <code>C:\Windows\System32\drivers\etc\hosts</code> 文件来设置，在 Linux 中这个配置文件是 <code>/etc/hosts</code>，修改这个文件同样可以配置域名解析的 IP 结果。</p>
-<a id="more"></a>
-</li>
-<li><p>如果以上步骤无法完成域名的解析，就会真正请求域名服务器来解析这个域名了。操作系统会先把域名发送给 <code>Local DNS Server</code>，也就是本地区的域名服务器。例如你在学校接入校园网，那么本地域名服务器肯定在你的学校，如果你是在一个小区接入互联网，那这个 <code>Local DNS Server</code> 就是提供给你接入互联网的应用提供商（电信、移动或联通），通常会在城市里的某个角落，不会很远。</p>
-</li>
-<li><p>如果 <code>Local DNS Server</code> 仍然没有命中，就直接到 <code>ROOT DNS Server</code>（根域名服务器）请求解析。</p>
-</li>
-<li><p>根域名服务器会返回给本地域名服务器一个所查询域名的 <code>gLTD Server</code>（主域名服务器）地址，<code>gLTD</code> 是国际顶级域名服务器，如 <code>.com</code>、<code>.cn</code> 等。</p>
-</li>
-<li><p><code>Local DNS Server</code>（本地域名服务器）会再向刚才返回的 <code>gTLD Server</code> 发送请求。</p>
-</li>
-<li><p>接受请求的 <code>gTLD Server</code> 查找并返回此域名对应的 <code>Name Server</code> 域名服务器的地址，这个 <code>Name Server</code> 通常就是你注册的域名服务提供商（例如阿里云-万网）。</p>
-</li>
-<li><p><code>Name Server</code> 再查询存储的域名和 IP 的映射关系表，正常情况下，域名得到 IP 记录，连同一个 <code>TTL</code> 值返回给 <code>Local DNS Server</code>（本地域名服务器）。</p>
-</li>
-<li><p><code>Local DNS Server</code> 会缓存这个域名和 IP 的对应关系，缓存时间由 <code>TTL</code> 值控制，最后把解析的结果返回给用户</p>
-</li>
-</ol>
-<h3 id="域名解析方式"><a href="#域名解析方式" class="headerlink" title="域名解析方式"></a>域名解析方式</h3><p>域名解析记录主要分为 A 记录、AAAA记录、MX 记录、CNAME 记录、NS 记录和 TXT 记录。</p>
-<ul>
-<li>A 记录：指定域名对应的 IP 地址(IPV4)</li>
-<li>AAAA记录：指定域名对应的 IP 地址(IPV6)</li>
-<li>MX 记录：将域名指向邮件服务器。</li>
-<li>CNAME 记录：将一个域名指向另一个域名。</li>
-<li>NS 记录：将子域名指向其他 DNS 解析服务器。</li>
-<li>TXT 记录：为某个主机名或域名设置说明</li>
-</ul>
+        <h2 id="Git中文路径转义问题"><a href="#Git中文路径转义问题" class="headerlink" title="Git中文路径转义问题"></a>Git中文路径转义问题</h2><p>之前在提交博客的时候是直接在终端上使用git进行提交的，没有使用可视化工具，因为可能会同时改了好几个博客，而我在提交的时候通常都是分类提交，在使用git status时看一下有哪些改动，发现中文路径自动转义，导致我在分别add和commit的时候不方便</p>
+<p><img src="/images/Git/Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98.png" alt="Git中文路径问题"></p>
+<p>可以使用来进行配置，默认为true</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config core.quotepath false</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -305,7 +288,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+              <a href="/tags/Git/" rel="tag"># Git</a>
           </div>
 
         
@@ -316,12 +299,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E9%97%AE%E9%A2%98/%E7%BA%BF%E4%B8%8A%E9%97%AE%E9%A2%98/" rel="prev" title="线上问题">
-      <i class="fa fa-chevron-left"></i> 线上问题
+    <a href="/2021/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/1.ConcurrentLinkedQueue/" rel="prev" title="ConcurrentLinkedQueue">
+      <i class="fa fa-chevron-left"></i> ConcurrentLinkedQueue
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hadoop/%E5%88%86/MapReduce/9.%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="next" title="数据清洗">
-      数据清洗 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/java%E5%9F%BA%E7%A1%80/%E9%9B%86%E5%90%88/hash%E5%86%B2%E7%AA%81/" rel="next" title="hash冲突">
+      hash冲突 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -382,7 +365,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">域名解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">域名解析方式</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E4%B8%AD%E6%96%87%E8%B7%AF%E5%BE%84%E8%BD%AC%E4%B9%89%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">Git中文路径转义问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -398,7 +381,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">371</span>
+          <span class="site-state-item-count">374</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
