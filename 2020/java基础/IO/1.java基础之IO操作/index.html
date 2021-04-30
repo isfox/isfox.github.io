@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="jic7QSLJ3G" />
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="用户进程发起请求，内核接收到请求后，从I&#x2F;O设备中获取数据到buffer中，再将buffer中的数据copy到用户进程的地址空间，该用户进程获取到数据后再响应客户端。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO操作">
+<meta property="og:url" content="https://isfox.github.io/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="小菜鸟">
+<meta property="og:description" content="用户进程发起请求，内核接收到请求后，从I&#x2F;O设备中获取数据到buffer中，再将buffer中的数据copy到用户进程的地址空间，该用户进程获取到数据后再响应客户端。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://isfox.github.io/images/java基础/IO/InputStream.png">
+<meta property="og:image" content="https://isfox.github.io/images/java基础/IO/OutputStream.png">
+<meta property="og:image" content="https://isfox.github.io/images/java基础/IO/字符流.png">
+<meta property="article:published_time" content="2020-05-18T07:00:30.000Z">
+<meta property="article:modified_time" content="2021-04-23T01:37:50.220Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://isfox.github.io/images/java基础/IO/InputStream.png">
+
+<link rel="canonical" href="https://isfox.github.io/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>IO操作 | 小菜鸟</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小菜鸟</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/isfox" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          IO操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-18 15:00:30" itemprop="dateCreated datePublished" datetime="2020-05-18T15:00:30+08:00">2020-05-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-23 09:37:50" itemprop="dateModified" datetime="2021-04-23T09:37:50+08:00">2021-04-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">java基础</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/" class="post-meta-item leancloud_visitors" data-flag-title="IO操作" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>用户进程发起请求，内核接收到请求后，从I/O设备中获取数据到buffer中，再将buffer中的数据copy到用户进程的地址空间，该用户进程获取到数据后再响应客户端。</p>
+<a id="more"></a>
+
+<p>数据输入到buffer需要时间，从buffer复制数据至进程也需要时间，根据在这两段时间内等待方式不同，I/O动作可分为五种模式</p>
+<ul>
+<li>阻塞I/O（Blocking I/O）</li>
+<li>非阻塞I/O（Non-Blocking I/O）</li>
+<li>I/O复用（I/O Multiplexing）</li>
+<li>信号驱动I/O</li>
+<li>异步I/O</li>
+</ul>
+<p>java的I/O操作在类的java.io包中</p>
+<ul>
+<li><p>基于字节操作的I/O接口： InputStream和OutputStream</p>
+</li>
+<li><p>基于字符操作的I/O接口： Writer和Reader</p>
+</li>
+<li><p>基于磁盘操作的I/O接口： File</p>
+</li>
+<li><p>基于网络操作的I/O接口： Socket(网络编程，不在io包中)</p>
+</li>
+</ul>
+<h2 id="普通IO"><a href="#普通IO" class="headerlink" title="普通IO"></a>普通IO</h2><ol>
+<li><p>字节流对应原生的二进制数据</p>
+</li>
+<li><p>字符流对应字符数据，会自动处理与本地字符集之间的转换</p>
+</li>
+<li><p>缓冲流可以提高性能，通过减少底层API的调用次数来优化IO</p>
+</li>
+</ol>
+<h3 id="字节流"><a href="#字节流" class="headerlink" title="字节流"></a>字节流</h3><h4 id="输入流"><a href="#输入流" class="headerlink" title="输入流"></a>输入流</h4><img src="/images/java基础/IO/InputStream.png" alt="InputStream" style="zoom:50%;">
+
+<h5 id="继承关系"><a href="#继承关系" class="headerlink" title="继承关系"></a>继承关系</h5><p>字节输入流都继承自InputStream，InputStream表示从不同数据源产生输入的类，这些数据源包括</p>
+<ol>
+<li>字节数组</li>
+<li>String对象</li>
+<li>文件</li>
+<li>管道，从一端输入，从另一端输出</li>
+<li>一个由其他种类的流组成的序列，然后把它们汇聚为一个流</li>
+<li>其他数据源，如Internet连接</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>功能</th>
+<th>构造器</th>
+<th>如何使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ByteArrayInputStream</td>
+<td>允许将内存的缓冲区当做InputStream使用</td>
+<td>缓冲区，字节将从中取出</td>
+<td>将其与FilterInputStream对象相连以提供有用接口</td>
+</tr>
+<tr>
+<td>StringBufferInputStream(已废除)</td>
+<td>将String转换为InputStream</td>
+<td>字符串。底层实现实际使用StringBuffer</td>
+<td>将其与FilterInputStream对象相连以提供有用接口</td>
+</tr>
+<tr>
+<td>FileInputStream</td>
+<td>用于从文件中读取信息</td>
+<td>字符串，表示文件名、文件或FileDescriptor对象</td>
+<td></td>
+</tr>
+<tr>
+<td>PipedInputStream</td>
+<td>产生用于写入相关PipedOutputStream的数据。实现管道化概念</td>
+<td>PipedOutputStream</td>
+<td>作为多线程中的数据源</td>
+</tr>
+<tr>
+<td>SequenceInputStream</td>
+<td>将两个或多个InputStream对象转换成一个InputStream</td>
+<td>两个InputStream对象或一个容纳InputStream对象的容器Enumeration</td>
+<td></td>
+</tr>
+<tr>
+<td>FilterInputStream</td>
+<td>抽象类，作为装饰器的接口，为其他的InputStream类提供有用的功能</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>FilterInputStream类型子类包括以下几种</p>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>功能</th>
+<th>构造器</th>
+<th>如何使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DataInputStream</td>
+<td>与DataOutputStream搭配使用，按照移植方式从流读取基本数据类型</td>
+<td>InputStream</td>
+<td>包含用于读取基本数据类型的全部接口</td>
+</tr>
+<tr>
+<td>BufferedInputStream</td>
+<td>使用它可以防止每次读取时都得进行实际写操作</td>
+<td>InputStream</td>
+<td>本质上不提供接口，只是向进程添加缓冲功能</td>
+</tr>
+<tr>
+<td>LineNumberInputStream(已废除)</td>
+<td>跟踪输入流的行号，可调用getLineNumber()和setLineNumber(int)</td>
+<td>InputStream，可以指定缓冲区大小</td>
+<td>仅增加了行号</td>
+</tr>
+<tr>
+<td>PushbackInputStream</td>
+<td>具有能弹出一个字节的缓冲区，因此可以将读到的最后一个字符回退</td>
+<td>InputStream</td>
+<td>通常作为编译器的扫描器</td>
+</tr>
+</tbody></table>
+<h5 id="方法介绍"><a href="#方法介绍" class="headerlink" title="方法介绍"></a>方法介绍</h5><h6 id="读取数据"><a href="#读取数据" class="headerlink" title="读取数据"></a>读取数据</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 每次读取一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="comment">// 使用字节数组作为缓冲区，将读到的字节填充至缓冲区中</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[])</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="comment">// 将读到的字节填充至字节数组的指定位置上</span></span></span><br><span class="line"><span class="function"><span class="comment">// off 起始位置</span></span></span><br><span class="line"><span class="function"><span class="comment">// len 长度</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="关闭流"><a href="#关闭流" class="headerlink" title="关闭流"></a>关闭流</h6><p>使用close方法来关闭流，在1.7及之后建议使用try-with-resources语句来使用流，这样可以避免显示的调用close()方法，减少一些重复代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="跳过指定字节"><a href="#跳过指定字节" class="headerlink" title="跳过指定字节"></a>跳过指定字节</h6><p>可以使用skip方法来跳过指定数目的字节，相当于把流中当前读到的位置向后移动若干个字节。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">skip</span><span class="params">(<span class="keyword">long</span> n)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：该方法可能在向后移动的时候，没有达到指定字节就到达了流的末尾，所以并不一定会跳过指定的字节，该方法返回值为实际跳过的字节数</p>
+</blockquote>
+<h6 id="标记与重置"><a href="#标记与重置" class="headerlink" title="标记与重置"></a>标记与重置</h6><p>标记与重置方法一般联合使用，以实现流中部分内容可重复读取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mark方法在当前读取位置进行标记</span></span><br><span class="line"><span class="comment">// readlimit表示允许重复读取的字节，只能从标记的位置再次重复向后读取所指定的字节</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">mark</span><span class="params">(<span class="keyword">int</span> readlimit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// reset方法将流的当前读取位置移动到上次标记的位置</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function"><span class="comment">// 不是所有的流都支持标记功能，需要使用该方法来判断当前流是否支持标记功能</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">markSupported</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<h6 id="可读字节数"><a href="#可读字节数" class="headerlink" title="可读字节数"></a>可读字节数</h6><p>当read方法被调用时，如果当前流中没有可用的数据，该操作就会被阻塞，available()方法就是返回当前流中还有多少字节可以读取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">available</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="输出流"><a href="#输出流" class="headerlink" title="输出流"></a>输出流</h4><img src="/images/java基础/IO/OutputStream.png" alt="OutputStream" style="zoom:50%;">
+
+<p>字节输入流都继承自OutputStream，该类决定了输出所要去的目标，字节数组、文件或管道</p>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>功能</th>
+<th>构造器</th>
+<th>如何使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ByteArrayOutputStream</td>
+<td>在内存中创建缓冲区。所有送往流的数据都要放置在此缓冲区</td>
+<td>缓冲区初始大小</td>
+<td>用于指定数据的目的地</td>
+</tr>
+<tr>
+<td>FileOutputStream</td>
+<td>用于将信息写入文件</td>
+<td>字符串，表示文件名、文件或FileDescriptor对象</td>
+<td></td>
+</tr>
+<tr>
+<td>PipedOutputStream</td>
+<td>任何写入其中的信息都会自动作为相关PipedInputStream的输出，实现管道化概念</td>
+<td>PipedInputStream</td>
+<td>指定用于多线程的数据的目的地</td>
+</tr>
+<tr>
+<td>FilterOutputStream</td>
+<td>抽象类，作为装饰器的接口，为其他OutputStream提供有用的功能</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>FilterOutputStream类型子类包括</p>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>功能</th>
+<th>构造器</th>
+<th>如何使用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DataOutputStream</td>
+<td>与DataInputStream搭配使用，可以按照移植方式向流中写入基本数据类型</td>
+<td>OutputStream</td>
+<td>包含用于写入基本数据类型的全部接口</td>
+</tr>
+<tr>
+<td>PrintStream</td>
+<td>用于产生改格式化输出。其中DataOutputStream处理数据的存储，PrintStream处理显示</td>
+<td>OutputStream，可以用boolean值指示是否每次换行时清空缓冲区</td>
+<td>应该是对OutputStream对象的final封装</td>
+</tr>
+<tr>
+<td>BufferedOutputStream</td>
+<td>使用它以避免每次发送数据时都进行实际的写操作，可以调用flush()清空缓冲区</td>
+<td>OutputStream，可以指定缓冲区大小</td>
+<td>只是向进程添加缓冲功能</td>
+</tr>
+</tbody></table>
+<h5 id="方法介绍-1"><a href="#方法介绍-1" class="headerlink" title="方法介绍"></a>方法介绍</h5><h6 id="写入数据"><a href="#写入数据" class="headerlink" title="写入数据"></a>写入数据</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 每次写入一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> b)</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="comment">// 使用字节数组作为缓冲区，写入整个字节数组的内容</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">byte</span> b[])</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="comment">// 写入字节数组的部分内容</span></span></span><br><span class="line"><span class="function"><span class="comment">// off 起始位置</span></span></span><br><span class="line"><span class="function"><span class="comment">// len 长度</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">byte</span> b[], <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="关闭流-1"><a href="#关闭流-1" class="headerlink" title="关闭流"></a>关闭流</h6><p>使用close方法来关闭流，在1.7及之后建议使用try-with-resources语句来使用流，这样可以避免显示的调用close()方法，减少一些重复代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="刷新"><a href="#刷新" class="headerlink" title="刷新"></a>刷新</h6><p>flush()方法用来强制要求OutputStream对象将暂存于内部缓冲区的数据立即进行实际的写入(一般情况下不需要手动的调用该方法，在内部缓冲区填充满了之后，会自动执行实际的写入操作，在调用close()方法时也会自动调用flush()方法)</p>
+<p>有些OutputStream类中维护内部缓冲区是为了减少实际的写入操作次数，来提升性能</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">flush</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="字符流"><a href="#字符流" class="headerlink" title="字符流"></a>字符流</h3><img src="/images/java基础/IO/字符流.png" alt="字符流" style="zoom:50%;">
+
+<p>InputStream和OutputStream是面向字节I/O的，而Reader和Writer则提供兼容Unicode和面向字符I/O的功能，InputStreamReader可以把InputStream转换为Reader，而OutputStreamWriter可以把OutputStream转换为Writer</p>
+<h3 id="RandomAccessFile类"><a href="#RandomAccessFile类" class="headerlink" title="RandomAccessFile类"></a>RandomAccessFile类</h3><p>适用于由大小已知的记录组成的文件，可以使用seek()将文件指针从一条记录移动到另一条记录，然后对记录进行读取和修改。文件中记录的大小不一定相同，只要我们能确定那些记录有多大以及它们在文件中的位置即可。</p>
+<p>RandomAccessFile类不是InputStream或者OutputStream的子类，只是实现了DataInput和DataOutput接口，没有使用InputStream和OutputStream的任何功能，所有方法都是独立的，大部分为native方法</p>
+<h3 id="常用的IO操作"><a href="#常用的IO操作" class="headerlink" title="常用的IO操作"></a>常用的IO操作</h3><h4 id="缓冲输入文件"><a href="#缓冲输入文件" class="headerlink" title="缓冲输入文件"></a>缓冲输入文件</h4><p>想要打开一个文件进行字符输入，可以使用FileReader对象，然后传入一个String或者File对象作为文件名。为了提高速度，对文件进行缓冲，可以将所产生的引用传递给一个BufferedReader构造器。BufferedReader提供了lines()方法，会产生一个Stream<String>对象</String></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">(String file)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">try</span>(BufferedReader bufferedReader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(file)))&#123;</span><br><span class="line">           String line = <span class="keyword">null</span>;</span><br><span class="line">           <span class="keyword">while</span>((line = bufferedReader.readLine()) != <span class="keyword">null</span>)&#123;</span><br><span class="line">               System.out.println(line);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;读取失败&quot;</span>,e);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="读取字符"><a href="#读取字符" class="headerlink" title="读取字符"></a>读取字符</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        StringReader stringReader = <span class="keyword">new</span> StringReader(<span class="string">&quot;qaw试试&quot;</span>);</span><br><span class="line">        <span class="keyword">int</span> c;</span><br><span class="line">        <span class="keyword">while</span> ((c = stringReader.read()) != -<span class="number">1</span>) &#123;</span><br><span class="line">            System.out.println((<span class="keyword">char</span>)c);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>StringReader的read方法是以int形式返回的下一个字节，所以打印的时候类型必须转为char</p>
+<h4 id="格式化数据"><a href="#格式化数据" class="headerlink" title="格式化数据"></a>格式化数据</h4><p>要读取格式化数据，可以使用DataInputStream，是面向字节的，所以要使用InputStream类</p>
+<h4 id="文件输出"><a href="#文件输出" class="headerlink" title="文件输出"></a>文件输出</h4><p>FileWrite对象用于向文件写入数据，通常使用BufferedWriter将其包装起来增加缓冲的功能，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>(BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> StringReader(<span class="string">&quot;1111111111111111\n2222222222222\n3333333333&quot;</span>));</span><br><span class="line">            PrintWriter printWriter = <span class="keyword">new</span> PrintWriter(<span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> FileWriter(<span class="string">&quot;test.txt&quot;</span>)))</span><br><span class="line">        )&#123;</span><br><span class="line">            in.lines().forEach(printWriter :: println);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="标准IO"><a href="#标准IO" class="headerlink" title="标准IO"></a>标准IO</h2><p>标准输入流Systom.in、标准输出流System.out、标准错误流Sytem.err。</p>
+<p>System.out和System.err是预先包装成了PrintStream对象，但是System.in没有进行包装，属于原生的InputStream，所以在读取时需要对其进行包装</p>
+<h3 id="标准输入"><a href="#标准输入" class="headerlink" title="标准输入"></a>标准输入</h3><p>通常一行一行地读取输入，将System.in包装成BufferedReader</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (BufferedReader bufferedReader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(System.in))) &#123;</span><br><span class="line">            String line;</span><br><span class="line">            <span class="keyword">while</span> ((line = bufferedReader.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (line.equals(<span class="string">&quot;end&quot;</span>)) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重定向标准I-O"><a href="#重定向标准I-O" class="headerlink" title="重定向标准I/O"></a>重定向标准I/O</h3><p>System类提供了简单的静态方法调用，重定向标准输入流、标准输出流和标准错误流</p>
+<ul>
+<li><p>setIn(InputStream)</p>
+</li>
+<li><p>setOut(PrintStream)</p>
+</li>
+<li><p>setErr(PrintStream)</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span>(BufferedInputStream bufferedInputStream = <span class="keyword">new</span> BufferedInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">&quot;C:\\Users\\sinosoft\\Desktop\\剩余工作.txt&quot;</span>));</span><br><span class="line">            PrintStream printStream = <span class="keyword">new</span> PrintStream(<span class="keyword">new</span> BufferedOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;C:\\Users\\sinosoft\\Desktop\\剩余工作副本.txt&quot;</span>)))</span><br><span class="line">        )&#123;</span><br><span class="line">            System.setIn(bufferedInputStream);</span><br><span class="line">            System.setOut(printStream);</span><br><span class="line">            <span class="keyword">try</span> (BufferedReader bufferedReader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(System.in))) &#123;</span><br><span class="line">                String line;</span><br><span class="line">                <span class="keyword">while</span> ((line = bufferedReader.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (line.equals(<span class="string">&quot;end&quot;</span>)) &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    System.out.println(line);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e1) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E5%9F%BA%E7%A1%80/" rel="tag"># java基础</a>
+          </div>
+
+        
+
+
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/java%E5%9F%BA%E7%A1%80/IO/2.NIO%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" rel="prev" title="NIO基本操作">
+      <i class="fa fa-chevron-left"></i> NIO基本操作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/%E5%A4%A7%E6%95%B0%E6%8D%AE/kafka/2.kafka%20API%E4%BD%BF%E7%94%A8/" rel="next" title="kafka API操作">
+      kafka API操作 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9AIO"><span class="nav-number">1.</span> <span class="nav-text">普通IO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E6%B5%81"><span class="nav-number">1.1.</span> <span class="nav-text">字节流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%B5%81"><span class="nav-number">1.1.1.</span> <span class="nav-text">输入流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">继承关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">方法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.2.1.</span> <span class="nav-text">读取数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E6%B5%81"><span class="nav-number">1.1.1.2.2.</span> <span class="nav-text">关闭流</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%B7%B3%E8%BF%87%E6%8C%87%E5%AE%9A%E5%AD%97%E8%8A%82"><span class="nav-number">1.1.1.2.3.</span> <span class="nav-text">跳过指定字节</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E4%B8%8E%E9%87%8D%E7%BD%AE"><span class="nav-number">1.1.1.2.4.</span> <span class="nav-text">标记与重置</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%8F%AF%E8%AF%BB%E5%AD%97%E8%8A%82%E6%95%B0"><span class="nav-number">1.1.1.2.5.</span> <span class="nav-text">可读字节数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%B5%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">输出流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">方法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">写入数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E6%B5%81-1"><span class="nav-number">1.1.2.1.2.</span> <span class="nav-text">关闭流</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%B7%E6%96%B0"><span class="nav-number">1.1.2.1.3.</span> <span class="nav-text">刷新</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E6%B5%81"><span class="nav-number">1.2.</span> <span class="nav-text">字符流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RandomAccessFile%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">RandomAccessFile类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84IO%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">常用的IO操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E8%BE%93%E5%85%A5%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">缓冲输入文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%AD%97%E7%AC%A6"><span class="nav-number">1.4.2.</span> <span class="nav-text">读取字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.3.</span> <span class="nav-text">格式化数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%BE%93%E5%87%BA"><span class="nav-number">1.4.4.</span> <span class="nav-text">文件输出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86IO"><span class="nav-number">2.</span> <span class="nav-text">标准IO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">标准输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91%E6%A0%87%E5%87%86I-O"><span class="nav-number">2.2.</span> <span class="nav-text">重定向标准I&#x2F;O</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZH"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">ZH</p>
+  <div class="site-description" itemprop="description">java菜鸟号正在起航</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">386</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/isfox" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;isfox" rel="noopener" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/SiXiangPiaoFuZhe" title="Gitee → https:&#x2F;&#x2F;gitee.com&#x2F;SiXiangPiaoFuZhe" rel="noopener" target="_blank"><i class="fa fa-git fa-fw"></i>Gitee</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhanghe1996hy@163.com" title="E-Mail → mailto:zhanghe1996hy@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZH</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'default',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'MURUEmkUEoDdKOq3baW5Ofoh-gzGzoHsz',
+      appKey     : 'AsR88DCeCWHyTu5jFQkAA6g6',
+      placeholder: "来说一句吧",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

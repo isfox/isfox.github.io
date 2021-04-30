@@ -31,7 +31,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://isfox.github.io/images/tomcat/catalina.png">
 <meta property="article:published_time" content="2020-08-29T07:47:19.000Z">
-<meta property="article:modified_time" content="2021-04-18T01:25:09.424Z">
+<meta property="article:modified_time" content="2021-04-27T01:09:25.165Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="tomcat">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-18 09:25:09" itemprop="dateModified" datetime="2021-04-18T09:25:09+08:00">2021-04-18</time>
+                <time title="修改时间：2021-04-27 09:09:25" itemprop="dateModified" datetime="2021-04-27T09:09:25+08:00">2021-04-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -365,7 +365,7 @@
 </li>
 </ul>
 <h4 id="Context的解析"><a href="#Context的解析" class="headerlink" title="Context的解析"></a>Context的解析</h4><p>ContextRuleSet类中包含Context的解析</p>
-<p>Catalina中Context配置并非来源于一处，此处仅介绍server.xm中的配置，大多数情况下，不需要再server.xml中配置Context，而是由HostConfig自动扫描部署目录，以context.xml文件为基础进行解析创建。</p>
+<p>Catalina中Context配置并非来源于一处，此处仅介绍server.xm中的配置，大多数情况下，不需要在server.xml中配置Context，而是由HostConfig自动扫描部署目录，以context.xml文件为基础进行解析创建。</p>
 <ul>
 <li><p>Context实例化</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用server.xml创建时，create为true；通过HostConfig创建时create为false</span></span><br><span class="line"><span class="keyword">if</span> (create) &#123;</span><br><span class="line">    digester.addObjectCreate(prefix + <span class="string">&quot;Context&quot;</span>,</span><br><span class="line">            <span class="string">&quot;org.apache.catalina.core.StandardContext&quot;</span>, <span class="string">&quot;className&quot;</span>);</span><br><span class="line">    digester.addSetProperties(prefix + <span class="string">&quot;Context&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    digester.addRule(prefix + <span class="string">&quot;Context&quot;</span>, <span class="keyword">new</span> SetContextPropertiesRule());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (create) &#123;</span><br><span class="line">    digester.addRule(prefix + <span class="string">&quot;Context&quot;</span>,</span><br><span class="line">                     <span class="keyword">new</span> LifecycleListenerRule</span><br><span class="line">                         (<span class="string">&quot;org.apache.catalina.startup.ContextConfig&quot;</span>,</span><br><span class="line">                          <span class="string">&quot;configClass&quot;</span>));</span><br><span class="line">    digester.addSetNext(prefix + <span class="string">&quot;Context&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;addChild&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;org.apache.catalina.Container&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -376,7 +376,7 @@
 <li><p>为Context指定类加载器</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//默认为org.apache.catalina.loader.WebappLoader</span></span><br><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/Loader&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.loader.WebappLoader&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/Loader&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/Loader&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setLoader&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.Loader&quot;</span>);</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>位Context添加会话管理器</p>
+<li><p>为Context添加会话管理器</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认为org.apache.catalina.session.StandardManager</span></span><br><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/Manager&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;org.apache.catalina.session.StandardManager&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/Manager&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/Manager&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setManager&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.Manager&quot;</span>);</span><br><span class="line"><span class="comment">// 指定会话存储方式</span></span><br><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/Manager/Store&quot;</span>,</span><br><span class="line">                         <span class="keyword">null</span>, <span class="comment">// MUST be specified in the element</span></span><br><span class="line">                         <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/Manager/Store&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/Manager/Store&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setStore&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.Store&quot;</span>);</span><br><span class="line"><span class="comment">//指定会话标识生成器</span></span><br><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/Manager/SessionIdGenerator&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;org.apache.catalina.util.StandardSessionIdGenerator&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/Manager/SessionIdGenerator&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/Manager/SessionIdGenerator&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setSessionIdGenerator&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.SessionIdGenerator&quot;</span>);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>为Context添加初始化参数</p>
@@ -403,7 +403,9 @@
 
 <ul>
 <li><p>为Context添加Cookie处理器</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;org.apache.tomcat.util.http.Rfc6265CookieProcessor&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setCookieProcessor&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.tomcat.util.http.CookieProcessor&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">digester.addObjectCreate(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;org.apache.tomcat.util.http.Rfc6265CookieProcessor&quot;</span>,</span><br><span class="line">                         <span class="string">&quot;className&quot;</span>);</span><br><span class="line">digester.addSetProperties(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>);</span><br><span class="line">digester.addSetNext(prefix + <span class="string">&quot;Context/CookieProcessor&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;setCookieProcessor&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.tomcat.util.http.CookieProcessor&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
 
     </div>
@@ -507,20 +509,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">374</span>
+          <span class="site-state-item-count">386</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">60</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
