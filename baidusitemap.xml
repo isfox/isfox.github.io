@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://zhhll.icu/2021/scala/19.scala%E9%9B%86%E5%90%88%E6%93%8D%E4%BD%9C/</loc>
+    <lastmod>2021-05-08</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/scala/18.scala%E9%9B%86%E5%90%88/</loc>
+    <lastmod>2021-05-08</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/%E9%9B%86%E5%90%88/8.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2021-05-08</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/15.MySQL%E6%97%A5%E5%BF%97/</loc>
+    <lastmod>2021-05-08</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/10.tomcat%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%99%A8/</loc>
+    <lastmod>2021-05-08</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/6.MySQL%E7%B4%A2%E5%BC%95/</loc>
+    <lastmod>2021-05-07</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/</loc>
+    <lastmod>2021-05-07</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/scala/17.scala%E9%9A%90%E5%BC%8F%E5%87%BD%E6%95%B0/</loc>
+    <lastmod>2021-05-07</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/2.CopyOnWrite%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2021-05-07</lastmod>
+  </url>
+  <url>
     <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/%E9%9B%86%E5%90%88/6.HashMap%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2021-05-06</lastmod>
   </url>
@@ -169,10 +205,6 @@
     <lastmod>2021-04-23</lastmod>
   </url>
   <url>
-    <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/IO/1.java%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E6%93%8D%E4%BD%9C/</loc>
-    <lastmod>2021-04-23</lastmod>
-  </url>
-  <url>
     <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/%E5%AD%97%E7%AC%A6%E4%B8%B2/2.%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/</loc>
     <lastmod>2021-04-23</lastmod>
   </url>
@@ -238,10 +270,6 @@
   </url>
   <url>
     <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/%E9%9B%86%E5%90%88/9.hash/</loc>
-    <lastmod>2021-04-23</lastmod>
-  </url>
-  <url>
-    <loc>http://zhhll.icu/2020/java%E5%9F%BA%E7%A1%80/%E9%9B%86%E5%90%88/8.ConcurrentHashMap%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2021-04-23</lastmod>
   </url>
   <url>
@@ -521,10 +549,6 @@
     <lastmod>2021-04-18</lastmod>
   </url>
   <url>
-    <loc>http://zhhll.icu/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/10.tomcat%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%99%A8/</loc>
-    <lastmod>2021-04-18</lastmod>
-  </url>
-  <url>
     <loc>http://zhhll.icu/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/9.tomcat%E4%B9%8Bserver%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/</loc>
     <lastmod>2021-04-18</lastmod>
   </url>
@@ -550,10 +574,6 @@
   </url>
   <url>
     <loc>http://zhhll.icu/2020/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat/1.web%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%99%A8/</loc>
-    <lastmod>2021-04-18</lastmod>
-  </url>
-  <url>
-    <loc>http://zhhll.icu/2021/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8/2.CopyOnWrite%E5%AE%B9%E5%99%A8/</loc>
     <lastmod>2021-04-18</lastmod>
   </url>
   <url>
@@ -642,10 +662,6 @@
   </url>
   <url>
     <loc>http://zhhll.icu/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/7.in%E5%92%8Cexists%E7%9A%84%E5%8F%96%E8%88%8D/</loc>
-    <lastmod>2021-04-14</lastmod>
-  </url>
-  <url>
-    <loc>http://zhhll.icu/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/6.MySQL%E7%B4%A2%E5%BC%95/</loc>
     <lastmod>2021-04-14</lastmod>
   </url>
   <url>
