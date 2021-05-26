@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://zhhll.icu/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/2.DataFrame%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2021-05-26</lastmod>
+  </url>
+  <url>
+    <loc>http://zhhll.icu/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/1.SparkSQL%E7%AE%80%E4%BB%8B/</loc>
+    <lastmod>2021-05-25</lastmod>
+  </url>
+  <url>
     <loc>http://zhhll.icu/2021/scala/2.scala%E5%8F%98%E9%87%8F/</loc>
     <lastmod>2021-05-25</lastmod>
   </url>
