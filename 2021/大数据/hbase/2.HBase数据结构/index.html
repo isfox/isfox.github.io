@@ -29,11 +29,13 @@
 <meta property="og:site_name" content="小菜鸟">
 <meta property="og:description" content="HBase数据结构命名空间NameSpaceHBase的命名空间类似于mysql中的database，一个mysql下可以有多个database，同样的一个HBase下也可以有多个命名空间，命名空间中包括  Table表，所有的表都是命名空间的成员，即表必属于某个命名空间，如果没有指定，则在default默认的命名空间中。 RegionServer group，一个命名空间包含了默认的Region">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://isfox.github.io/images/大数据/hbase/表结构.png">
 <meta property="article:published_time" content="2021-04-26T12:32:23.000Z">
-<meta property="article:modified_time" content="2021-04-26T02:50:42.878Z">
+<meta property="article:modified_time" content="2021-05-29T08:40:09.144Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="hbase">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://isfox.github.io/images/大数据/hbase/表结构.png">
 
 <link rel="canonical" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/2.HBase%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
@@ -220,10 +222,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-26 20:32:23 / 修改时间：10:50:42" itemprop="dateCreated datePublished" datetime="2021-04-26T20:32:23+08:00">2021-04-26</time>
+              <time title="创建时间：2021-04-26 20:32:23" itemprop="dateCreated datePublished" datetime="2021-04-26T20:32:23+08:00">2021-04-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-29 16:40:09" itemprop="dateModified" datetime="2021-05-29T16:40:09+08:00">2021-05-29</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -288,7 +296,7 @@
 <h3 id="Column-Family"><a href="#Column-Family" class="headerlink" title="Column Family"></a>Column Family</h3><p>列族：HBASE表中的每个列，都归属于某个列族。列族是表的schema的一部分(而列不是)，必须在使用表之前定义。列名都以列族作为前缀。例如 info:name，info:sex都属于info 这个列族。</p>
 <h3 id="Cell"><a href="#Cell" class="headerlink" title="Cell"></a>Cell</h3><p>由{rowkey, column Family:columu, version} 唯一确定的单元。cell中的数据是没有类型的，全部是字节码形式存贮。</p>
 <h3 id="Time-Stamp"><a href="#Time-Stamp" class="headerlink" title="Time Stamp"></a>Time Stamp</h3><p>HBASE 中通过rowkey和columns确定的为一个存贮单元称为cell。每个 cell都保存 着同一份数据的多个版本。版本通过时间戳来索引。时间戳的类型是 64位整型。时间戳可以由HBASE(在数据写入时自动 )赋值，此时时间戳是精确到毫秒 的当前系统时间。时间戳也可以由客户显式赋值。如果应用程序要避免数据版 本冲突，就必须自己生成具有唯一性的时间戳。每个 cell中，不同版本的数据按照时间倒序排序，即最新的数据排在最前面。<br>为了避免数据存在过多版本造成的的管理 (包括存贮和索引)负担，HBASE提供 了两种数据版本回收方式。一是保存数据的最后n个版本，二是保存最近一段 时间内的版本（比如最近七天）。用户可以针对每个列族进行设置。</p>
-
+<img src="/images/大数据/hbase/表结构.png" alt="表结构" style="zoom:50%;">
     </div>
 
     
@@ -390,7 +398,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">438</span>
+          <span class="site-state-item-count">441</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
