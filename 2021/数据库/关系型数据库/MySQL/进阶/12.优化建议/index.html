@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="优化建议join语句优化 使用小表驱动大表，减少join语句的nestedLoop的循环总数 优先优化内层循环 保证join语句中被驱动表上的join条件已被索引">
+  <meta name="description" content="优化建议join语句优化 使用小表驱动大表，减少join语句的nestedLoop的循环总数 优先优化内层循环 保证join语句中被驱动表上的join条件已被索引 尽量用join代替子查询  减少排序排序会消耗较多 CPU 资源，所以减少排序可以在缓存命中率高、IO 能力足够的场景下会影响 SQL 的响应时间 减少排序的方法  通过利用索引来排序的方式进行优化 减少参与排序的记录条数 非必要不对数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="优化建议">
 <meta property="og:url" content="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/12.%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="优化建议join语句优化 使用小表驱动大表，减少join语句的nestedLoop的循环总数 优先优化内层循环 保证join语句中被驱动表上的join条件已被索引">
+<meta property="og:description" content="优化建议join语句优化 使用小表驱动大表，减少join语句的nestedLoop的循环总数 优先优化内层循环 保证join语句中被驱动表上的join条件已被索引 尽量用join代替子查询  减少排序排序会消耗较多 CPU 资源，所以减少排序可以在缓存命中率高、IO 能力足够的场景下会影响 SQL 的响应时间 减少排序的方法  通过利用索引来排序的方式进行优化 减少参与排序的记录条数 非必要不对数">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-07T01:40:30.000Z">
-<meta property="article:modified_time" content="2021-04-14T02:21:46.136Z">
+<meta property="article:modified_time" content="2021-06-03T10:01:15.252Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-14 10:21:46" itemprop="dateModified" datetime="2021-04-14T10:21:46+08:00">2021-04-14</time>
+                <time title="修改时间：2021-06-03 18:01:15" itemprop="dateModified" datetime="2021-06-03T18:01:15+08:00">2021-06-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,6 +276,23 @@
 <li>使用小表驱动大表，减少join语句的nestedLoop的循环总数</li>
 <li>优先优化内层循环</li>
 <li>保证join语句中被驱动表上的join条件已被索引</li>
+<li>尽量用join代替子查询</li>
+</ul>
+<h3 id="减少排序"><a href="#减少排序" class="headerlink" title="减少排序"></a>减少排序</h3><p>排序会消耗较多 CPU 资源，所以减少排序可以在缓存命中率高、IO 能力足够的场景下会影响 SQL 的响应时间</p>
+<p>减少排序的方法</p>
+<ul>
+<li>通过利用索引来排序的方式进行优化</li>
+<li>减少参与排序的记录条数</li>
+<li>非必要不对数据进行排序</li>
+</ul>
+<h3 id="减少or的使用"><a href="#减少or的使用" class="headerlink" title="减少or的使用"></a>减少or的使用</h3><p>当 where 子句中存在多个条件以“或”并存的时候，MySQL 的优化器并没有很好的解决其执行计划优化问题，再加上MySQL 特有的 SQL 与 Storage 分层架构方式，造成了其性能比较低下，使用 union all 或者是union(必要的时候)的方式来代替“or”会得到更好的效果</p>
+<h3 id="防止出现索引失效的情况"><a href="#防止出现索引失效的情况" class="headerlink" title="防止出现索引失效的情况"></a>防止出现索引失效的情况</h3><ul>
+<li>计算</li>
+<li>使用not，&lt;&gt;，!=</li>
+<li>使用IS NULL和IS NOT NULL</li>
+<li>数据类型转换</li>
+<li>对索引字段使用函数或者表达式</li>
+<li>索引字段中不要有null</li>
 </ul>
 
     </div>
@@ -363,7 +380,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">优化建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#join%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">join语句优化</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">优化建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#join%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">join语句优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">减少排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E5%B0%91or%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">减少or的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E6%AD%A2%E5%87%BA%E7%8E%B0%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.4.</span> <span class="nav-text">防止出现索引失效的情况</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -379,20 +396,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">466</span>
+          <span class="site-state-item-count">469</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-count">65</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-count">74</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
