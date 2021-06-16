@@ -194,6 +194,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" class="post-title-link" itemprop="url">程序计数器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-12 15:30:40 / 修改时间：16:15:57" itemprop="dateCreated datePublished" datetime="2021-06-12T15:30:40+08:00">2021-06-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" class="post-meta-item leancloud_visitors" data-flag-title="程序计数器" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h2><p>程序计数器(Program Counter Register)是用来存储指向下一条指令的地址，也就是即将要执行的指令代码，有执行引擎来读取下一条指令，每个线程都有自己的一个程序计数器，程序计数器的生命周期与线程的一致，在任何时间同一个线程只会执行一个方法，也就是当前方法，程序计数器会存储当前线程正在执行方法的JVM指令地址，如果执行的是native方法，在指令地址是undefined</p>
+<blockquote>
+<p>程序计数器是JVM规范中唯一一个不会出现OOM的区域，且也不存在垃圾回收</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/JVM/6.%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/JVM/3.%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1113,96 +1212,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/linux/%E8%BF%9B%E9%98%B6/1.linux%E4%B8%AD%E7%9A%84inode%E5%AF%B9%E8%B1%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/linux/%E8%BF%9B%E9%98%B6/1.linux%E4%B8%AD%E7%9A%84inode%E5%AF%B9%E8%B1%A1/" class="post-title-link" itemprop="url">linux中的inode对象</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-06-08 20:00:30 / 修改时间：10:57:01" itemprop="dateCreated datePublished" datetime="2021-06-08T20:00:30+08:00">2021-06-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/linux/%E8%BF%9B%E9%98%B6/1.linux%E4%B8%AD%E7%9A%84inode%E5%AF%B9%E8%B1%A1/" class="post-meta-item leancloud_visitors" data-flag-title="linux中的inode对象" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/linux/%E8%BF%9B%E9%98%B6/1.linux%E4%B8%AD%E7%9A%84inode%E5%AF%B9%E8%B1%A1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/linux/%E8%BF%9B%E9%98%B6/1.linux%E4%B8%AD%E7%9A%84inode%E5%AF%B9%E8%B1%A1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="linux中的inode对象"><a href="#linux中的inode对象" class="headerlink" title="linux中的inode对象"></a>linux中的inode对象</h2><p>inode 是 UNIX/Linux 操作系统中的一种数据结构,其本质是结构体,它包含了与文件系统中各个文件相关的一些重要信息,例如文件及目录的基本信息,包含时间、档名、使用者及群组等。在 UNIX/Linux中创建文件系统时,同时将会创建大量的 inode 。通常,文件系统磁盘空间中大约百分之一空间分配给了 inode 表。在Linux系统中,内核为每一个新创建的文件分配一个Inode(索引结点),每个文件都有一个唯一的inode号,我们可以将inode简单理解成一个指针,它永远指向本文件的具体存储位置。文件属性保存在索引结点里,在访问文件时,索引结点被复制到内存在,从而实现文件的快速访问。系统是通过索引节点(而不是文件名)来定位每一个文件</p>
-<p>Block 是记录文件内容数据的区域,至于 inode 则是记录 该文件的相关属性,以及文件内容放置在哪一个 Block 之内 的信息</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1274,7 +1283,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">501</span>
+          <span class="site-state-item-count">502</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
