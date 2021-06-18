@@ -30,7 +30,7 @@
 <meta property="og:description" content="springmvc注解的使用@RequestMapping地址映射，可以用在类和方法上">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-07T06:05:23.000Z">
-<meta property="article:modified_time" content="2021-04-19T03:24:40.492Z">
+<meta property="article:modified_time" content="2021-06-17T10:25:19.867Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="springmvc">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-19 11:24:40" itemprop="dateModified" datetime="2021-04-19T11:24:40+08:00">2021-04-19</time>
+                <time title="修改时间：2021-06-17 18:25:19" itemprop="dateModified" datetime="2021-06-17T18:25:19+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -280,11 +280,24 @@
 <p>@PathVariable中的value值要设置为和地址栏中一致，如@PathVariable(“id”)</p>
 <h3 id="RequestParam"><a href="#RequestParam" class="headerlink" title="@RequestParam"></a>@RequestParam</h3><p>可以接收拼接在地址栏中的参数</p>
 <p>如: get?id=1&amp;name=张三</p>
-<p>@RequestParam(“id”) int id,@RequestParam(“name”) String name</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestParam(&quot;id&quot;)</span> <span class="keyword">int</span> id,<span class="meta">@RequestParam(&quot;name&quot;)</span> String name</span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="RequestHeader"><a href="#RequestHeader" class="headerlink" title="@RequestHeader"></a>@RequestHeader</h3><p>可以获取请求头参数</p>
 <h3 id="CookieValue"><a href="#CookieValue" class="headerlink" title="@CookieValue"></a>@CookieValue</h3><p>可以绑定请求中的cookie值</p>
 <p>@CookieValue(“JSESSIONID”) String sessionId</p>
-<h3 id="SessionAttribute"><a href="#SessionAttribute" class="headerlink" title="@SessionAttribute"></a>@SessionAttribute</h3>
+<h3 id="SessionAttribute"><a href="#SessionAttribute" class="headerlink" title="@SessionAttribute"></a>@SessionAttribute</h3><p>默认情况下Spring MVC将模型中的数据存储到request域中，当一个请求结束后，数据就失效了，如果要跨页面使用，那么需要使用到session，而@SessionAttributes注解就可以使得模型中的数据存储一份到session域中</p>
+<h3 id="ModelAttribute"><a href="#ModelAttribute" class="headerlink" title="@ModelAttribute"></a>@ModelAttribute</h3><p>可以放到方法上或者参数上</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.PARAMETER, ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ModelAttribute</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法上"><a href="#方法上" class="headerlink" title="方法上"></a>方法上</h4><p>标记在方法上，会在每一个@RequestMapping标注的方法前执行，如果有返回值，则自动将该返回值加入到ModelMap中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ModelAttribute</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">(<span class="meta">@RequestParam(&quot;id&quot;)</span> String id, Model model)</span></span>&#123;</span><br><span class="line">  <span class="comment">// 方法返回值为void，所以需要手动添加到model中</span></span><br><span class="line">    model.addAttribute(<span class="string">&quot;id&quot;</span>,id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@ModelAttribute(&quot;name&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">beforeWith</span><span class="params">(<span class="meta">@RequestParam(&quot;name&quot;)</span> String name, Model model)</span></span>&#123;</span><br><span class="line">  <span class="comment">// 将返回结果放入到model中</span></span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/modelAttributeTest&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">test</span><span class="params">(Model model)</span></span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; stringObjectMap = model.asMap();</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;id:&quot;</span>+stringObjectMap.get(<span class="string">&quot;id&quot;</span>)+<span class="string">&quot;,name:&quot;</span>+stringObjectMap.get(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="参数上"><a href="#参数上" class="headerlink" title="参数上"></a>参数上</h4><p>标记在方法的参数上，会将客户端传递过来的参数按名称注入到指定对象中，并且会将这个对象自动加入ModelMap中，便于View层使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/modelAttributeTest2&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testParam</span><span class="params">(Model model,<span class="meta">@ModelAttribute(&quot;pass&quot;)</span> String pass)</span></span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; stringObjectMap = model.asMap();</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;id:&quot;</span>+stringObjectMap.get(<span class="string">&quot;id&quot;</span>)+<span class="string">&quot;,name:&quot;</span>+stringObjectMap.get(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">            +<span class="string">&quot;,pass:&quot;</span>+stringObjectMap.get(<span class="string">&quot;pass&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     
@@ -370,7 +383,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#springmvc%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">springmvc注解的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestMapping"><span class="nav-number">1.1.</span> <span class="nav-text">@RequestMapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PathVariable"><span class="nav-number">1.2.</span> <span class="nav-text">@PathVariable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestParam"><span class="nav-number">1.3.</span> <span class="nav-text">@RequestParam</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestHeader"><span class="nav-number">1.4.</span> <span class="nav-text">@RequestHeader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CookieValue"><span class="nav-number">1.5.</span> <span class="nav-text">@CookieValue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SessionAttribute"><span class="nav-number">1.6.</span> <span class="nav-text">@SessionAttribute</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#springmvc%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">springmvc注解的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestMapping"><span class="nav-number">1.1.</span> <span class="nav-text">@RequestMapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PathVariable"><span class="nav-number">1.2.</span> <span class="nav-text">@PathVariable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestParam"><span class="nav-number">1.3.</span> <span class="nav-text">@RequestParam</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RequestHeader"><span class="nav-number">1.4.</span> <span class="nav-text">@RequestHeader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CookieValue"><span class="nav-number">1.5.</span> <span class="nav-text">@CookieValue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SessionAttribute"><span class="nav-number">1.6.</span> <span class="nav-text">@SessionAttribute</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ModelAttribute"><span class="nav-number">1.7.</span> <span class="nav-text">@ModelAttribute</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%8A"><span class="nav-number">1.7.1.</span> <span class="nav-text">方法上</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%B8%8A"><span class="nav-number">1.7.2.</span> <span class="nav-text">参数上</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -386,7 +399,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-count">510</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

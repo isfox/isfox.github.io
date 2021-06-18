@@ -22,20 +22,20 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="有状态转换有时在DStream操作时需要跨批次的进行数据统计，如需要统计累加的wordcount，此时可以使用有状态的转换操作updateStateByKey方法。updateStateByKey()为我们提供了对一个状态变量的访问，用于键值对形式的 DStream。给定一个由(键，事件)对构成的 DStream，并传递一个指定如何根据新的事件更新每个键对应状态的函数，它可以构建出一个新的 DSt">
+  <meta name="description" content="spark streaming容错为了spark streaming可以有强大的容错保障，必须设置检查点，检查点机制主要有两个目的  控制发生失败时需要重算的状态数 提供驱动器程序容错  驱动器程序容错">
 <meta property="og:type" content="article">
-<meta property="og:title" content="有状态转换">
-<meta property="og:url" content="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/index.html">
+<meta property="og:title" content="spark streaming容错">
+<meta property="og:url" content="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="有状态转换有时在DStream操作时需要跨批次的进行数据统计，如需要统计累加的wordcount，此时可以使用有状态的转换操作updateStateByKey方法。updateStateByKey()为我们提供了对一个状态变量的访问，用于键值对形式的 DStream。给定一个由(键，事件)对构成的 DStream，并传递一个指定如何根据新的事件更新每个键对应状态的函数，它可以构建出一个新的 DSt">
+<meta property="og:description" content="spark streaming容错为了spark streaming可以有强大的容错保障，必须设置检查点，检查点机制主要有两个目的  控制发生失败时需要重算的状态数 提供驱动器程序容错  驱动器程序容错">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-29T06:00:30.000Z">
-<meta property="article:modified_time" content="2021-05-29T06:25:03.275Z">
+<meta property="article:published_time" content="2021-06-17T12:00:30.000Z">
+<meta property="article:modified_time" content="2021-06-17T08:22:33.981Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="spark">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/">
+<link rel="canonical" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>有状态转换 | 小菜鸟</title>
+  <title>spark streaming容错 | 小菜鸟</title>
   
 
 
@@ -198,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -211,7 +211,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          有状态转换
+          spark streaming容错
         </h1>
 
         <div class="post-meta">
@@ -222,7 +222,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-29 14:00:30 / 修改时间：14:25:03" itemprop="dateCreated datePublished" datetime="2021-05-29T14:00:30+08:00">2021-05-29</time>
+              <time title="创建时间：2021-06-17 20:00:30 / 修改时间：16:22:33" itemprop="dateCreated datePublished" datetime="2021-06-17T20:00:30+08:00">2021-06-17</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -235,7 +235,7 @@
             </span>
 
           
-            <span id="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/" class="post-meta-item leancloud_visitors" data-flag-title="有状态转换" title="阅读次数">
+            <span id="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/" class="post-meta-item leancloud_visitors" data-flag-title="spark streaming容错" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -250,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/3.%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/4.spark%20streaming%E5%AE%B9%E9%94%99/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,13 +266,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="有状态转换"><a href="#有状态转换" class="headerlink" title="有状态转换"></a>有状态转换</h2><p>有时在DStream操作时需要跨批次的进行数据统计，如需要统计累加的wordcount，此时可以使用有状态的转换操作updateStateByKey方法。<br>updateStateByKey()为我们提供了对一个状态变量的访问，用于键值对形式的 DStream。给定一个由(键，事件)对构成的 DStream，并传递一个指定如何根据新的事件更新每个键对应状态的函数，它可以构建出一个新的 DStream，其内部数据为(键，状态) 对。<br>updateStateByKey() 的结果会是一个新的 DStream，其内部的 RDD 序列是由每个时间区间对应的(键，状态)对组成的</p>
-<blockquote>
-<p>使用 updateStateByKey 需要对检查点目录进行配置，会使用检查点来保存状态</p>
-<p>如果不设置检查点会出现错误</p>
-<p>requirement failed: The checkpoint directory has not been set. Please set it by StreamingContext.checkpoint().</p>
-</blockquote>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> sparkConf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setMaster(<span class="string">&quot;local[*]&quot;</span>).setAppName(<span class="string">&quot;sparkStreaming&quot;</span>)</span><br><span class="line"><span class="comment">// 第二个参数是采集周期</span></span><br><span class="line"><span class="keyword">val</span> streamingContext = <span class="keyword">new</span> <span class="type">StreamingContext</span>(sparkConf, <span class="type">Seconds</span>(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置检查点</span></span><br><span class="line">streamingContext.checkpoint(<span class="string">&quot;./checkpoint&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> stream = streamingContext.receiverStream(<span class="keyword">new</span> <span class="type">MyReceiver</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> map = stream.map((_, <span class="number">1</span>))</span><br><span class="line"><span class="comment">// updateStateByKey内需要传入一个函数</span></span><br><span class="line"><span class="comment">//  函数第一个参数  values 为当前批次单词频度</span></span><br><span class="line"><span class="comment">//  函数第二个参数  state 为以往批次单词频度</span></span><br><span class="line"><span class="keyword">val</span> wordCount = map.updateStateByKey[<span class="type">Int</span>]((values: <span class="type">Seq</span>[<span class="type">Int</span>], state: <span class="type">Option</span>[<span class="type">Int</span>]) =&gt; &#123;</span><br><span class="line">  <span class="keyword">val</span> current = values.foldLeft(<span class="number">0</span>)(_ + _)</span><br><span class="line">  <span class="keyword">val</span> pre = state.getOrElse(<span class="number">0</span>)</span><br><span class="line">  <span class="type">Some</span>(current + pre)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">wordCount.print()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动采集器</span></span><br><span class="line">streamingContext.start()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待采集器停止</span></span><br><span class="line">streamingContext.awaitTermination()</span><br></pre></td></tr></table></figure>
+        <h2 id="spark-streaming容错"><a href="#spark-streaming容错" class="headerlink" title="spark streaming容错"></a>spark streaming容错</h2><p>为了spark streaming可以有强大的容错保障，必须设置检查点，检查点机制主要有两个目的</p>
+<ul>
+<li>控制发生失败时需要重算的状态数</li>
+<li>提供驱动器程序容错</li>
+</ul>
+<h3 id="驱动器程序容错"><a href="#驱动器程序容错" class="headerlink" title="驱动器程序容错"></a>驱动器程序容错</h3><a id="more"></a>
+
+<p>在驱动器重启的时候，如果想要从检查点来恢复数据，必须要使用特殊的方式来进行创建StreamingContext，使用getOrCreate方法可以使得在重启驱动器程序的时候，如果检查点文件存在，会重新从检查点目录中初始化出StreamingContext，然后继续处理</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> checkPointDir = <span class="string">&quot;./checkpoint3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 驱动器程序容错</span></span><br><span class="line"><span class="keyword">val</span> context = <span class="type">StreamingContext</span>.getOrCreate(checkPointDir, () =&gt; &#123;</span><br><span class="line">  <span class="keyword">val</span> sparkConf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setMaster(<span class="string">&quot;local[*]&quot;</span>).setAppName(<span class="string">&quot;sparkStreaming&quot;</span>)</span><br><span class="line">  <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(sparkConf, <span class="type">Seconds</span>(<span class="number">1</span>))</span><br><span class="line">  ssc.checkpoint(checkPointDir)</span><br><span class="line">  <span class="comment">// 业务逻辑要放在该方法内部，否则无法生效</span></span><br><span class="line">  <span class="keyword">val</span> stream = ssc.receiverStream(<span class="keyword">new</span> <span class="type">MyReceiver</span>)</span><br><span class="line">  <span class="keyword">val</span> map = stream.map((_, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">  <span class="keyword">val</span> window = map.reduceByKeyAndWindow(</span><br><span class="line">    &#123; (x, y) =&gt; x + y &#125;, <span class="comment">// 加上新进入窗口的批次中的元素</span></span><br><span class="line">    &#123; (x, y) =&gt; x - y &#125;, <span class="comment">//移除离开窗口的老批次中的元素</span></span><br><span class="line">    <span class="type">Seconds</span>(<span class="number">10</span>), <span class="comment">//窗口时长</span></span><br><span class="line">    <span class="type">Seconds</span>(<span class="number">1</span>) <span class="comment">//滑动步长</span></span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  window.print()</span><br><span class="line">  </span><br><span class="line">  ssc</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 
     </div>
@@ -294,12 +296,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/2.%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E6%BA%90/" rel="prev" title="自定义数据源">
-      <i class="fa fa-chevron-left"></i> 自定义数据源
+    <a href="/2021/JVM/16.%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" rel="prev" title="执行引擎">
+      <i class="fa fa-chevron-left"></i> 执行引擎
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/%E6%B6%88%E6%81%AF%E7%B3%BB%E7%BB%9F/kafka/9.kafka%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="next" title="kafka配置文件">
-      kafka配置文件 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/%E6%A1%86%E6%9E%B6/spring/%E8%BF%9B%E9%98%B6/2.%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E6%9E%84%E5%BB%BA/" rel="next" title="源码分析之上下文构建">
+      源码分析之上下文构建 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -360,7 +362,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">有状态转换</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#spark-streaming%E5%AE%B9%E9%94%99"><span class="nav-number">1.</span> <span class="nav-text">spark streaming容错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E5%99%A8%E7%A8%8B%E5%BA%8F%E5%AE%B9%E9%94%99"><span class="nav-number">1.1.</span> <span class="nav-text">驱动器程序容错</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -376,7 +378,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-count">510</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

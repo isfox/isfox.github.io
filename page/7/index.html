@@ -194,6 +194,204 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/8.HBase%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BC%8A%E7%AB%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/8.HBase%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BC%8A%E7%AB%AF/" class="post-title-link" itemprop="url">HBase使用的弊端</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-28 22:47:23" itemprop="dateCreated datePublished" datetime="2021-05-28T22:47:23+08:00">2021-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-29 22:47:45" itemprop="dateModified" datetime="2021-05-29T22:47:45+08:00">2021-05-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/8.HBase%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BC%8A%E7%AB%AF/" class="post-meta-item leancloud_visitors" data-flag-title="HBase使用的弊端" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/8.HBase%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BC%8A%E7%AB%AF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/hbase/8.HBase%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BC%8A%E7%AB%AF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="HBase使用的弊端"><a href="#HBase使用的弊端" class="headerlink" title="HBase使用的弊端"></a>HBase使用的弊端</h2><p>多条件复杂查询关系型数据库能够很好的支持，但是对于HBase来说，实现起来并不是那么的容易，基本的解决思路就是建立一张二级索引表，将查询条件设计成二级索引表的rowkey，而存储的数据则是数据表的rowkey，这样，就可以一定程度上的实现多个条件的查询。但是二级索引表也会引入一系列的问题，多表的插入将降低数据写入的性能，并且，由于多表之间无事务保障，可能会带来数据一致性的问题</p>
+<p>HBase本身能够支持的查询维度有限，难以支持复杂查询，如group by、order by、join等等，这些特点使得它的应用场景受到了限制。当然，这也并非是不可弥补的硬伤，通过后面章节所介绍的搜索引擎，构建索引，可以在一定程度上解决HBase复杂条件组合查询的问题</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="post-title-link" itemprop="url">文件上传攻击与防御</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-28 21:12:19" itemprop="dateCreated datePublished" datetime="2021-05-28T21:12:19+08:00">2021-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-29 21:13:49" itemprop="dateModified" datetime="2021-05-29T21:13:49+08:00">2021-05-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" itemprop="url" rel="index"><span itemprop="name">网站攻击与防御</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="post-meta-item leancloud_visitors" data-flag-title="文件上传攻击与防御" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="文件上传攻击与防御"><a href="#文件上传攻击与防御" class="headerlink" title="文件上传攻击与防御"></a>文件上传攻击与防御</h2><h3 id="什么是文件上传攻击"><a href="#什么是文件上传攻击" class="headerlink" title="什么是文件上传攻击"></a>什么是文件上传攻击</h3><p>在上网的过程中，我们经常会将一些如图片、压缩包之类的文件上传到远端服务器进行保存，文件上传攻击指的是恶意攻击者利用一些站点没有对文件的类型做很好的校验这样的漏洞，上传了可执行的文件或者脚本，并且通过脚本获得服务器上相应的权利，或者是通过诱导外部用户访问或者下载上传的病毒或者木马文件，达到攻击目的</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/4.%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -631,7 +829,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-29 11:45:55" itemprop="dateModified" datetime="2021-05-29T11:45:55+08:00">2021-05-29</time>
+                <time title="修改时间：2021-06-17 11:33:34" itemprop="dateModified" datetime="2021-06-17T11:33:34+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -677,8 +875,15 @@
       
           <h2 id="spark-Streaming简介"><a href="#spark-Streaming简介" class="headerlink" title="spark Streaming简介"></a>spark Streaming简介</h2><p>spark Streaming是spark想要在流式处理中占据一席之地开发出来的产物，其底层还是使用的spark core，所以spark streaming做不到实时数据处理(毫秒级别)，只能做到准实时(秒/分钟级别)，且由于spark的架构如果是一个个的进行处理会导致资源的闲置和浪费，所以采用的是微批次的数据处理(微批次是为了可以准实时的进行处理，如果批量过大，回导致运算时间过长，变成离线处理)。</p>
 <p>而为了可以实现准实时、微批量，spark streaming使用离散化流(discretized stream)作为抽象表示，叫作 DStream。DStream 是随时间推移而收到的数据的序列。在内部，每个时间区间收到的数据都作为 RDD 存在，而 DStream 是由这些 RDD 所组成的序列(因此得名“离散化”)，DStream 就是对 RDD 在实时数据处理场景的一种封装</p>
-<p>Spark Streaming 支持的数据输入源很多，例如：Kafka、Flume、Twitter、ZeroMQ 和简单的 TCP 套接字等等。数据输入后可以用 Spark 的高度抽象原语如：map、reduce、join、window 等进行运算。而结果也能保存在很多地方，如 HDFS，数据库等。</p>
-
+<p>Spark Streaming 支持的数据输入源很多，例如：Kafka、Flume、Twitter、ZeroMQ 和简单的 TCP 套接字等等。数据输入后可以用 Spark 的高度抽象原语如：map、reduce、join、window 等进行运算。DStream支持两种操作，一种是<strong>转换操作</strong>，会生成一个新的SDtream；一种是<strong>输出操作</strong>，可以把数据写入到外部系统，如 HDFS，数据库等。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20streaming/1.spark%20Streaming%E7%AE%80%E4%BB%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -895,188 +1100,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7CPU%E5%88%A9%E7%94%A8%E7%8E%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7CPU%E5%88%A9%E7%94%A8%E7%8E%87/" class="post-title-link" itemprop="url">监控CPU利用率</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-27 20:35:30 / 修改时间：15:26:01" itemprop="dateCreated datePublished" datetime="2021-05-27T20:35:30+08:00">2021-05-27</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7CPU%E5%88%A9%E7%94%A8%E7%8E%87/" class="post-meta-item leancloud_visitors" data-flag-title="监控CPU利用率" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7CPU%E5%88%A9%E7%94%A8%E7%8E%87/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7CPU%E5%88%A9%E7%94%A8%E7%8E%87/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="监控CPU利用率"><a href="#监控CPU利用率" class="headerlink" title="监控CPU利用率"></a>监控CPU利用率</h2><p>使用vmstat来分析CPU使用信息</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">DATE=$(date +%F&quot; &quot;%H:%M)</span><br><span class="line">IP=$(ifconfig eth0 |awk -F &#x27;[ :]+&#x27; &#x27;/inet addr/&#123;print $4&#125;&#x27;)  # 只支持CentOS6</span><br><span class="line">MAIL=&quot;example@mail.com&quot;</span><br><span class="line">if ! which vmstat &amp;&gt;/dev/null; then</span><br><span class="line">    echo &quot;vmstat command no found, Please install procps package.&quot; </span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line">US=$(vmstat |awk &#x27;NR==3&#123;print $13&#125;&#x27;)</span><br><span class="line">SY=$(vmstat |awk &#x27;NR==3&#123;print $14&#125;&#x27;)</span><br><span class="line">IDLE=$(vmstat |awk &#x27;NR==3&#123;print $15&#125;&#x27;)</span><br><span class="line">WAIT=$(vmstat |awk &#x27;NR==3&#123;print $16&#125;&#x27;)</span><br><span class="line">USE=$(($US+$SY))</span><br><span class="line">if [ $USE -ge 50 ]; then</span><br><span class="line">    echo &quot;</span><br><span class="line">    Date: $DATE</span><br><span class="line">    Host: $IP</span><br><span class="line">    Problem: CPU utilization $USE</span><br><span class="line">    &quot; | mail -s &quot;CPU Monitor&quot; $MAIL</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87/" class="post-title-link" itemprop="url">监控内存利用率</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-27 20:35:30 / 修改时间：15:25:55" itemprop="dateCreated datePublished" datetime="2021-05-27T20:35:30+08:00">2021-05-27</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87/" class="post-meta-item leancloud_visitors" data-flag-title="监控内存利用率" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="监控内存利用率"><a href="#监控内存利用率" class="headerlink" title="监控内存利用率"></a>监控内存利用率</h2><p>使用free来分析CPU使用信息</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">DATE=$(date +%F&quot; &quot;%H:%M)</span><br><span class="line">IP=$(ifconfig eth0 |awk -F &#x27;[ :]+&#x27; &#x27;/inet addr/&#123;print $4&#125;&#x27;)  </span><br><span class="line">MAIL=&quot;example@mail.com&quot;</span><br><span class="line">TOTAL=$(free -m |awk &#x27;/Mem/&#123;print $2&#125;&#x27;)</span><br><span class="line">USE=$(free -m |awk &#x27;/Mem/&#123;print $3-$6-$7&#125;&#x27;)</span><br><span class="line">FREE=$(($TOTAL-$USE))</span><br><span class="line"><span class="meta">#</span><span class="bash"> 内存小于1G发送报警邮件</span></span><br><span class="line">if [ $FREE -lt 1024 ]; then</span><br><span class="line">    echo &quot;</span><br><span class="line">    Date: $DATE</span><br><span class="line">    Host: $IP</span><br><span class="line">    Problem: Total=$TOTAL,Use=$USE,Free=$FREE</span><br><span class="line">    &quot; | mail -s &quot;Memory Monitor&quot; $MAIL</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/linux/%E5%AE%9E%E7%94%A8shell/%E7%9B%91%E6%8E%A7%E7%A1%AC%E7%9B%98%E5%88%A9%E7%94%A8%E7%8E%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1235,7 +1258,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-count">510</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
