@@ -30,7 +30,7 @@
 <meta property="og:description" content="springmvc异常处理spring中有三种方式可以优雅的处理异常  使用@ExceptionHandler 使用HandlerExceptionResolver 使用@ControllerAdvice  使用@ExceptionHandler">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-01-09T09:53:23.000Z">
-<meta property="article:modified_time" content="2021-06-09T07:00:40.236Z">
+<meta property="article:modified_time" content="2021-06-21T03:18:10.748Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="springmvc">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 15:00:40" itemprop="dateModified" datetime="2021-06-09T15:00:40+08:00">2021-06-09</time>
+                <time title="修改时间：2021-06-21 11:18:10" itemprop="dateModified" datetime="2021-06-21T11:18:10+08:00">2021-06-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -323,6 +323,8 @@
 <li>它允许将几个异常映射到相同的方法，以便一起处理</li>
 <li>它充分利用了新的REST风格的 ResposeEntity响应</li>
 </ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ControllerAdvice &#123;</span><br><span class="line"></span><br><span class="line">   </span><br><span class="line">   <span class="meta">@AliasFor(&quot;basePackages&quot;)</span></span><br><span class="line">   String[] value() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 指定生效的包</span></span><br><span class="line">   <span class="meta">@AliasFor(&quot;value&quot;)</span></span><br><span class="line">   String[] basePackages() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 指定生效的包</span></span><br><span class="line">   Class&lt;?&gt;[] basePackageClasses() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 指定生效的类</span></span><br><span class="line">   Class&lt;?&gt;[] assignableTypes() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 指定生效的注解，如RestController</span></span><br><span class="line">   Class&lt;? extends Annotation&gt;[] annotations() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h4 id="局部异常处理"><a href="#局部异常处理" class="headerlink" title="局部异常处理"></a>局部异常处理</h4><p>在当前Controller中处理异常(当前Controller中使用@ExceptionHandler标注的方法)</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/exception&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 在<span class="doctag">@Controller</span>中所写的<span class="doctag">@ExceptionHandler</span>方法只能处理该Controller类中出现的异常，不可以处理其他Controller中出现的异常，此为局部异常处理</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">    <span class="meta">@ExceptionHandler</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">exception</span><span class="params">(Exception e)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;出现异常&quot;</span>+e.getMessage();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/testException&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">testException</span><span class="params">()</span></span>&#123;</span><br><span class="line">        User user = <span class="keyword">null</span>;</span><br><span class="line">        System.out.println(user.getId());</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -431,7 +433,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">510</span>
+          <span class="site-state-item-count">514</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

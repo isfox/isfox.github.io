@@ -22,20 +22,20 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="垃圾回收机制垃圾回收Java垃圾回收机制最基本的做法是分代回收。内存中的区域被分为不同的年代，对象根据其存活的时间被保存在对应年代的区域内。 分为3个年代：年轻代、老年代和元空间。 内存的分配发生在年轻代中，当对象存活时间足够长时，会被复制到老年代。 垃圾回收根据回收区域不同分为两种类型：一种是部分收集(Partial GC)，一种是整堆收集(Full GC)">
+  <meta name="description" content="MySQL数据存储Innodb存储引擎的数据存储，可以使用两种方式进行存储：系统表空间和独立表空间 123-- ON表示使用的是独立表空间-- OFF表示使用的是系统表空间show variables like &amp;#x27;%innodb_file_per_table%&amp;#x27;    系统表空间(共享表空间)在MySQL5.5之前默认使用的是系统表空间，系统表空间是指每一个数据库所有的表数据，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="垃圾回收">
-<meta property="og:url" content="https://isfox.github.io/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/index.html">
+<meta property="og:title" content="MySQL数据存储">
+<meta property="og:url" content="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="垃圾回收机制垃圾回收Java垃圾回收机制最基本的做法是分代回收。内存中的区域被分为不同的年代，对象根据其存活的时间被保存在对应年代的区域内。 分为3个年代：年轻代、老年代和元空间。 内存的分配发生在年轻代中，当对象存活时间足够长时，会被复制到老年代。 垃圾回收根据回收区域不同分为两种类型：一种是部分收集(Partial GC)，一种是整堆收集(Full GC)">
+<meta property="og:description" content="MySQL数据存储Innodb存储引擎的数据存储，可以使用两种方式进行存储：系统表空间和独立表空间 123-- ON表示使用的是独立表空间-- OFF表示使用的是系统表空间show variables like &amp;#x27;%innodb_file_per_table%&amp;#x27;    系统表空间(共享表空间)在MySQL5.5之前默认使用的是系统表空间，系统表空间是指每一个数据库所有的表数据，">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-11-30T08:53:40.000Z">
-<meta property="article:modified_time" content="2021-06-14T05:27:52.513Z">
+<meta property="article:published_time" content="2021-06-18T12:11:30.000Z">
+<meta property="article:modified_time" content="2021-06-18T07:51:27.255Z">
 <meta property="article:author" content="ZH">
-<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://isfox.github.io/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+<link rel="canonical" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>垃圾回收 | 小菜鸟</title>
+  <title>MySQL数据存储 | 小菜鸟</title>
   
 
 
@@ -198,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -211,7 +211,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          垃圾回收
+          MySQL数据存储
         </h1>
 
         <div class="post-meta">
@@ -220,28 +220,22 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-11-30 16:53:40" itemprop="dateCreated datePublished" datetime="2020-11-30T16:53:40+08:00">2020-11-30</time>
+              <time title="创建时间：2021-06-18 20:11:30 / 修改时间：15:51:27" itemprop="dateCreated datePublished" datetime="2021-06-18T20:11:30+08:00">2021-06-18</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-14 13:27:52" itemprop="dateModified" datetime="2021-06-14T13:27:52+08:00">2021-06-14</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
                 </span>
             </span>
 
           
-            <span id="/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" class="post-meta-item leancloud_visitors" data-flag-title="垃圾回收" title="阅读次数">
+            <span id="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" class="post-meta-item leancloud_visitors" data-flag-title="MySQL数据存储" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -256,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/JVM/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/18.MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -272,35 +266,40 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="垃圾回收机制"><a href="#垃圾回收机制" class="headerlink" title="垃圾回收机制"></a>垃圾回收机制</h2><h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>Java垃圾回收机制最基本的做法是分代回收。内存中的区域被分为不同的年代，对象根据其存活的时间被保存在对应年代的区域内。</p>
-<p>分为3个年代：年轻代、老年代和元空间。</p>
-<p>内存的分配发生在年轻代中，当对象存活时间足够长时，会被复制到老年代。</p>
-<p>垃圾回收根据回收区域不同分为两种类型：一种是部分收集(Partial GC)，一种是整堆收集(Full GC)</p>
+        <h2 id="MySQL数据存储"><a href="#MySQL数据存储" class="headerlink" title="MySQL数据存储"></a>MySQL数据存储</h2><p>Innodb存储引擎的数据存储，可以使用两种方式进行存储：系统表空间和独立表空间</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- ON表示使用的是独立表空间</span></span><br><span class="line"><span class="comment">-- OFF表示使用的是系统表空间</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">&#x27;%innodb_file_per_table%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="系统表空间-共享表空间"><a href="#系统表空间-共享表空间" class="headerlink" title="系统表空间(共享表空间)"></a>系统表空间(共享表空间)</h3><p>在MySQL5.5之前默认使用的是系统表空间，系统表空间是指每一个数据库所有的表数据，索引文件全部放在一个文件中，文件名为ibdataX(X代表第几个文件，从1开始)，默认初始化是12M</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">&#x27;innodb_data%&#x27;</span>;</span><br><span class="line"></span><br><span class="line">Variable_name              Value</span><br><span class="line">innodb_data_file_path    ibdata1:12M:autoextend</span><br><span class="line">innodb_data_home_dir    </span><br></pre></td></tr></table></figure>
+
+<p>autoextend表示自动扩展，当文件存储满时会自动进行扩展，默认增量是64M</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">&#x27;innodb_autoextend_increment&#x27;</span>;</span><br><span class="line"></span><br><span class="line">Variable_name                  Value</span><br><span class="line">innodb_autoextend_increment    64</span><br></pre></td></tr></table></figure>
+
 <a id="more"></a>
 
-<h4 id="部分收集Partial-GC"><a href="#部分收集Partial-GC" class="headerlink" title="部分收集Partial GC"></a>部分收集Partial GC</h4><p>部分收集不是完整收集整个堆的垃圾回收</p>
-<ul>
-<li>Minor GC年轻代收集 :只对年轻代进行垃圾回收，Eden满的话会触发Minor GC，Survicor不会去触发，只不过Minor GC也会去清理Survicor</li>
-<li>Major GC老年代收集 :只对老年代进行垃圾回收(只有CMS GC会单独对老年代进行垃圾回收)</li>
-<li>Mixed GC混合收集：对整个新生代以及部分老年代进行垃圾回收(只有G1 GC会存在Mixed GC)</li>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>表空间可以分成多个文件存放到各个磁盘，所以表也就可以分成多个文件存放在磁盘上，表的大小不受磁盘大小的限制</p>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>数据量非常大的时候，表做了大量删除操作后表空间中将会有大量的空隙，系统表空间无法简单的收缩文件大小，造成空间浪费，并会产生大量的磁盘碎片</li>
+<li>如果对多个表进行刷新时，实际上是顺序进行的，会产生IO瓶颈</li>
 </ul>
-<h4 id="整堆收集Full-GC"><a href="#整堆收集Full-GC" class="headerlink" title="整堆收集Full GC"></a>整堆收集Full GC</h4><p>整堆收集会收集整个java堆和方法区的垃圾收集</p>
-<h3 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h3><ul>
-<li><p>标记-清除</p>
-</li>
-<li><p>标记-复制</p>
-</li>
-<li><p>标记-整理</p>
-</li>
-<li><p>分代回收</p>
-</li>
+<h3 id="独立表空间"><a href="#独立表空间" class="headerlink" title="独立表空间"></a>独立表空间</h3><p>在MySQL5.6中默认使用的是独立表空间，每一个表都会生成独立的文件来进行存储，以.frm表描述文件(存储表的结构)，还有.ibd文件(存储一个表的数据内容以及索引内容)</p>
+<h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>独立表空间可以通过<code>optimeze table</code> 收缩系统文件，不需要重启服务器也不会影响对表的正常访问</li>
+<li>独立表空间可以同时向多个文件刷新数据</li>
+<li>可以实现单表在不同数据库中进行移动</li>
 </ul>
-<!-- more -->
-
-<h3 id="如何判断一个对象是否应该被回收"><a href="#如何判断一个对象是否应该被回收" class="headerlink" title="如何判断一个对象是否应该被回收"></a>如何判断一个对象是否应该被回收</h3><ul>
-<li>引用计数法</li>
-<li>可达性分析</li>
-</ul>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><p>当单表占用空间过大时，存储空间不足，只能从操作系统层面思考解决方法</p>
+<h3 id="如何将系统表空间的表转为独立表空间呢？"><a href="#如何将系统表空间的表转为独立表空间呢？" class="headerlink" title="如何将系统表空间的表转为独立表空间呢？"></a>如何将系统表空间的表转为独立表空间呢？</h3><ol>
+<li>使用mysqldump 导出所有数据库数据（存储过程、触发器、计划任务一起都要导出 ）可以在从服务器上操作</li>
+<li>停止Mysql 服务器，修改参数（my.cnf加入innodb_file_per_table），并删除Inoodb相关文件（可以重建Data目录）</li>
+<li>重启Mysql，并重建Innodb系统表空间</li>
+<li>重新导入数据</li>
+</ol>
+<blockquote>
+<p><code>alter table</code> 同样可以的转移，但是无法回收系统表空间中占用的空间</p>
+</blockquote>
 
     </div>
 
@@ -310,7 +309,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/JVM/" rel="tag"># JVM</a>
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
           </div>
 
         
@@ -321,12 +320,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/10.java%E5%9F%BA%E7%A1%80%E4%B9%8B%E6%97%B6%E9%97%B4%E6%93%8D%E4%BD%9C/" rel="prev" title="时间操作">
-      <i class="fa fa-chevron-left"></i> 时间操作
+    <a href="/2021/%E6%A1%86%E6%9E%B6/spring/%E8%BF%9B%E9%98%B6/2.%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E6%9E%84%E5%BB%BA/" rel="prev" title="源码分析之上下文构建">
+      <i class="fa fa-chevron-left"></i> 源码分析之上下文构建
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/%E5%A4%9A%E7%BA%BF%E7%A8%8B/11.CyclicBarrier%E5%92%8CCountDownLatch/" rel="next" title="CyclicyBarrier和CountDownLatch">
-      CyclicyBarrier和CountDownLatch <i class="fa fa-chevron-right"></i>
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/19.MySQL%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE/" rel="next" title="MySQL内存配置">
+      MySQL内存配置 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -387,7 +386,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.1.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E6%94%B6%E9%9B%86Partial-GC"><span class="nav-number">1.1.1.</span> <span class="nav-text">部分收集Partial GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E5%A0%86%E6%94%B6%E9%9B%86Full-GC"><span class="nav-number">1.1.2.</span> <span class="nav-text">整堆收集Full GC</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">垃圾回收算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E5%BA%94%E8%AF%A5%E8%A2%AB%E5%9B%9E%E6%94%B6"><span class="nav-number">1.3.</span> <span class="nav-text">如何判断一个对象是否应该被回收</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="nav-number">1.</span> <span class="nav-text">MySQL数据存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%A1%A8%E7%A9%BA%E9%97%B4-%E5%85%B1%E4%BA%AB%E8%A1%A8%E7%A9%BA%E9%97%B4"><span class="nav-number">1.1.</span> <span class="nav-text">系统表空间(共享表空间)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%E8%A1%A8%E7%A9%BA%E9%97%B4"><span class="nav-number">1.2.</span> <span class="nav-text">独立表空间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E7%B3%BB%E7%BB%9F%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E8%A1%A8%E8%BD%AC%E4%B8%BA%E7%8B%AC%E7%AB%8B%E8%A1%A8%E7%A9%BA%E9%97%B4%E5%91%A2%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">如何将系统表空间的表转为独立表空间呢？</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -403,7 +402,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">510</span>
+          <span class="site-state-item-count">514</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

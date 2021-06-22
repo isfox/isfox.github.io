@@ -30,7 +30,7 @@
 <meta property="og:description" content="基本命令启动命令1memcached -m 64 -p 11211 -u nobody -vv  如果想要后台启动，则使用-d 1&#x2F;memcached -m 64 -p 11211 -u nobody -d">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-13T16:34:40.000Z">
-<meta property="article:modified_time" content="2021-06-13T17:07:25.558Z">
+<meta property="article:modified_time" content="2021-06-22T01:54:15.977Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="memcached">
 <meta name="twitter:card" content="summary">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-14 00:34:40 / 修改时间：01:07:25" itemprop="dateCreated datePublished" datetime="2021-06-14T00:34:40+08:00">2021-06-14</time>
+              <time title="创建时间：2021-06-14 00:34:40" itemprop="dateCreated datePublished" datetime="2021-06-14T00:34:40+08:00">2021-06-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-22 09:54:15" itemprop="dateModified" datetime="2021-06-22T09:54:15+08:00">2021-06-22</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -274,7 +280,7 @@
 <a id="more"></a>
 
 <p>参数说明</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">-p &lt;num&gt; tcp port number to listen on (default: 11211) // 监听的端口</span><br><span class="line"></span><br><span class="line">-u &lt;num&gt; udp port number to listen on (default: 0, off)</span><br><span class="line"></span><br><span class="line">-s &lt;file&gt; unix socket path to listen on (disables network support)</span><br><span class="line"></span><br><span class="line">-a &lt;mask&gt; access mask for unix socket, in octal (default 0700)</span><br><span class="line"></span><br><span class="line">-l &lt;ip_addr&gt; interface to listen on, default is indrr_any</span><br><span class="line"></span><br><span class="line">-d start tell memcached to start</span><br><span class="line"></span><br><span class="line">-d restart tell running memcached to do a graceful restart</span><br><span class="line"></span><br><span class="line">-d stop|shutdown tell running memcached to shutdown</span><br><span class="line"></span><br><span class="line">-d install install memcached service // 把 memcached 注册成服务</span><br><span class="line"></span><br><span class="line">-d uninstall uninstall memcached service</span><br><span class="line"></span><br><span class="line">-r maximize core file limit</span><br><span class="line"></span><br><span class="line">-u &lt;username&gt; assume identity of &lt;username&gt; (only when run as root)</span><br><span class="line"></span><br><span class="line">-m &lt;num&gt; max memory to use for items in megabytes, default is 64mb //分配给 memcached 的最大内存</span><br><span class="line"></span><br><span class="line">-m return error on memory exhausted (rather than removingitems)</span><br><span class="line"></span><br><span class="line">-c &lt;num&gt; max simultaneous connections, default is 1024 // 最大的连接数</span><br><span class="line"></span><br><span class="line">-k lock down all paged memory. note that there is a limit on how much memory you may lock. trying to allocate more than that would fail, so be sure you set the limit correctly for the user you started the daemon with (not for -u &lt;username&gt; user;under sh this is done with &#x27;ulimit -s -l num_kb&#x27;).</span><br><span class="line"></span><br><span class="line">-v verbose (print errors/warnings while in event loop) //输出错误信息</span><br><span class="line"></span><br><span class="line">-vv very verbose (also print client commands/reponses) //输出所有信息</span><br><span class="line"></span><br><span class="line">-h print this help and exit</span><br><span class="line"></span><br><span class="line">-i print memcached and libevent license</span><br><span class="line"></span><br><span class="line">-b run a managed instanced (mnemonic: buckets)</span><br><span class="line"></span><br><span class="line">-p &lt;file&gt; save pid in &lt;file&gt;, only used with -d option</span><br><span class="line"></span><br><span class="line">-f &lt;factor&gt; chunk size growth factor, default 1.25 //增长因子</span><br><span class="line"></span><br><span class="line">-n &lt;bytes&gt; minimum space allocated for key+value+flags, default 48</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">-d 启动一个守护进程</span><br><span class="line">-m 分配给Memcache使用的内存数量，单位是MB</span><br><span class="line">-u 运行Memcache的用户</span><br><span class="line">-l 监听的服务器IP地址，可以有多个地址</span><br><span class="line">-p 设置Memcache监听的端口，，最好是1024以上的端口</span><br><span class="line">-c 最大运行的并发连接数，默认是1024</span><br><span class="line">-P 设置保存Memcache的pid文件</span><br><span class="line">-f 块大小增长因子，默认是1.25</span><br><span class="line">-n 最小分配空间， key+value+flags 默认是 48byte</span><br><span class="line">-I 每个slab page的大小 -v/-vv 详细显示工作时各种参数</span><br></pre></td></tr></table></figure>
 
 <p>由于memcached是CS架构，且在启动服务端的时候是指定了端口号的，所以可以使用telnet来进行连接</p>
 <h3 id="添加数据命令"><a href="#添加数据命令" class="headerlink" title="添加数据命令"></a>添加数据命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 语法：add key flag expire length</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># key  key值</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># flag  标志,要求为一个正整数，memcached是基本文本协议,传输的东西,理解成字符串来存储. 所有类型的对象都序列化成字符串,往出取的时候,自然还要反序列化成 对象/数组/json 格式等等. 这时可以使用flag 来定义该值的类型(自己进行定义) 比如, 1 就是字符串, 2 反转成数组 3,反序列化对象</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># expire 设置缓存的有效期,有 3 种格式 1:设置秒数, 从设定开始数,第 n 秒后失效. 2:时间戳, 到指定的时间戳后失效. add key 0 1623234849 6   3: 设为 0. 不自动失效</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># length 缓存值的长度(字节为单位)</span></span></span><br><span class="line">add user.name 1 0 8</span><br><span class="line">zhangsan</span><br></pre></td></tr></table></figure>
@@ -403,7 +409,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">510</span>
+          <span class="site-state-item-count">514</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

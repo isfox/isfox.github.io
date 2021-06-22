@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"isfox.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="检索策略类级别的检索策略有两种方式，一种为立即检索，一种为延迟检索 在class元素中设置属性lazy   默认为true  立即检索：立即加载检索方法指定的对象 延迟检索：只有在使用具体属性(除id之外的属性)的时候才会加载    注意：只有在使用load方法的时候，lazy属性才会有用，在使用get()和list()方法时，只会使用立即检索">
+  <meta name="description" content="检索策略hibernate一共提供了三种检索策略，一种为立即检索，除了立即检索之外还提供了两种检索策略，延迟检索和迫切左外连接检索  立即检索  会直接进行数据库访问，且立即执行，如果select语句过多，会频繁访问数据库 延迟检索 避免了多余加载用程序不需要访问的关联对象 迫切左外连接检索  充分利用了SQL的外连接查询功能，减少了select语句的数目  类级别的检索策略类级别的可选检索策略只">
 <meta property="og:type" content="article">
 <meta property="og:title" content="检索策略">
 <meta property="og:url" content="https://isfox.github.io/2020/%E6%A1%86%E6%9E%B6/hibernate/9.%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5/index.html">
 <meta property="og:site_name" content="小菜鸟">
-<meta property="og:description" content="检索策略类级别的检索策略有两种方式，一种为立即检索，一种为延迟检索 在class元素中设置属性lazy   默认为true  立即检索：立即加载检索方法指定的对象 延迟检索：只有在使用具体属性(除id之外的属性)的时候才会加载    注意：只有在使用load方法的时候，lazy属性才会有用，在使用get()和list()方法时，只会使用立即检索">
+<meta property="og:description" content="检索策略hibernate一共提供了三种检索策略，一种为立即检索，除了立即检索之外还提供了两种检索策略，延迟检索和迫切左外连接检索  立即检索  会直接进行数据库访问，且立即执行，如果select语句过多，会频繁访问数据库 延迟检索 避免了多余加载用程序不需要访问的关联对象 迫切左外连接检索  充分利用了SQL的外连接查询功能，减少了select语句的数目  类级别的检索策略类级别的可选检索策略只">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-07T06:42:23.000Z">
-<meta property="article:modified_time" content="2021-04-09T08:35:37.968Z">
+<meta property="article:modified_time" content="2021-06-21T08:13:43.101Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="hibernate">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-09 16:35:37" itemprop="dateModified" datetime="2021-04-09T16:35:37+08:00">2021-04-09</time>
+                <time title="修改时间：2021-06-21 16:13:43" itemprop="dateModified" datetime="2021-06-21T16:13:43+08:00">2021-06-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,32 +272,53 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="检索策略"><a href="#检索策略" class="headerlink" title="检索策略"></a>检索策略</h2><h3 id="类级别的检索策略"><a href="#类级别的检索策略" class="headerlink" title="类级别的检索策略"></a>类级别的检索策略</h3><p>有两种方式，一种为立即检索，一种为延迟检索</p>
-<p>在class元素中设置属性lazy   默认为true</p>
+        <h2 id="检索策略"><a href="#检索策略" class="headerlink" title="检索策略"></a>检索策略</h2><p>hibernate一共提供了三种检索策略，一种为立即检索，除了<strong>立即检索</strong>之外还提供了两种检索策略，<strong>延迟检索</strong>和<strong>迫切左外连接检索</strong></p>
+<ul>
+<li>立即检索  会直接进行数据库访问，且立即执行，如果select语句过多，会频繁访问数据库</li>
+<li>延迟检索 避免了多余加载用程序不需要访问的关联对象</li>
+<li>迫切左外连接检索  充分利用了SQL的外连接查询功能，减少了select语句的数目</li>
+</ul>
+<h3 id="类级别的检索策略"><a href="#类级别的检索策略" class="headerlink" title="类级别的检索策略"></a>类级别的检索策略</h3><p>类级别的可选检索策略只有<strong>立即检索</strong>和<strong>延迟检索</strong></p>
+<p>在<class>元素中设置属性lazy   默认为true</class></p>
 <ul>
 <li>立即检索：立即加载检索方法指定的对象</li>
-<li>延迟检索：只有在使用具体属性(除id之外的属性)的时候才会加载  </li>
+<li>延迟检索：在调用load方法时不会执行select语句，而是返回一个代理对象，这个代理对象继承了原来对象的所有属性和方法(使用CGLIB生成的代理类)，该代理类的实例仅初始化OID，所以占用的内存较少，只有在使用具体属性(除id之外的属性)的时候才会去执行select语句</li>
 </ul>
-<p>注意：只有在使用load方法的时候，lazy属性才会有用，在使用get()和list()方法时，只会使用立即检索</p>
+<blockquote>
+<p>只有在使用load方法的时候，lazy属性才会有用，在使用get()和list()方法时，只会使用立即检索</p>
+</blockquote>
 <a id="more"></a>
 
-<h3 id="一对多和多对多检索策略"><a href="#一对多和多对多检索策略" class="headerlink" title="一对多和多对多检索策略"></a>一对多和多对多检索策略</h3><p>在set属性中配置一对多和多对多关联关系，set元素有lazy和fetch属性</p>
+<h3 id="关联级别的检索策略"><a href="#关联级别的检索策略" class="headerlink" title="关联级别的检索策略"></a>关联级别的检索策略</h3><p>关联级别可选的检索策略有三种：<strong>立即检索</strong>、<strong>延迟检索</strong>和<strong>迫切左外连接检索</strong></p>
+<h4 id="一对多和多对多检索策略"><a href="#一对多和多对多检索策略" class="headerlink" title="一对多和多对多检索策略"></a>一对多和多对多检索策略</h4><p>在set属性中配置一对多和多对多关联关系，<set>元素有lazy和fetch属性</set></p>
 <ul>
-<li>lazy：主要决定set被初始化的时间，在加载主表时被初始化还是再被访问时被初始化  默认为true</li>
-<li>fetch：取值为select或subselect时，决定初始化set的查询语句形式；取值为join，决定set被初始化的时机，lazy属性将会被忽略，默认为select<ul>
-<li>select   set元素中每条数据都会执行一条select语句</li>
+<li>lazy：主要决定<set>被初始化的时间，在加载主表时被初始化还是在访问该集合时被初始化  默认为true，有true(延迟检索)、extra(增强延迟检索)和false(立即检索)<ul>
+<li>true 在调用iterator()、size()、isEmpty()、contains方法时会进行初始化</li>
+<li>extra  在调用iterator()方法时会进行初始化，而调用size()、isEmpty()、contains方法时，不会进行初始化，而是通过特定的select语句来查询必要的信息，而不是检索所有的对象</li>
+</ul>
+</set></li>
+<li>fetch：取值为select或subselect时，决定初始化<set>的查询语句形式；取值为join，决定<set>被初始化的时机，lazy属性将会被忽略，默认为select<ul>
+<li>select   <set>元素中每条数据都会执行一条select语句</set></li>
 <li>subselect  使用子查询，直接初始化set中所有的元素，使用 in (select id from zitable)，此时batch-size属性被忽略</li>
 <li>join 使用左外连接  (Query的list方法会忽略join，使用延迟检索)</li>
 </ul>
-</li>
-<li>batch-size：set中有一个batch-size属性，用来配置在延迟加载的情况下，每次加载几条数据，可以减少查询语句，提升性能（查询多条时使用in语句查询）</li>
+</set></set></li>
+<li>batch-size：<set>中有一个batch-size属性，用来配置在延迟加载的情况下，每次加载几条数据，可以减少查询语句，提升性能（查询多条时使用in语句查询），仅适用于立即检索和延迟检索</set></li>
 </ul>
-<h3 id="多对一和一对一检索策略"><a href="#多对一和一对一检索策略" class="headerlink" title="多对一和一对一检索策略"></a>多对一和一对一检索策略</h3><p>在many-to-one元素中也包含lazy属性和fetch属性</p>
+<blockquote>
+<p>对于<set>元素Hibernate是使用的代理类org.hibernate.collection.internal.PersistentSet</set></p>
+</blockquote>
+<h4 id="多对一和一对一检索策略"><a href="#多对一和一对一检索策略" class="headerlink" title="多对一和一对一检索策略"></a>多对一和一对一检索策略</h4><p>在<many-to-one>元素和<one-to-one>中也包含lazy属性和fetch属性</one-to-one></many-to-one></p>
 <ul>
-<li>lazy： proxy表示延时检索       no-proxy   false 表示立即检索   默认proxy</li>
-<li>fetch：select 每条数据使用一个select     join表示使用左外连接    默认select   </li>
-<li>batch-size：可以在一的一端的class元素中设置batch-size，来配置一次初始化1的这一端的代理的个数</li>
+<li>lazy： proxy表示延时检索       no-proxy表示无代理延迟检索   false 表示立即检索   默认proxy</li>
+<li>fetch：select表示每条数据使用一个select     join表示使用左外连接    默认select   </li>
+<li>batch-size：可以在一的一端的<class>元素中设置batch-size，来配置一次初始化1的这一端的代理的个数，仅适用于立即检索和延迟检索</class></li>
 </ul>
+<blockquote>
+<p>影响的方法有load方法、get方法以及Query和Criteria的API</p>
+</blockquote>
+<p>在进行迫切左外连接时，由于过深的进行表连接会影响检索性能，所以hibernate设置了一个进行控制外连接深度的配置</p>
+<p><code>hibernate.max_fetch_depth</code>，该配置默认是2</p>
 
     </div>
 
@@ -384,7 +405,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">检索策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.</span> <span class="nav-text">类级别的检索策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%92%8C%E5%A4%9A%E5%AF%B9%E5%A4%9A%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.</span> <span class="nav-text">一对多和多对多检索策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%92%8C%E4%B8%80%E5%AF%B9%E4%B8%80%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.</span> <span class="nav-text">多对一和一对一检索策略</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">检索策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.</span> <span class="nav-text">类级别的检索策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E7%BA%A7%E5%88%AB%E7%9A%84%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.</span> <span class="nav-text">关联级别的检索策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%92%8C%E5%A4%9A%E5%AF%B9%E5%A4%9A%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">一对多和多对多检索策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%92%8C%E4%B8%80%E5%AF%B9%E4%B8%80%E6%A3%80%E7%B4%A2%E7%AD%96%E7%95%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">多对一和一对一检索策略</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -400,7 +421,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">510</span>
+          <span class="site-state-item-count">514</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
