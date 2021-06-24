@@ -30,7 +30,7 @@
 <meta property="og:description" content="垃圾回收垃圾是指在运行程序中没有任何指针指向的对象，这个对象就是需要被回收的垃圾  GC主要作用于堆和方法区，其中大多数是在堆中进行  如何判断一个对象是否应该被回收(垃圾标记算法)既然要进行回收，那么就需要判断一个对象是否是垃圾，是否应该被回收，判断对象是否存活一般有两种方式：引用计数法和可达性分析">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-11-30T08:53:40.000Z">
-<meta property="article:modified_time" content="2021-06-22T07:53:46.309Z">
+<meta property="article:modified_time" content="2021-06-24T03:59:02.691Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 15:53:46" itemprop="dateModified" datetime="2021-06-22T15:53:46+08:00">2021-06-22</time>
+                <time title="修改时间：2021-06-24 11:59:02" itemprop="dateModified" datetime="2021-06-24T11:59:02+08:00">2021-06-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -356,7 +356,7 @@
 <li>GC需要维护region之间的对象引用关系，不管内存占用或者时间开销都不小</li>
 </ul>
 <blockquote>
-<p>该算法适用于存活对象比较少、垃圾比较多的情况下，所以可以用于年轻代中</p>
+<p>该算法适用于存活对象比较少、垃圾比较多的情况下，所以可以用于新生代中</p>
 </blockquote>
 <h4 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h4><p>标记-整理算法(Mark-Compact)也是分为了两个阶段，<strong>标记</strong>和<strong>整理</strong></p>
 <ul>
@@ -373,17 +373,126 @@
 <li>移动过程中，需要全程暂停用户应用程序</li>
 </ul>
 <h4 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h4><p>由于没有一个完美的算法，所以根据不同的场景来采用不同的垃圾回收算法，HotSpot根据不同的区域采用不同的垃圾回收算法，也就是分代收集算法</p>
-<p>在年轻代中，由于年轻代中对象生命周期短，存活率低，回收频繁，且年轻代中存在两个survivor，所以<strong>在年轻代使用复制算法</strong>，回收速度快</p>
+<p>在新生代中，由于新生代中对象生命周期短，存活率低，回收频繁，且新生代中存在两个survivor，所以<strong>在新生代使用复制算法</strong>，回收速度快</p>
 <p>在老年代中，由于老年代区域大，对象生命周期长，存活率高，肯定不可以使用复制算法，所以使用的是<strong>标记-清除</strong>或者<strong>标记-清除和标记-整理混合实现</strong></p>
 <h3 id="STW事件-stop-the-world"><a href="#STW事件-stop-the-world" class="headerlink" title="STW事件(stop the world)"></a>STW事件(stop the world)</h3><p>STW事件是指GC发生过程中，会产生应用程序的停顿，停顿产生时整个应用程序线程会被暂停，没有任何响应</p>
 <p>在可达性分析算法中枚举根节点(GC Roots)就会导致所有java线程停顿（停顿是由于分析工作必须在一个能确保一致性的快照中进行）</p>
+<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><p>有七款经典的垃圾回收器</p>
+<p><strong>按照线程数分类</strong></p>
+<ul>
+<li>串行回收器：Serial、Serial Old</li>
+<li>并行回收器：ParNew、Parallel Scavenge、Parallel Old</li>
+<li>并发回收期：CMS、G1</li>
+</ul>
+<p><strong>按照分代分类</strong></p>
+<ul>
+<li>新生代收集器：Serial、ParNew、Parallel Scavenge</li>
+<li>老年代收集器：Serial Old、Parallel Old、CMS</li>
+<li>整堆收集器：G1</li>
+</ul>
+<blockquote>
+<p>可以使用<code>-XX:+PrintCommandLineFlags</code>查看命令行相关参数</p>
+<p>也可以使用 jinfo -flag 相关垃圾回收器参数 pid</p>
+</blockquote>
+<h4 id="Serial收集器"><a href="#Serial收集器" class="headerlink" title="Serial收集器"></a>Serial收集器</h4><p><strong>Serial收集器</strong>是最基本、历史最悠久的收集器，在jdk3之前回收<strong>新生代</strong>的唯一选择，采用<strong>复制算法、串行回收和STW机制</strong>的方式执行内存回收，<strong>Serial Old收集器</strong>是用来执行<strong>老年代</strong>垃圾收集的收集器，Serial Old收集器采用了<strong>标记-压缩算法、串行回收和STW机制</strong>的方式执行内存回收</p>
+<p>Serial收集器是HotSpot中Client模式下的默认新生代垃圾收集器</p>
+<p>Serial Old收集器是HotSpot中Client模式下的默认老年代垃圾收集器</p>
+<p>Serial Old收集器在Server模式下的用途</p>
+<ul>
+<li>与新生代Parallel Scavenge配合使用</li>
+<li>作为老年代CMS收集器的后备垃圾收集方案</li>
+</ul>
+<h5 id="优点-4"><a href="#优点-4" class="headerlink" title="优点"></a>优点</h5><p>简单高效</p>
+<blockquote>
+<p>可以使用<code>-XX:+UseSerialGC</code>参数来指定年轻代使用Serial收集器，老年代使用Serial Old收集器</p>
+</blockquote>
+<p>一般在单核cpu时使用，目前已经不使用串行回收了</p>
+<h4 id="ParNew收集器"><a href="#ParNew收集器" class="headerlink" title="ParNew收集器"></a>ParNew收集器</h4><p>ParNew(Par是Parallel，New是指新生代)收集器是<strong>新生代</strong>中的多线程版本，除了使用<strong>并行回收</strong>外，其他与Serial没有什么区别，也是采用<strong>复制算法和STW机制</strong>，由于在新生代回收次数较多，所以使用的是并行的方式，而老年代回收次数较少，可以使用串行方式来节省资源，减少了线程切换的消耗。所以老年代可以使用Serial Old收集器来进行回收</p>
+<blockquote>
+<p>可以使用<code>-XX:+UseParNewGC</code>来指定使用ParNew来进行内存回收，只能指定新生代，不影响老年代</p>
+<p>同时可以使用 <code>-XX:+UseConcMarkSweepGC</code>来指定老年代使用CMS收集器</p>
+<p>使用<code>-XX:ParallelGCThreads</code>来指定线程数量，默认是CPU核数</p>
+</blockquote>
+<h4 id="Parallel-Scavenge收集器"><a href="#Parallel-Scavenge收集器" class="headerlink" title="Parallel Scavenge收集器"></a>Parallel Scavenge收集器</h4><p>Parallel Scavenge收集器采用<strong>复制算法、并行回收和STW机制</strong>的方式执行内存回收，看上去与ParNew收集器是一样的，但是Parallel Scavenge收集器是一个吞吐量优先的收集器，可以进行自适应调节策略，可以高效的利用CPU时间，尽快完成程序的运算任务，适合在后台运算而不需要太多交互的任务，如批量处理、订单处理等，吞吐量优先的场景下使用Parallel Scavenge收集器和Parallel Old收集器进行组合(JDK8中默认的组合)</p>
+<blockquote>
+<p>在jdk6时老年代的默认垃圾收集器由Serial Old收集器变为了Parallel Old收集器</p>
+</blockquote>
+<p>Parallel Old收集器采用了<strong>标记-压缩算法、并行回收和STW机制</strong>的方式执行内存回收</p>
+<h5 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h5><ul>
+<li><p><code>-XX:+UseParallelGC</code>  指定新生代使用Parallel并行收集器</p>
+</li>
+<li><p><code>-XX:+UseParallelOldGC</code> 指定老年代使用并行收集器，开启新生代也会激活老年代，开启老年代也会激活新生代，互相激活</p>
+</li>
+<li><p><code>-XX:ParallelGCThreads</code> 设置新生代并行收集器的线程数，一般与CPU核数相等，默认情况下，如果CPU核数小于8，则为CPU核数；如果CPU核数大于8，则为3+(5*CPU核数/8)</p>
+</li>
+<li><p><code>-XX:MaxGCPauseMillis</code> 设置垃圾收集器最大停顿时间(STW时间)，单位毫秒，与<code>-XX:GCTimeRatio</code>互斥</p>
+</li>
+<li><p><code>-XX:GCTimeRatio</code> 设置垃圾收集时间占总时间的比例(1/(N+1)) 取值范围为(0,100)，默认99</p>
+</li>
+<li><p><code>-XX:+UseAdaptiveSizePolicy</code> 设置是否开启自适应调节策略，默认开启，如果开启，新生代大小、Eden和Survivor的比例、晋升老年代的对象年龄等参数会被自动调整，已达到在堆大小、吞吐量和停顿时间的平衡点</p>
+</li>
+</ul>
+<h4 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h4><p>jdk5中推出的<strong>老年代</strong>的并发收集器，尽可能缩短垃圾回收时用户线程的停顿时间，<strong>重视服务的响应速度，低延迟</strong>，采用的是<strong>标记-清除算法和STW机制</strong>，该垃圾回收器不能与Parallel Scavenge收集器组合，只能与ParNew或者Serial收集器组合</p>
+<p>分为<strong>初始标记</strong>(会STW)、<strong>并发标记</strong>(可以与用户线程一起工作，不会产生STW)、<strong>重新标记</strong>(会STW)、<strong>并发清理</strong>(可以与用户线程一起工作，不会产生STW)、<strong>重置线程</strong>(可以与用户线程一起工作，不会产生STW)五个步骤</p>
+<h5 id="优点-5"><a href="#优点-5" class="headerlink" title="优点"></a>优点</h5><ul>
+<li>并发收集</li>
+<li>低延迟</li>
+</ul>
+<h5 id="缺点-4"><a href="#缺点-4" class="headerlink" title="缺点"></a>缺点</h5><ul>
+<li>由于使用的是标记-清除算法，所以会产生内存碎片，在无法分配大对象时，只能触发Full GC</li>
+<li>CMS收集器对CPU资源非常敏感</li>
+<li>CMS收集器无法处理浮动垃圾，在并发标记阶段产生的新的垃圾，无法进行标记，所以新产生的垃圾不会回收，只能在下一次GC时进行释放</li>
+</ul>
+<h5 id="参数配置-1"><a href="#参数配置-1" class="headerlink" title="参数配置"></a>参数配置</h5><ul>
+<li><p><code>-XX:+UseConcMarkSweepGC</code> 指定使用CMS收集器，自动触发<code>-XX:+UseParNewGC</code>，使用的组合为ParNew(新生代)+CMS(老年代)+Serial Old(老年代)</p>
+</li>
+<li><p><code>-XX:CMSInitiatingOccupanyFraction</code> 设置堆内存使用率的阈值，达到该阈值，开始进行回收，如果内存增长缓慢，可以设置稍大的值，降低CMS的触发频率，减少老年代回收的次数；如果内存增长迅速，则应该降低该阈值，避免频繁触发Serial Old，有效降低Full GC的执行次数</p>
+</li>
+<li><p><code>-XX:+UseCMSCompactAtFullCollection</code> 指定在执行Full GC后对内存进行压缩整理，会带来STW</p>
+</li>
+<li><p><code>-XX:CMSFullGCsBeforeCompaction</code> 设置执行多少次Full GC后对内存空间进行压缩整理</p>
+</li>
+<li><p><code>-XX:ParallelCMSThreads</code> 设置CMS线程数量，默认为 (ParallelGCThreads + 3) /4，ParallelGCThreads是新生代并行手机器的线程数</p>
+</li>
+</ul>
+<blockquote>
+<p>jdk9中废弃，jdk14中删除</p>
+</blockquote>
+<h4 id="G1收集器"><a href="#G1收集器" class="headerlink" title="G1收集器"></a>G1收集器</h4><p>jdk7引入G1收集器，G1是一个并发收集器，将堆内存分割为很多不想关的区域(region)，使用不同的region来表示Eden、Survivor0、Survivor1、老年代等，避免在整个堆中进行全区域的垃圾收集，跟踪各个Region里垃圾堆积的价值大小(回收所获得的空间大小比上回收所需的时间)，维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region</p>
+<p><strong>面向服务端应用，针对大内存、多处理器的机器使用G1收集器</strong></p>
+<h5 id="优点-6"><a href="#优点-6" class="headerlink" title="优点"></a>优点</h5><ul>
+<li><strong>并行与并发</strong>   可以多个GC线程同时工作，不过会导致STW；可以与应用程序交替执行，部分工作可以与应用程序同时执行</li>
+<li><strong>分代收集</strong>   G1依然属于分代回收，不过不要求Eden、新生代或者老年代是年需的，而是将堆空间分为若干个region，这些region中包含了逻辑上的新生代和老年代</li>
+<li><strong>空间整合</strong>  G1将内存划分为一个个的region，内存回收是以region为基本单位的，region之间是复制算法，整体上是标记-整理算法，可以避免内存碎片</li>
+<li><strong>可预测的停顿时间模型</strong>  避免在整个堆中进行全区域的垃圾收集，跟踪各个Region里垃圾堆积的价值大小(回收所获得的空间大小比上回收所需的时间)，维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region，保证了G1收集器在有限时间内可以获取尽可能高的收集效率</li>
+</ul>
+<h5 id="缺点-5"><a href="#缺点-5" class="headerlink" title="缺点"></a>缺点</h5><p>G1需要更高的内存占用，所以在小内存的应用上CMS的表现会优于G1，而在大内存的应用上G1可以有很大的优势(6~8G)</p>
+<h5 id="参数配置-2"><a href="#参数配置-2" class="headerlink" title="参数配置"></a>参数配置</h5><ul>
+<li><code>-XX:+UseG1GC</code>  指定使用G1收集器</li>
+<li><code>-XX:G1HeapRegionSize</code>  设置每个region的大小，值是2的次幂，范围是1M到32M之前，目标是根据最小的堆大小划分出2048个region，默认是堆内存的1/2000</li>
+<li><code>-XX:MaxGCPauseMillis</code> 设置期望达到的最大GC停顿时间指标(STW时间)，不能保证一定可以达到，但是会尽量保证，默认200ms</li>
+<li><code>-XX:ParallelGCThread</code> 设置并行垃圾回收线程数，最大为8</li>
+<li><code>-XX:ConcGCThreads</code>  设置并发标记的线程数，ParallelGCThread`的1/4左右</li>
+<li><code>-XX:InitiatingHeapOccupancyParcent</code> 触发并发GC周期的堆占用率阈值，超过则会触发GC，默认45</li>
+</ul>
+<blockquote>
+<p>jdk9中为默认垃圾收集器</p>
+</blockquote>
+<h4 id="评估GC的性能指标"><a href="#评估GC的性能指标" class="headerlink" title="评估GC的性能指标"></a>评估GC的性能指标</h4><ul>
+<li><strong><em>※吞吐量</em></strong>：运行用户代码的时间占总运行时间的比例</li>
+<li>垃圾收集开销：吞吐量的补数，垃圾收集所用时间与总运行时间的比例</li>
+<li><strong><em>※暂停时间</em></strong>：执行垃圾收集时，程序的工作线程被暂停的时间(STW时间)，越小越好</li>
+<li>收集频率：相对于应用程序的执行，收集操作发生的频率</li>
+<li>内存占用：java堆区所占用的内存大小</li>
+<li>快速：一个对象从诞生到被回收所经历的时间</li>
+</ul>
 <h3 id="垃圾回收-1"><a href="#垃圾回收-1" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>Java垃圾回收机制最基本的做法是分代收集。内存中的区域被分为不同的年代，对象根据其存活的时间被保存在对应年代的区域内。</p>
-<p>分为3个年代：年轻代、老年代和元空间。</p>
-<p>内存的分配发生在年轻代中，当对象存活时间足够长时，会被复制到老年代。</p>
+<p>分为3个年代：新生代、老年代和元空间。</p>
+<p>内存的分配发生在新生代中，当对象存活时间足够长时，会被复制到老年代。</p>
 <p>垃圾回收根据回收区域不同分为两种类型：一种是部分收集(Partial GC)，一种是整堆收集(Full GC)</p>
 <h4 id="部分收集Partial-GC"><a href="#部分收集Partial-GC" class="headerlink" title="部分收集Partial GC"></a>部分收集Partial GC</h4><p>部分收集不是完整收集整个堆的垃圾回收</p>
 <ul>
-<li>Minor GC年轻代收集 :只对年轻代进行垃圾回收，Eden满的话会触发Minor GC，Survicor不会去触发，只不过Minor GC也会去清理Survicor</li>
+<li>Minor GC新生代收集 :只对新生代进行垃圾回收，Eden满的话会触发Minor GC，Survicor不会去触发，只不过Minor GC也会去清理Survicor</li>
 <li>Major GC老年代收集 :只对老年代进行垃圾回收(只有CMS GC会单独对老年代进行垃圾回收)</li>
 <li>Mixed GC混合收集：对整个新生代以及部分老年代进行垃圾回收(只有G1 GC会存在Mixed GC)</li>
 </ul>
@@ -474,7 +583,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E5%BA%94%E8%AF%A5%E8%A2%AB%E5%9B%9E%E6%94%B6-%E5%9E%83%E5%9C%BE%E6%A0%87%E8%AE%B0%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">如何判断一个对象是否应该被回收(垃圾标记算法)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">引用计数法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">1.1.2.</span> <span class="nav-text">可达性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%8F%AF%E4%BB%A5%E4%BD%9C%E4%B8%BAGC-Roots"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">哪些可以作为GC Roots</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#finalization%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">finalization机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E4%B8%AD%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">虚拟机对象中的状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%8F%AF%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">判断是否可回收的过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">垃圾回收算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">标记-清除算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">复制算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.</span> <span class="nav-text">标记-整理算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-3"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-3"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#STW%E4%BA%8B%E4%BB%B6-stop-the-world"><span class="nav-number">1.3.</span> <span class="nav-text">STW事件(stop the world)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6-1"><span class="nav-number">1.4.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E6%94%B6%E9%9B%86Partial-GC"><span class="nav-number">1.4.1.</span> <span class="nav-text">部分收集Partial GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E5%A0%86%E6%94%B6%E9%9B%86Full-GC"><span class="nav-number">1.4.2.</span> <span class="nav-text">整堆收集Full GC</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E5%BA%94%E8%AF%A5%E8%A2%AB%E5%9B%9E%E6%94%B6-%E5%9E%83%E5%9C%BE%E6%A0%87%E8%AE%B0%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">如何判断一个对象是否应该被回收(垃圾标记算法)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">引用计数法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">1.1.2.</span> <span class="nav-text">可达性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%8F%AF%E4%BB%A5%E4%BD%9C%E4%B8%BAGC-Roots"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">哪些可以作为GC Roots</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#finalization%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">finalization机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AF%B9%E8%B1%A1%E4%B8%AD%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">虚拟机对象中的状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%8F%AF%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">判断是否可回收的过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">垃圾回收算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">标记-清除算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">复制算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-2"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-2"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.</span> <span class="nav-text">标记-整理算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-3"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-3"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#STW%E4%BA%8B%E4%BB%B6-stop-the-world"><span class="nav-number">1.3.</span> <span class="nav-text">STW事件(stop the world)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">垃圾回收器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Serial%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">Serial收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-4"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">优点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ParNew%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">ParNew收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-Scavenge%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.4.3.</span> <span class="nav-text">Parallel Scavenge收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">参数配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.4.4.</span> <span class="nav-text">CMS收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-5"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-4"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE-1"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">参数配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G1%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.4.5.</span> <span class="nav-text">G1收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-6"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-5"><span class="nav-number">1.4.5.2.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE-2"><span class="nav-number">1.4.5.3.</span> <span class="nav-text">参数配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%84%E4%BC%B0GC%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.4.6.</span> <span class="nav-text">评估GC的性能指标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6-1"><span class="nav-number">1.5.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E6%94%B6%E9%9B%86Partial-GC"><span class="nav-number">1.5.1.</span> <span class="nav-text">部分收集Partial GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E5%A0%86%E6%94%B6%E9%9B%86Full-GC"><span class="nav-number">1.5.2.</span> <span class="nav-text">整堆收集Full GC</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
