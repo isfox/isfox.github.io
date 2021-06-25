@@ -30,7 +30,7 @@
 <meta property="og:description" content="MySQL索引类型MySQL内置的存储引擎对各种索引技术有不同的实现方式，包括：B-树，B+树，R-树以及散列类型 B-树这种索引我是没有使用过，因为从最一开始我就使用的innodb存储引擎，而B-树是存在于MyISAM存储引擎中的 MyISAM存储引擎使用B-树数据结构来实现主码索引、唯一索引以及非主码索引。在MyISAM实现数据目录和数据库模式子目录中，用户可以找到每个MySQL表对应的.MY">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-22T13:30:30.000Z">
-<meta property="article:modified_time" content="2021-06-22T08:29:08.214Z">
+<meta property="article:modified_time" content="2021-06-24T08:08:01.818Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-22 21:30:30 / 修改时间：16:29:08" itemprop="dateCreated datePublished" datetime="2021-06-22T21:30:30+08:00">2021-06-22</time>
+              <time title="创建时间：2021-06-22 21:30:30" itemprop="dateCreated datePublished" datetime="2021-06-22T21:30:30+08:00">2021-06-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 16:08:01" itemprop="dateModified" datetime="2021-06-24T16:08:01+08:00">2021-06-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -288,8 +294,8 @@
 </ul>
 <h3 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B+树"></a>B+树</h3><p>在平时使用的Innodb存储引擎中创建的BTREE索引，就是B+树的结构</p>
 <p>B+树索引分为聚集索引（clustered index)和非聚集索引（secondary index)，这两种索引的共同点是内部都是B+树，高度都是平衡的，叶节点存放着所有数据。不同点是叶节点是否存放着一整行数据</p>
-<h4 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h4><p>Innodb存储引擎表是索引组织表，即表中数据按主键顺序存放，而聚集索引就是按每张表的主键构造一颗B+树。并且叶节点存放整张表的行记录数据，每张表只能有一个聚集索引（一个主键），聚集索引的另一个好处是它对于主键的排序查找和范围的速度非常快，叶节点的数据就是我们要找的数据</p>
-<h4 id="非聚集索引"><a href="#非聚集索引" class="headerlink" title="非聚集索引"></a>非聚集索引</h4><p>叶级别不包含行的全部数据，叶级别除了包含行的键值以外，每个索引行还包含了一个书签（bookmark），该书签告诉innodb存储引擎，哪里可以找到与索引对应的数据。<br>非聚集索引的存在并不影响数据在聚集索引中的组织，因此一个表可以有多个非聚集索引。当通过非聚集索引查找数据时，innodb会遍历非聚集索引并通过叶级别的指针获得指向主键索引的主键。然后再通过主键索引找到一行完整的数据</p>
+<h4 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h4><p>Innodb存储引擎表是索引组织表，即表中数据按主键顺序存放，而聚集索引就是按每张表的主键构造一颗B+树。并且叶节点存放整张表的行记录数据，每张表只能有一个聚集索引（一个主键），对于聚集索引，叶子结点即存储了真实的数据行，不再有另外单独的数据页，聚集索引的另一个好处是它对于主键的排序查找和范围的速度非常快，叶节点的数据就是我们要找的数据</p>
+<h4 id="非聚集索引"><a href="#非聚集索引" class="headerlink" title="非聚集索引"></a>非聚集索引</h4><p>表数据存储顺序与索引顺序无关。对于非聚集索引，叶结点包含索引字段值及指向数据页数据行的逻辑指针，该层紧邻数据页，其行数量与数据表行数据量一致<br>非聚集索引的存在并不影响数据在聚集索引中的组织，因此一个表可以有多个非聚集索引。当通过非聚集索引查找数据时，innodb会遍历非聚集索引并通过叶级别的指针获得指向主键索引的主键。然后再通过主键索引找到一行完整的数据</p>
 <h4 id="B-树的结构-1"><a href="#B-树的结构-1" class="headerlink" title="B+树的结构"></a>B+树的结构</h4><p>B+树数据结构是B-树实现的增强版本，尽管B+树支持B-树索引的所有特性，它们之间最显著的不同点在于<strong>B+树中底层数据是根据被提及的索引列进行排序的</strong>，B+树还通过叶子节点之间的附加引用来优化扫描性能。</p>
 <p>B+搜索和B-搜索不同，区别是B+树只有达到叶子节点才命中（B-树可以在非叶子节点命中），其性能等价于关键字全集做一次二分搜索。</p>
 <p>B+树的特性：</p>
@@ -302,7 +308,7 @@
 <p>在默认MySQL的引擎索引中，只有MEMORY引擎支持散列数据结构，散列结构的强度可以表示为直接键查找的简单性，散列索引的相似度模式匹配查询比直接查询慢。也可以为MEMORY引擎指定一个B-树索引实现</p>
 <h4 id="散列表结构"><a href="#散列表结构" class="headerlink" title="散列表结构"></a>散列表结构</h4><p>散列表数据结构是一种很简单的概念，它将一种算法应用到给定值中以在底层数据存储系统中返回一个唯一的指针或位置。散列表的优点是始终以线性时间复杂度找到需要读取的行的位置，而不像B-树那样需要横跨多层节点来确定位置</p>
 <h3 id="R-树"><a href="#R-树" class="headerlink" title="R-树"></a>R-树</h3><p> R-树数据结构支持基于数据类型对几何数据进行管理。目前只有MyISAM使用R-树实现支持空间索引，使用空间索引也有很多限制，比如只支持唯一的NOT NULL列等</p>
-<h3 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h3><p>全文本结构也是一种MySQL采用的基本数据结构</p>
+<h3 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h3><p>全文本结构也是一种MySQL采用的基本数据结构，只能添加在 char, varchar, text类型的字段，查询字段较大的字符串类型的字段时可以提高速率</p>
 
     </div>
 
@@ -326,7 +332,10 @@
     <a href="/2021/JVM/19.%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%92%8C%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" rel="prev" title="内存溢出和内存泄漏">
       <i class="fa fa-chevron-left"></i> 内存溢出和内存泄漏
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/22.MySQL%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98/" rel="next" title="MySQL系统调优">
+      MySQL系统调优 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -402,7 +411,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">516</span>
+          <span class="site-state-item-count">517</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
