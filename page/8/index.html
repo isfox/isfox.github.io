@@ -194,6 +194,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="post-title-link" itemprop="url">DDOS攻击与防御</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-28 21:12:19" itemprop="dateCreated datePublished" datetime="2021-05-28T21:12:19+08:00">2021-05-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-29 21:18:33" itemprop="dateModified" datetime="2021-05-29T21:18:33+08:00">2021-05-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" itemprop="url" rel="index"><span itemprop="name">网站攻击与防御</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="post-meta-item leancloud_visitors" data-flag-title="DDOS攻击与防御" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/5.DDOS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="DDOS攻击与防御"><a href="#DDOS攻击与防御" class="headerlink" title="DDOS攻击与防御"></a>DDOS攻击与防御</h2><h3 id="什么是DDos"><a href="#什么是DDos" class="headerlink" title="什么是DDos"></a>什么是DDos</h3><p>DDoS(Distributed Denial of Service)，即分布式拒绝服务攻击，是目前最为强大、最难以防御的攻击方式之一。要理解DDos，得先从DoS说起。最基本的DoS攻击就是利用合理的客户端请求来占用过多的服务器资源，从而使合法用户无法得到服务器的响应。DDoS攻击手段是在传统的DoS攻击基础之上产生的一类攻击方式，传统的DoS攻击一般是采用一对一方式的，当攻击目标CPU速度、内存或者网络带宽等等各项性能指标不高的情况下，它的效果是明显的，但随着计算机与网络技术的发展，计算机的处理能力显著增加，内存不断增大，同时也出现了千兆级别的网络，这使得DoS攻击逐渐失去效果。这时候分布式拒绝服务攻击手段（DDoS）便应运而生了。你理解了DoS攻击以后，<br>DDoS的原理就非常简单了，它指的是攻击者借助公共网络，将数量庞大的计算机设备联合起来作为<br>攻击平台，对一个或多个目标发动攻击，从而达到瘫痪目标主机的目的。通常，在攻击开始前，攻<br>击者会提前控制大量的用户计算机，称之为“肉鸡”，并通过指令使大量的肉鸡在同一时刻对某个主机进行访问，从而达到瘫痪目标主机的目的</p>
+<p>DDoS的攻击有很多种类型，如依赖蛮力的ICMP Flood、UDP Flood等等，随着硬件性能的提升，需要的机器规模越来越大，组织大规模的攻击越来越困难，现在已经不常见，还有就是依赖协议特征以及具体的软件漏洞进行的攻击，如Slowloris攻击，Hash碰撞攻击等等，这类攻击主要利用协议以及软件漏洞发起攻击，需要在特定环境下才会出现，更多的攻击者采用的是前面两种的混合方式，即利用了协议、系统的缺陷，又具备了海量的流量，如SYN Flood、DNS Query Flood等等</p>
+<h4 id="DNS-Query-Flood攻击"><a href="#DNS-Query-Flood攻击" class="headerlink" title="DNS Query Flood攻击"></a>DNS Query Flood攻击</h4><p>DNS Query Flood实际上是UDP Flood攻击的一种变形，由于DNS服务在互联网中不可替代的作用，一旦DNS服务器瘫痪，影响甚大。DNS Query Flood攻击采用的方法是向被攻击的服务器发送海量的域名解析请求，通常，请求解析的域名是随机生成，大部分根本就不存在，并且通过伪造端口和客户端IP，防止查询请求被ACL过滤。被攻击的DNS 服务器在接收到域名解析请求后，首先会在服务器上查找是否有对应的缓存，由于域名是随机生成的，几乎不可能有相应的缓存信息，当没有缓存，并且该域名无法直接由该DNS服务器进行解析的时候，DNS服务器会向其上层DNS服务器递归查询域名信息，直到全球互联网的13台根DNS服务器。大量不存在的域名解析请求，给服务器带来了很大的负载，当解析请求超过一定量的时候，就会造成DNS服务器解析域名超时，这样攻击者便达成了攻击目的。</p>
+<h4 id="CC攻击"><a href="#CC攻击" class="headerlink" title="CC攻击"></a>CC攻击</h4><p>CC(Challenge Collapsar)攻击属于DDos的一种，是基于应用层HTTP协议发起的DDos攻击，也被称为HTTP Flood。CC攻击的原理是这样的，攻击者通过控制的大量“肉鸡”或者利用从互联网上搜寻的大量匿名的HTTP代理，模拟正常用户给网站发起请求直到该网站拒绝服务为止。大部分网站会通过CDN以及分布式缓存来加快服务端响应，提升网站的吞吐量，而这些精心构造的HTTP请求往往有意避开这些缓存，需要进行多次DB查询操作或者是一次请求返回大量的数据，加速系统资源消耗，从而拖垮后端的业务处理系统，甚至连相关存储以及日志收集系统也无法幸免</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E5%92%8C%E9%98%B2%E5%BE%A1/1.XSS%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1073,110 +1171,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/" class="post-title-link" itemprop="url">spark中连接hive</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-27 20:30:30" itemprop="dateCreated datePublished" datetime="2021-05-27T20:30:30+08:00">2021-05-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-28 17:43:40" itemprop="dateModified" datetime="2021-05-28T17:43:40+08:00">2021-05-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index"><span itemprop="name">spark</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/" class="post-meta-item leancloud_visitors" data-flag-title="spark中连接hive" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="spark中连接hive"><a href="#spark中连接hive" class="headerlink" title="spark中连接hive"></a>spark中连接hive</h2><p>由于spark是大数据的分析计算引擎，而hive作为一个数据仓库，所以spark经常需要和hive结合起来使用，而spark sql如果需要连接到一个hive上，需要将hive-site.xml复制到spark的conf目录下(如果使用spark内置的hive元数据仓库，则会在spark的工作目录下创建Hive元数据仓库，metastore_db)，且由于Hive的元数据存储在mysql中，所以spark的jars目录下还需要有mysql驱动</p>
-<p>且由于由于我下载的版本是没有集成hive的，所以右下载了一个spark源码包进行编译的</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 在源码包中进行执行</span></span><br><span class="line">./build/mvn -Phive -Phive-thriftserver -DskipTests clean package</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/spark%20sql/5.spark%E4%B8%AD%E8%BF%9E%E6%8E%A5hive/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1248,7 +1242,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">517</span>
+          <span class="site-state-item-count">518</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
