@@ -30,7 +30,7 @@
 <meta property="og:description" content="JVM参数-X参数选项   非标准选项1234567891011121314151617181920212223242526272829303132333435363738394041424344454647# 使用java -X可以看到-X参数选项有哪些参数java -X    -Xmixed           混合模式执行（默认）    -Xint             仅解释模式执行">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-07-28T13:47:40.000Z">
-<meta property="article:modified_time" content="2021-07-28T07:19:44.153Z">
+<meta property="article:modified_time" content="2021-07-29T02:28:04.874Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-07-28 21:47:40 / 修改时间：15:19:44" itemprop="dateCreated datePublished" datetime="2021-07-28T21:47:40+08:00">2021-07-28</time>
+              <time title="创建时间：2021-07-28 21:47:40" itemprop="dateCreated datePublished" datetime="2021-07-28T21:47:40+08:00">2021-07-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-29 10:28:04" itemprop="dateModified" datetime="2021-07-29T10:28:04+08:00">2021-07-29</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -353,7 +359,28 @@
 <li><code>-XX:G1MaxNewSizePercent</code> 新生代占用整个堆内存的最大百分比，默认60%</li>
 <li><code>-XX:G1ReservePercent</code>  保留内存区域，防止Survivor的to区溢出</li>
 </ul>
-<h4 id="GC日志相关选项"><a href="#GC日志相关选项" class="headerlink" title="GC日志相关选项"></a>GC日志相关选项</h4><h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4>
+<h4 id="GC日志相关选项"><a href="#GC日志相关选项" class="headerlink" title="GC日志相关选项"></a>GC日志相关选项</h4><ul>
+<li><code>-verbose:gc</code>  输出gc日志信息</li>
+<li><code>-XX:+PrintGC</code>  打印简化的GC日志，等价于<code>-verbose:gc</code></li>
+<li><code>-XX:+PrintGCDetails</code>  在发生垃圾回收时打印内存回收详细的日志，并在进程退出时输出当前内存区域分配情况</li>
+<li><code>-XX:+PrintGCTimeStamps</code> 输出GC发生时的时间戳，需要与<code>-XX:+PrintGCDetails</code>搭配使用</li>
+<li><code>-XX:+PrintGCDateStamps</code> 输出GC发生时的时间戳，日期格式，需要与<code>-XX:+PrintGCDetails</code>搭配使用</li>
+<li><code>-XX:+PrintHeapAtGC</code>  每一次GC前后都打印堆信息</li>
+<li><code>-Xloggc:&lt;file&gt;</code>  把GC日志写入到一个文件中</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li><code>-XX:+DisableExplicitGC</code> 禁止hotspot执行System.gc()</li>
+<li><code>-XX:ReservedCodeCacheSize=&lt;n&gt;[g|m|k]</code>  指定代码缓存的大小</li>
+<li><code>-XX:InitialCodeCacheSize=&lt;n&gt;[g|m|k]</code>   指定代码缓存的大小</li>
+<li><code>-XX:+UseCodeCacheFlushing</code>  让jvm放弃一些被编译的代码，避免代码缓存被占满时JVM切换到interpreted-only的情况</li>
+<li><code>-XX:+DoEscapeAnalysis</code> 开启逃逸分析</li>
+<li><code>-XX:+UseBiasedLocking</code> 开启偏向锁</li>
+<li><code>-XX:+UseLargePages</code>  开启使用大页面</li>
+<li><code>-XX:+UseTLAB</code>  使用TLAB，默认打开</li>
+<li><code>-XX:+PrintTLAB</code> 打印TLAB的使用情况</li>
+<li><code>-XX:TLABSize</code> 设置TLAB大小</li>
+</ul>
+
     </div>
 
     
@@ -376,7 +403,10 @@
     <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/25.%E4%BC%98%E5%8C%96%E5%99%A8/" rel="prev" title="优化器">
       <i class="fa fa-chevron-left"></i> 优化器
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/26.MySQL%E5%88%86%E5%8C%BA/" rel="next" title="MySQL分区">
+      MySQL分区 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -452,7 +482,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">533</span>
+          <span class="site-state-item-count">534</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

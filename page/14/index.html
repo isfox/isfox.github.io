@@ -196,6 +196,109 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">MySQL忽略大小写问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-08 21:08:30 / 修改时间：22:08:53" itemprop="dateCreated datePublished" datetime="2021-05-08T21:08:30+08:00">2021-05-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="MySQL忽略大小写问题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="MySQL忽略大小写问题"><a href="#MySQL忽略大小写问题" class="headerlink" title="MySQL忽略大小写问题"></a>MySQL忽略大小写问题</h2><p>今天使用MySQL查询时遇到一个问题，使用一个字符串去查询时，查出来两条数据，但是查到的数据大小写并不一样</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from good where name = &#x27;a&#x27;;</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br><span class="line">| id | name | price |</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br><span class="line">|  3 | a    |   100 |</span><br><span class="line">|  4 | A    |   100 |</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br></pre></td></tr></table></figure>
+
+<p>我查到了name为a和A的两条数据，这就很奇怪，难道mysql会忽略大小写吗？</p>
+<p>然后查了一下资料，说是utf8_general_ci中的_ci是指忽略大小写Case-insensitive，但是我只设置了字符编码utf8，没有设置为utf8_general_ci呀，原来utf8默认的是就是utf8_general_ci</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看字符集</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">collation</span>;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+  	
+    	  
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E8%BF%9B%E9%98%B6/15.MySQL%E6%97%A5%E5%BF%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1161,116 +1264,6 @@
   
 
     
-  	
-    	  
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/scala/10.scala%E5%8C%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/scala/10.scala%E5%8C%85/" class="post-title-link" itemprop="url">scala包</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-01 22:04:19" itemprop="dateCreated datePublished" datetime="2021-05-01T22:04:19+08:00">2021-05-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-08 09:23:33" itemprop="dateModified" datetime="2021-06-08T09:23:33+08:00">2021-06-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/scala/" itemprop="url" rel="index"><span itemprop="name">scala</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/scala/10.scala%E5%8C%85/" class="post-meta-item leancloud_visitors" data-flag-title="scala包" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/scala/10.scala%E5%8C%85/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/scala/10.scala%E5%8C%85/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="scala包"><a href="#scala包" class="headerlink" title="scala包"></a>scala包</h2><p>scala也像java一样与包这个概念，但是功能更加强大<br>Scala包的三大作用(和Java一样)</p>
-<ul>
-<li>区分相同名字的类</li>
-<li>当类很多时,可以很好地管理类</li>
-<li>控制访问范围</li>
-</ul>
-<h3 id="包定义方式"><a href="#包定义方式" class="headerlink" title="包定义方式"></a>包定义方式</h3><p><strong>scala中包名和源码所在系统文件目录结构可以不一致</strong>，这点与java不一样，但是编译之后的字节码路径会和包名保持一致<br>这也就意味着scala中一个源文件可以包含多个包<br>且scala有三种包定义方式</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/scala/10.scala%E5%8C%85/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
 
   
   <nav class="pagination">
@@ -1342,7 +1335,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">533</span>
+          <span class="site-state-item-count">534</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

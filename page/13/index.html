@@ -196,6 +196,114 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%A1%86%E6%9E%B6/spring/12.spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="ZH">
+      <meta itemprop="description" content="java菜鸟号正在起航">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小菜鸟">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/%E6%A1%86%E6%9E%B6/spring/12.spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF/" class="post-title-link" itemprop="url">spring事务失效场景</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-13 20:29:23 / 修改时间：18:03:38" itemprop="dateCreated datePublished" datetime="2021-05-13T20:29:23+08:00">2021-05-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/%E6%A1%86%E6%9E%B6/spring/12.spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF/" class="post-meta-item leancloud_visitors" data-flag-title="spring事务失效场景" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/%E6%A1%86%E6%9E%B6/spring/12.spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%A1%86%E6%9E%B6/spring/12.spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="spring事务失效场景"><a href="#spring事务失效场景" class="headerlink" title="spring事务失效场景"></a>spring事务失效场景</h2><p>该描述的是使用注解@Transactional的方式来配置事务</p>
+<ul>
+<li><p>配置的方法非public修饰</p>
+<p>由于事务是使用的代理，而代理对于非public的方法不生效</p>
+</li>
+<li><p>配置的所在类非spring容器管理的bean</p>
+</li>
+<li><p>注解修饰的方法被所在类使用this或默认调用</p>
+<p>Spring在扫描Bean的时候会自动为标注了@Transactional注解的类生成一个代理类（proxy）,当有注解的方法被调用的时候，实际上是代理类调用的，代理类在调用之前会开启事务，执行事务的操作，但是同类中的方法互相调用，相当于this.B()，此时的B方法并非是代理类调用，而是直接通过原有的Bean直接调用，所以注解会失效</p>
+</li>
+<li><p>默认情况下，业务抛出异常为非RuntimeException异常</p>
+<p>由于默认情况下只对于RuntimeException异常回滚</p>
+</li>
+<li><p>业务代码使用try…catch捕获异常，然后直接消化了，并未抛出异常</p>
+</li>
+<li><p>注解中设置了错误的传播方式</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+  	
+    	  
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/5.spark%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1168,109 +1276,6 @@
   
 
     
-  	
-    	  
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://isfox.github.io/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="ZH">
-      <meta itemprop="description" content="java菜鸟号正在起航">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小菜鸟">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">MySQL忽略大小写问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-08 21:08:30 / 修改时间：22:08:53" itemprop="dateCreated datePublished" datetime="2021-05-08T21:08:30+08:00">2021-05-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" class="post-meta-item leancloud_visitors" data-flag-title="MySQL忽略大小写问题" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="MySQL忽略大小写问题"><a href="#MySQL忽略大小写问题" class="headerlink" title="MySQL忽略大小写问题"></a>MySQL忽略大小写问题</h2><p>今天使用MySQL查询时遇到一个问题，使用一个字符串去查询时，查出来两条数据，但是查到的数据大小写并不一样</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from good where name = &#x27;a&#x27;;</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br><span class="line">| id | name | price |</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br><span class="line">|  3 | a    |   100 |</span><br><span class="line">|  4 | A    |   100 |</span><br><span class="line">+<span class="comment">----+------+-------+</span></span><br></pre></td></tr></table></figure>
-
-<p>我查到了name为a和A的两条数据，这就很奇怪，难道mysql会忽略大小写吗？</p>
-<p>然后查了一下资料，说是utf8_general_ci中的_ci是指忽略大小写Case-insensitive，但是我只设置了字符编码utf8，没有设置为utf8_general_ci呀，原来utf8默认的是就是utf8_general_ci</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看字符集</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">collation</span>;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/%E9%97%AE%E9%A2%98/1.%E5%BF%BD%E7%95%A5%E5%A4%A7%E5%B0%8F%E5%86%99%E9%97%AE%E9%A2%98/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
 
   
   <nav class="pagination">
@@ -1342,7 +1347,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">533</span>
+          <span class="site-state-item-count">534</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
