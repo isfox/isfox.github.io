@@ -656,7 +656,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-23 09:37:55" itemprop="dateModified" datetime="2021-04-23T09:37:55+08:00">2021-04-23</time>
+                <time title="修改时间：2021-08-17 14:42:43" itemprop="dateModified" datetime="2021-08-17T14:42:43+08:00">2021-08-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -704,8 +704,12 @@
 <p>同步非阻塞</p>
 <p><strong>阻塞与非阻塞的区别：</strong></p>
 <ul>
-<li><strong>阻塞时，在调用结果返回时，当前线程会被挂起，并在得到结果之后返回</strong></li>
-<li><strong>非阻塞时，如不能立即得到结果，该调用不会阻塞当前线程，调用者需要定时轮询查看处理状态</strong></li>
+<li><p><strong>阻塞时，在调用结果返回时，当前线程会被挂起，并在得到结果之后返回</strong></p>
+<p>传统的 IO 流都是阻塞式的。也就是说，当一个线程调用 read() 或 write() 时，该线程被阻塞，直到有一些数据被读取或写入，该线程在此期间不能执行其他任务。因此，在完成网络通信进行 IO 操作时，由于线程会阻塞，所以服务器端必须为每个客户端都提供一个独立的线程进行处理，当服务器端需要处理大量客户端时，性能急剧下降</p>
+</li>
+<li><p><strong>非阻塞时，如不能立即得到结果，该调用不会阻塞当前线程，调用者需要定时轮询查看处理状态</strong></p>
+<p>Java NIO 是非阻塞模式的。当线程从某通道进行读写数据时，若没有数据可用时，该线程可以进行其他任务。线程通常将非阻塞 IO 的空闲时间用于在其他通道上执行 IO 操作，所以单独的线程可以管理多个输入和输出通道。因此，NIO 可以让服务器端使用一个或有限几个线程来同时处理连接到服务器端的所有客户端</p>
+</li>
 </ul>
 <p>Channel(通道)和Buffer(缓冲区)</p>
           <!--noindex-->
