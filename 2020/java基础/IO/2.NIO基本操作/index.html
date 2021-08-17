@@ -30,7 +30,7 @@
 <meta property="og:description" content="NIONIO早在JDK1.4中就已经提出来了(JSR51)，在JDK1.7中对NIO进行了补充类库NIO.2(JSR 203) 同步非阻塞 阻塞与非阻塞的区别：  阻塞时，在调用结果返回时，当前线程会被挂起，并在得到结果之后返回 传统的 IO 流都是阻塞式的。也就是说，当一个线程调用 read() 或 write() 时，该线程被阻塞，直到有一些数据被读取或写入，该线程在此期间不能执行其他任务。因">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-05-18T07:00:30.000Z">
-<meta property="article:modified_time" content="2021-08-17T06:42:43.923Z">
+<meta property="article:modified_time" content="2021-08-17T09:48:59.347Z">
 <meta property="article:author" content="ZH">
 <meta property="article:tag" content="java基础">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-17 14:42:43" itemprop="dateModified" datetime="2021-08-17T14:42:43+08:00">2021-08-17</time>
+                <time title="修改时间：2021-08-17 17:48:59" itemprop="dateModified" datetime="2021-08-17T17:48:59+08:00">2021-08-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -339,6 +339,8 @@
 <p>客户端、服务端分别使用SocketChannel和ServerSocketChannel来创建通道，其提高性能和吞吐量的核心在于多路复用器，也就是Selector</p>
 <h3 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h3><p>Selector是多路复用器，用于同时监测多个SelectableChannel 通道的事件以实现异步I/O。</p>
 <p>通过一个选择器来同时对多个套接字通道进行监听，当套接字通道有可用的事件的时候，通道改为可用状态，选择器就可以实现可用的状态。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_READ = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"><span class="comment">// 写</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_WRITE = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br><span class="line"><span class="comment">// 连接</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_CONNECT = <span class="number">1</span> &lt;&lt; <span class="number">3</span>;</span><br><span class="line"><span class="comment">// 接收</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_ACCEPT = <span class="number">1</span> &lt;&lt; <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
+
 <h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>客户端—–》Channel—–》Selector——》keys–状态改变—》server</p>
 <p>Buffer  缓冲区<br>Channel 通道<br>Selector  选择器</p>
 <p>Server端创建ServerSocketChannel    有一个Selector多路复用器  轮询所有注册的通道，根据通道状态，执行相关操作</p>
